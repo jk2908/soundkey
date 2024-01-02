@@ -2,13 +2,13 @@ export type Toast = {
   id: number
   type: 'success' | 'error' | 'warning' | 'info'
   message: string
-  onClose?: () => void
-  duration?: number
+  status?: number
+  duration?: number | null
 }
 
 export type Theme = 'light' | 'dark' | undefined
 
-export type Icon = 'moon' | 'sun' | 'spinner'
+export type Icon = 'moon' | 'sun' | 'spinner' | 'x'
 
 export type ActionResponse =
   | {
@@ -17,3 +17,8 @@ export type ActionResponse =
       status: number
     }
   | { type: undefined; message: null; status: number | undefined }
+
+export type Route = {
+  label: string
+  href: string
+}

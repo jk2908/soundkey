@@ -1,13 +1,12 @@
 'use client'
 
-import { useEffect, useId } from 'react'
+import { useEffect, experimental_useEffectEvent as useEffectEvent, useId } from 'react'
 import { useFormState } from 'react-dom'
 
 import { signup } from '@/lib/actions'
 import { ActionResponse } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
 
-import { Form } from '@/components/forms/form'
 import { FormGroup } from '@/components/forms/form-group'
 import { Input } from '@/components/forms/input'
 import { Label } from '@/components/forms/label'
@@ -28,16 +27,19 @@ export function SignupForm() {
 
   const { toast } = useToast()
 
+  const onStateChange = useEffectEvent((state: ActionResponse) => {
+    if (!state.type) return
+
+    toast({ ...state, duration: null })
+  })
+
   useEffect(() => {
-    const { type, message, status } = state
-
-    if (!type) return
-
-    toast({ type, message: `${message} / ${status}` })
-  }, [state, toast])
+    onStateChange(state)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state])
 
   return (
-    <Form action={dispatch}>
+    <form action={dispatch}>
       <FormGroup>
         <Label htmlFor={emailId}>Email</Label>
         <Input id={emailId} type="email" name="email" required />
@@ -58,6 +60,6 @@ export function SignupForm() {
           )}
         </SubmitButton>
       </FormGroup>
-    </Form>
+    </form>
   )
 }

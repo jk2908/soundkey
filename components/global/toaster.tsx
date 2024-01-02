@@ -1,5 +1,7 @@
 'use client'
 
+import { AnimatePresence } from 'framer-motion'
+
 import { useToast } from '@/hooks/use-toast'
 
 import { Toast } from '@/components/global/toast'
@@ -7,13 +9,13 @@ import { Toast } from '@/components/global/toast'
 export function Toaster() {
   const { toasts } = useToast()
 
-  if (!toasts.length) return null
-
   return (
-    <div className="fixed bottom-0 left-0 right-0 space-y-2 p-4">
-      {toasts.map(toast => (
-        <Toast key={toast.id} toast={toast} />
-      ))}
+    <div className="fixed bottom-0 flex w-full flex-col items-center justify-center space-y-2 p-4">
+      <AnimatePresence>
+        {toasts.map(toast => (
+          <Toast key={toast.id} toast={toast} />
+        ))}
+      </AnimatePresence>
     </div>
   )
 }

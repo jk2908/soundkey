@@ -8,7 +8,7 @@ export function useToast() {
 
   function toast(toast: Omit<Toast, 'id'>) {
     const id = crypto.getRandomValues(new Uint32Array(1))[0]
-    const { duration } = toast
+    const { duration = 7000 } = toast
 
     setToasts(prev => [...prev, { ...toast, id }])
 
@@ -18,14 +18,7 @@ export function useToast() {
   }
 
   function removeToast(id: number) {
-    const toast = toasts.find(toast => toast.id === id)
-
-    if (!toast) return
-
-    const { onClose } = toast
-
     setToasts(prev => prev.filter(toast => toast.id !== id))
-    onClose?.()
   }
 
   return { toasts, toast, removeToast }

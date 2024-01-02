@@ -2,8 +2,8 @@ import { cn } from '@/lib/utils'
 
 import { Icon, type Props } from '@/components/global/icon'
 
-export function LoadingSpinner(props: Props) {
-  const { name, className, ...rest } = props
+export function LoadingSpinner(props: Omit<Props, 'name'>) {
+  const { className, ...rest } = props
 
   return (
     <Icon

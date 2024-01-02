@@ -7,7 +7,7 @@ import { Button, type Props } from '@/components/global/button'
 export function SubmitButton({
   children,
   ...rest
-}: Omit<Props, 'children'> & {
+}: Omit<Props, 'children' | 'type'> & {
   children: React.ReactNode | (({ pending }: { pending: boolean }) => React.ReactNode)
 }) {
   const { pending } = useFormStatus()
