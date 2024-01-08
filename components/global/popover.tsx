@@ -6,7 +6,8 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { useClickOutside } from '@/hooks/use-click-outside'
 
-type Position = 'top' | 'bottom' | 'left' | 'right'
+const positions = ['top', 'bottom', 'left', 'right'] as const
+type Position = (typeof positions)[number]
 
 export type Props = {
   children: React.ReactNode
@@ -14,7 +15,6 @@ export type Props = {
   content: React.ReactNode
   position?: Position
   offset?: number
-  tryOrder?: Position[]
   onClickOutside?: () => void
   className?: string
 }
@@ -25,7 +25,6 @@ export function Popover({
   content,
   position = 'top',
   offset = 4,
-  tryOrder = ['top', 'bottom', 'left', 'right'],
   onClickOutside,
   className,
 }: Props) {
@@ -100,7 +99,7 @@ export function Popover({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className={cn(
-              'bg-gr33n-100 text-app-fg-inverted bg-app-bg-inverted/95 fixed z-50 whitespace-nowrap rounded-[3px] px-1 py-0.5 text-xs',
+              'bg-gr33n-100 fixed z-50 whitespace-nowrap rounded-[3px] bg-app-bg-inverted/95 px-1 py-0.5 text-xs text-app-fg-inverted',
               className
             )}
             style={style}>
