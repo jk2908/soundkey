@@ -1,5 +1,4 @@
-/** @type {import("prettier").Options} */
-module.exports = {
+const config = {
   printWidth: 100,
   endOfLine: 'lf',
   semi: false,
@@ -34,3 +33,5 @@ module.exports = {
   plugins: ['@ianvs/prettier-plugin-sort-imports', 'prettier-plugin-tailwindcss'],
   tailwindFunctions: ['cn']
 }
+
+export default config

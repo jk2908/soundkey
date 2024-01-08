@@ -3,29 +3,29 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 
 const TabsContext = createContext<{
-  selected: string
+  isSelected: string
   setSelected: React.Dispatch<React.SetStateAction<string>>
   tabs: React.MutableRefObject<string[]>
-  defaultSelected?: string
+  defaultisSelected?: string
 }>({
-  selected: '',
+  isSelected: '',
   setSelected: () => {},
   tabs: { current: [] },
-  defaultSelected: '',
+  defaultisSelected: '',
 })
 
 export function TabsProvider({
   children,
-  defaultSelected,
+  defaultisSelected,
 }: {
   children: React.ReactNode
-  defaultSelected?: string
+  defaultisSelected?: string
 }) {
-  const [selected, setSelected] = useState<string>('')
+  const [isSelected, setSelected] = useState<string>('')
   const tabs = useRef<string[]>([])
 
   return (
-    <TabsContext.Provider value={{ selected, setSelected, tabs, defaultSelected }}>
+    <TabsContext.Provider value={{ isSelected, setSelected, tabs, defaultisSelected }}>
       {children}
     </TabsContext.Provider>
   )
@@ -36,13 +36,13 @@ export function TabList({ children }: { children: React.ReactNode }) {
 }
 
 export function Tab({ children, id }: { children: React.ReactNode; id: string }) {
-  const { selected, setSelected } = useContext(TabsContext)
+  const { isSelected, setSelected } = useContext(TabsContext)
 
   return (
     <button
       type="button"
       onClick={() => setSelected(id)}
-      aria-selected={selected === id}
+      aria-selected={isSelected === id}
       role="tab">
       {children}
     </button>
@@ -50,7 +50,7 @@ export function Tab({ children, id }: { children: React.ReactNode; id: string })
 }
 
 export function TabPanel({ children, id }: { children: React.ReactNode; id: string }) {
-  const { selected } = useContext(TabsContext)
+  const { isSelected } = useContext(TabsContext)
 
-  return <div hidden={selected !== id} role="tabpanel">{children}</div>
+  return <div hidden={isSelected !== id} role="tabpanel">{children}</div>
 }

@@ -7,7 +7,7 @@ type Props = {
 
 export function Label({ children, className, ...rest }: Props) {
   return (
-    <label className={cn(className)} {...rest}>
+    <label className={cn('block font-mono', className)} {...rest}>
       {children}
     </label>
   )

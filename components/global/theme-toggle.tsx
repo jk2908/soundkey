@@ -1,18 +1,18 @@
 'use client'
 
 import { useMounted } from '@/hooks/use-mounted'
+import { useTheme } from '@/hooks/use-theme'
 
 import { Icon } from '@/components/global/icon'
 import { LoadingSpinner } from '@/components/global/loading-spinner'
-import { useTheme } from '@/hooks/use-theme'
 
 export function ThemeToggle() {
   const { theme, altTheme, toggleTheme } = useTheme()
-  const mounted = useMounted()
+  const isMounted = useMounted()
 
   return (
     <>
-      {!mounted ? (
+      {!isMounted ? (
         <LoadingSpinner />
       ) : (
         <button onClick={toggleTheme}>

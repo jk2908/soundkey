@@ -7,7 +7,7 @@ type Props = {
 
 export function FormGroup({ children, className, ...rest }: Props) {
   return (
-    <div className={cn(className)} {...rest}>
+    <div className={cn('space-y-2 [&_+_&]:mt-6', className)} {...rest}>
       {children}
     </div>
   )

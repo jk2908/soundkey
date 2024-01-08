@@ -4,16 +4,26 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 
 import type { Toast } from '@/lib/types'
-import { cn } from '@/lib/utils'
+import { cn, copyToClipboard } from '@/lib/utils'
 import { useToast } from '@/hooks/use-toast'
 
 import { CloseButton } from '@/components/global/close-button'
+import { Popover } from '@/components/global/popover'
 
 export function Toast({ toast, className, ...rest }: { toast: Toast; className?: string }) {
   const { id, type, message, status } = toast
   const { removeToast } = useToast()
 
-  const [copied, setCopied] = useState(false)
+  const [isCopied, setCopied] = useState(false)
+
+  function handleCopy() {
+    copyToClipboard(`Error message: ${message} \nStatus code: ${status}`)
+    setCopied(true)
+
+    setTimeout(() => {
+      setCopied(false)
+    }, 3000)
+  }
 
   const styleMap: Record<Toast['type'], string> = {
     success: 'bg-success',
@@ -36,10 +46,19 @@ export function Toast({ toast, className, ...rest }: { toast: Toast; className?:
         className
       )}
       {...rest}>
-      <div className="flex items-center justify-between gap-4 grow">
+      <div className="flex grow items-center justify-between gap-4">
         <p className="grow">{message}</p>
 
-        {type === 'error' && <button className="text-xs">Copy</button>}
+        {type === 'error' && (
+          <Popover
+            isOpen={isCopied}
+            content="Copied to clipboard"
+            onClickOutside={() => setCopied(false)}>
+            <button onClick={handleCopy} className="text-xs">
+              Copy
+            </button>
+          </Popover>
+        )}
       </div>
       <CloseButton onClick={() => removeToast(id)} colour="#fff" />
     </motion.div>

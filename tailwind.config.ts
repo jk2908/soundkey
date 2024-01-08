@@ -15,6 +15,8 @@ const config: Config = {
       colors: {
         'app-bg': 'rgb(var(--app-bg) / <alpha-value>)',
         'app-fg': 'rgb(var(--app-fg) / <alpha-value>)',
+        'app-bg-inverted': 'rgb(var(--app-bg-inverted) / <alpha-value>)',
+        'app-fg-inverted': 'rgb(var(--app-fg-inverted) / <alpha-value>)',
         'error': 'rgb(var(--error) / <alpha-value>)',
         'success': 'rgb(var(--success) / <alpha-value>)',
         'warning': 'rgb(var(--warning) / <alpha-value>)',
@@ -22,7 +24,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: ['var(--font-geist-sans)', ...fontFamily.sans],
-        mono: ['var(--font-geist-mono)', ...fontFamily.mono],
+        mono: ['var(--font-mono)', ...fontFamily.mono],
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
