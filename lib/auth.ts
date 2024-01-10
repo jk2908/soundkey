@@ -1,16 +1,16 @@
 import { cache } from 'react'
 import * as context from 'next/headers'
-import { prisma } from '@lucia-auth/adapter-prisma'
+import { pg } from '@lucia-auth/adapter-postgresql'
 import { lucia } from 'lucia'
 import { nextjs_future } from 'lucia/middleware'
 
-import { db } from '@/lib/db'
+import { pool } from '@/lib/db'
 
 export const auth = lucia({
-  adapter: prisma(db, {
-    user: 'user',
-    session: 'session',
-    key: 'key',
+  adapter: pg(pool, {
+    user: 'auth_user',
+    session: 'auth_session',
+    key: 'auth_key',
   }),
   env: process.env.NODE_ENV === 'development' ? 'DEV' : 'PROD',
   middleware: nextjs_future(),
