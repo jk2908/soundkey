@@ -1,7 +1,7 @@
 'use server'
 
 import * as context from 'next/headers'
-import { sql } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 
 import { auth, getPageSession } from '@/lib/auth'
 import { db, type DbError } from '@/lib/db'
@@ -158,19 +158,16 @@ export async function resetPassword(prevState: ActionResponse, formData: FormDat
   }
 
   try {
-    const storedUser = db
-      .select({
-        email: user.email,
-      })
+    const [storedUser] = await db
+      .select()
       .from(user)
-      .where(sql`${user.email} = ${email.toLowerCase()}`)
+      .where(eq(user.email, email.toLowerCase()))
       .limit(1)
 
     if (!storedUser) {
       return { type: 'error', message: 'Invalid email', status: 400 } satisfies ActionResponse
     }
 
-    // @ts-expect-error
     const { userId } = auth.transformDatabaseUser(storedUser)
     const token = await createPasswordResetToken(userId)
 
