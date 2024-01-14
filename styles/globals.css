@@ -24,12 +24,16 @@
     --app-bg-inverted: var(--gr33n-100);
     --app-fg: var(--gr33n-100);
     --app-fg-inverted: var(--y3llow-0);
+    
+    --keyline: 229 228 213;
 
     &[data-theme=dark] {
       --app-bg: var(--gr33n-100);
       --app-bg-inverted: var(--y3llow-0);
       --app-fg: var(--y3llow-0);
       --app-fg-inverted: var(--gr33n-100);
+
+      --keyline: 29 48 24;
     }
   }
 

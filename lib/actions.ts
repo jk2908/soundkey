@@ -3,13 +3,13 @@
 import * as context from 'next/headers'
 import { eq } from 'drizzle-orm'
 
-import { auth, getPageSession } from '@/lib/auth'
+import { _auth, getPageSession } from '@/lib/auth'
 import { db, type DbError } from '@/lib/db'
 import { sendPasswordResetEmail, sendVerificationEmail } from '@/lib/email'
 import { user } from '@/lib/schema'
 import { createEmailVerificationToken, createPasswordResetToken } from '@/lib/token'
 import type { ActionResponse } from '@/lib/types'
-import { isValidEmail } from '@/lib/utils'
+import { isValidEmail } from '@/utils/is-valid-email'
 
 export async function signup(prevState: ActionResponse, formData: FormData) {
   const email = formData.get('email')
@@ -32,7 +32,7 @@ export async function signup(prevState: ActionResponse, formData: FormData) {
   }
 
   try {
-    const { userId } = await auth.createUser({
+    const { userId } = await _auth.createUser({
       key: {
         providerId: 'email',
         providerUserId: email.toLowerCase(),
@@ -41,16 +41,17 @@ export async function signup(prevState: ActionResponse, formData: FormData) {
       attributes: {
         email: email.toLowerCase(),
         email_verified: false,
+        role: 'user',
       },
     })
 
-    const session = await auth.createSession({
+    const session = await _auth.createSession({
       userId,
       attributes: {},
     })
 
-    const authRequest = auth.handleRequest('POST', context)
-    authRequest.setSession(session)
+    const _authRequest = _auth.handleRequest('POST', context)
+    _authRequest.setSession(session)
 
     const token = await createEmailVerificationToken(userId)
     await sendVerificationEmail(email, token)
@@ -82,14 +83,14 @@ export async function login(prevState: ActionResponse, formData: FormData) {
   }
 
   try {
-    const { userId } = await auth.useKey('email', email.toLowerCase(), password)
-    const session = await auth.createSession({
+    const { userId } = await _auth.useKey('email', email.toLowerCase(), password)
+    const session = await _auth.createSession({
       userId,
       attributes: {},
     })
 
-    const authRequest = auth.handleRequest('POST', context)
-    authRequest.setSession(session)
+    const _authRequest = _auth.handleRequest('POST', context)
+    _authRequest.setSession(session)
 
     return { type: 'success', message: 'Logged in', status: 200 } satisfies ActionResponse
   } catch (err) {
@@ -102,15 +103,15 @@ export async function login(prevState: ActionResponse, formData: FormData) {
 }
 
 export async function logout() {
-  const authRequest = auth.handleRequest('POST', context)
-  const session = await authRequest.validate()
+  const _authRequest = _auth.handleRequest('POST', context)
+  const session = await _authRequest.validate()
 
   if (!session) {
     return { type: 'error', message: 'No session', status: 401 } satisfies ActionResponse
   }
 
-  await auth.invalidateSession(session.sessionId)
-  authRequest.setSession(null)
+  await _auth.invalidateSession(session.sessionId)
+  _authRequest.setSession(null)
 
   return { type: 'success', message: 'Logged out', status: 200 } satisfies ActionResponse
 }
@@ -168,7 +169,7 @@ export async function resetPassword(prevState: ActionResponse, formData: FormDat
       return { type: 'error', message: 'Invalid email', status: 400 } satisfies ActionResponse
     }
 
-    const { userId } = auth.transformDatabaseUser(storedUser)
+    const { userId } = _auth.transformDatabaseUser(storedUser)
     const token = await createPasswordResetToken(userId)
 
     await sendPasswordResetEmail(email, token)

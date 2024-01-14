@@ -3,7 +3,7 @@
 import { Children, cloneElement, useCallback, useEffect, useId, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/cn'
 import { useClickOutside } from '@/hooks/use-click-outside'
 
 const positions = ['top', 'bottom', 'left', 'right'] as const

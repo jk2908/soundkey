@@ -1,10 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import { cn } from '@/utils/cn'
+import { copyToClipboard } from '@/utils/copy-to-clipboard'
 import { motion } from 'framer-motion'
 
 import type { Toast } from '@/lib/types'
-import { cn, copyToClipboard } from '@/lib/utils'
 import { useToast } from '@/hooks/use-toast'
 
 import { CloseButton } from '@/components/global/close-button'

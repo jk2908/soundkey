@@ -1,19 +1,31 @@
+import { Suspense } from 'react'
 import { redirect } from 'next/navigation'
 
-import { useAuth } from '@/hooks/use-auth'
+import { auth } from '@/lib/auth'
 
-import { LogoutButton } from '@/components/forms/logout-button'
+import { Nav } from '@/components/authenticated/nav'
+import { Sidebar } from '@/components/authenticated/sidebar'
+import { Section } from '@/components/global/section'
+import { Wrapper } from '@/components/global/wrapper'
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
-  const user = await useAuth()
+  const user = await auth()
 
   if (!user) {
-    return redirect('/login')
+    throw redirect('/login')
   }
 
   return (
-    <>
-      {children} <LogoutButton />
-    </>
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="flex grow">
+        <Sidebar>
+          <Nav />
+        </Sidebar>
+
+        <Wrapper>
+          <Section size="lg">{children}</Section>
+        </Wrapper>
+      </div>
+    </Suspense>
   )
 }

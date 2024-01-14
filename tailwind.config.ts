@@ -17,10 +17,11 @@ const config: Config = {
         'app-fg': 'rgb(var(--app-fg) / <alpha-value>)',
         'app-bg-inverted': 'rgb(var(--app-bg-inverted) / <alpha-value>)',
         'app-fg-inverted': 'rgb(var(--app-fg-inverted) / <alpha-value>)',
-        'error': 'rgb(var(--error) / <alpha-value>)',
-        'success': 'rgb(var(--success) / <alpha-value>)',
-        'warning': 'rgb(var(--warning) / <alpha-value>)',
-        'info': 'rgb(var(--info) / <alpha-value>)',
+        error: 'rgb(var(--error) / <alpha-value>)',
+        success: 'rgb(var(--success) / <alpha-value>)',
+        warning: 'rgb(var(--warning) / <alpha-value>)',
+        info: 'rgb(var(--info) / <alpha-value>)',
+        keyline: 'rgb(var(--keyline) / <alpha-value>)',
       },
       fontFamily: {
         sans: ['var(--font-geist-sans)', ...fontFamily.sans],
@@ -43,6 +44,12 @@ const config: Config = {
         256: '64rem',
         272: '68rem',
         288: '72rem',
+      },
+      transitionProperty: {
+        bg: 'background-color',
+      },
+      aria: {
+        'current': 'current=page'
       },
     },
   },

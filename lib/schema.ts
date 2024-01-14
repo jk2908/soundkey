@@ -3,7 +3,7 @@ import { bigint, boolean, pgEnum, pgTable, varchar } from 'drizzle-orm/pg-core'
 
 export const userRole = pgEnum('user_role', ['user', 'admin'])
 
-export const user = pgTable('auth_user', {
+export const user = pgTable('user', {
   id: varchar('id', {
     length: 15,
   }).primaryKey(),
@@ -24,7 +24,7 @@ export const userRelations = relations(user, ({ many }) => ({
   password_reset_token: many(passwordResetToken),
 }))
 
-export const session = pgTable('auth_session', {
+export const session = pgTable('session', {
   id: varchar('id', {
     length: 128,
   }).primaryKey(),
@@ -48,7 +48,7 @@ export const sessionRelations = relations(session, ({ one }) => ({
   })
 }))
 
-export const key = pgTable('auth_key', {
+export const key = pgTable('key', {
   id: varchar('id', {
     length: 255,
   }).primaryKey(),
@@ -69,7 +69,7 @@ export const keyRelations = relations(key, ({ one }) => ({
   }),
 }))
 
-export const emailVerificationToken = pgTable('auth_email_verification_token', {
+export const emailVerificationToken = pgTable('email_verification_token', {
   id: varchar('id', {
     length: 255,
   }).primaryKey(),
@@ -90,7 +90,7 @@ export const emailVerificationTokenRelations = relations(emailVerificationToken,
   }),
 }))
 
-export const passwordResetToken = pgTable('auth_password_reset_token', {
+export const passwordResetToken = pgTable('password_reset_token', {
   id: varchar('id', {
     length: 255,
   }).primaryKey(),

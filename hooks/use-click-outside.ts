@@ -4,7 +4,7 @@ export function useClickOutside<T extends HTMLElement>(onClick: () => void) {
   const ref = useRef<T>(null)
 
   useEffect(() => {
-    function handleClick(e: Event) {
+    function handler(e: Event) {
       const target = e.target as HTMLElement
 
       if (target !== ref.current && !ref.current?.contains(target)) {
@@ -12,10 +12,10 @@ export function useClickOutside<T extends HTMLElement>(onClick: () => void) {
       }
     }
 
-    document.addEventListener('click', handleClick)
+    document.addEventListener('click', handler)
 
     return () => {
-      document.removeEventListener('click', handleClick)
+      document.removeEventListener('click', handler)
     }
   }, [onClick])
 
