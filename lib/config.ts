@@ -4,10 +4,3 @@ export const APP_VERSION = '0.0.1'
 export const APP_URL =
   process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://soundkey.app'
 export const APP_EMAIL = 'info@soundkey.app'
-
-export const BP = {
-  sm: 640,
-  md: 720,
-  lg: 1024,
-  xl: 1280,
-}
