@@ -1,13 +1,22 @@
-import { PrismaClient } from '@prisma/client'
+import { neon, neonConfig, Pool } from '@neondatabase/serverless'
+import { drizzle } from 'drizzle-orm/neon-http'
 
-const prismaClientSingleton = () => {
-  return new PrismaClient()
+import * as schema from '@/lib/schema'
+
+// @ts-expect-error
+neonConfig.fetchConnectionCache = true
+
+// @ts-expect-error
+export const pool = new Pool({ connectionString: process.env.DB_URL })
+
+// @ts-expect-error
+export const sql = neon(process.env.DB_URL)
+export const db = drizzle(sql, { schema })
+
+export interface DbError extends Error {
+  code: string
+  constraint: string
+  detail: string
+  table: string
+  message: 'duplicate key value violates unique constraint "users_email_index"'
 }
-
-declare global {
-  var prisma: undefined | ReturnType<typeof prismaClientSingleton>
-}
-
-export const db = globalThis.prisma ?? prismaClientSingleton()
-
-if (process.env.NODE_ENV !== 'production') globalThis.prisma = db

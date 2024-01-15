@@ -17,6 +17,7 @@ const config = {
     '^@/types/(.*)$',
     '^@/lib/(.*)$',
     '^@/hooks/(.*)$',
+    '^@/utils/(.*)$',
     '',
     '^@/components/(.*)$',
     '',

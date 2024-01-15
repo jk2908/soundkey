@@ -1,13 +1,13 @@
 import { cache } from 'react'
 import * as context from 'next/headers'
-import { prisma } from '@lucia-auth/adapter-prisma'
+import { pg } from '@lucia-auth/adapter-postgresql'
 import { lucia } from 'lucia'
 import { nextjs_future } from 'lucia/middleware'
 
-import { db } from '@/lib/db'
+import { pool } from '@/lib/db'
 
-export const auth = lucia({
-  adapter: prisma(db, {
+export const _auth = lucia({
+  adapter: pg(pool, {
     user: 'user',
     session: 'session',
     key: 'key',
@@ -17,14 +17,23 @@ export const auth = lucia({
   sessionCookie: {
     expires: false,
   },
-  getUserAttributes: ({ email, email_verified }) => {
+  getUserAttributes: ({ email, email_verified, role }) => {
     return {
       email,
       emailVerified: Boolean(email_verified),
+      role,
     }
   },
 })
 
-export type Auth = typeof auth
+export type Auth = typeof _auth
 
-export const getPageSession = cache(() => auth.handleRequest('GET', context).validate())
+export const getPageSession = cache(() => _auth.handleRequest('GET', context).validate())
+
+export async function auth() {
+  const { user } = await getPageSession() ?? {}
+
+  if (!user) return null 
+
+  return user
+}

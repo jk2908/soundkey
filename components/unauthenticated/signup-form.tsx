@@ -3,14 +3,14 @@
 import { useEffect, experimental_useEffectEvent as useEffectEvent, useId } from 'react'
 import { useFormState } from 'react-dom'
 
-import { login } from '@/lib/actions'
+import { signup } from '@/lib/actions'
 import { ActionResponse } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
 
-import { FormGroup } from '@/components/forms/form-group'
-import { Input } from '@/components/forms/input'
-import { Label } from '@/components/forms/label'
-import { SubmitButton } from '@/components/forms/submit-button'
+import { FormGroup } from '@/components/global/form-group'
+import { Input } from '@/components/global/input'
+import { Label } from '@/components/global/label'
+import { SubmitButton } from '@/components/global/submit-button'
 import { LoadingSpinner } from '@/components/global/loading-spinner'
 
 const initialState: ActionResponse = {
@@ -19,18 +19,18 @@ const initialState: ActionResponse = {
   status: undefined,
 }
 
-export function LoginForm() {
+export function SignupForm() {
   const emailId = useId()
   const passwordId = useId()
 
-  const [state, dispatch] = useFormState(login, initialState)
+  const [state, dispatch] = useFormState(signup, initialState)
 
   const { toast } = useToast()
 
   const onStateChange = useEffectEvent((state: ActionResponse) => {
     if (!state.type) return
 
-    toast({ ...state })
+    toast({ ...state, duration: null })
   })
 
   useEffect(() => {

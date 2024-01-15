@@ -6,7 +6,7 @@ import localFont from 'next/font/local'
 import { GeistSans } from 'geist/font/sans'
 
 import { APP_DESCRIPTION, APP_NAME } from '@/lib/config'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/cn'
 
 import { Provider } from '@/components/global/provider'
 import { Toaster } from '@/components/global/toaster'
@@ -31,7 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       dir="ltr"
       className={cn('h-full font-sans', GeistSans.variable, MinorPraxis.variable)}
       suppressHydrationWarning>
-      <body className="min-h-full bg-app-bg text-app-fg">
+      <body className="flex min-h-full flex-col bg-app-bg text-app-fg">
         <Provider>
           {children}
 

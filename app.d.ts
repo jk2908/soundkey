@@ -4,6 +4,7 @@ declare namespace Lucia {
   type DatabaseUserAttributes = {
     email: string
     email_verified: boolean
+    role: 'user' | 'admin'
   }
   type DatabaseSessionAttributes = {}
 }

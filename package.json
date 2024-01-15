@@ -2,19 +2,26 @@
   "name": "soundkey",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate": "drizzle-kit generate:pg",
+    "migrate": "tsx ./lib/migrate.ts"
   },
   "dependencies": {
-    "@lucia-auth/adapter-prisma": "^3.0.2",
-    "@prisma/client": "^5.7.1",
+    "@lucia-auth/adapter-postgresql": "^2.0.2",
+    "@neondatabase/serverless": "^0.7.0",
+    "dotenv": "^16.3.1",
+    "drizzle-orm": "^0.29.3",
+    "focusable-selectors": "^0.8.4",
     "framer-motion": "^10.17.0",
     "geist": "^1.2.0",
     "lucia": "^2.7.6",
     "next": "14.0.5-canary.31",
+    "postgres": "^3.4.3",
     "react": "^18",
     "react-dom": "^18",
     "resend": "^2.1.0"
@@ -26,16 +33,18 @@
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
     "clsx": "^2.0.0",
+    "drizzle-kit": "^0.20.10",
     "eslint": "^8",
     "eslint-config-next": "14.0.4",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react-hooks": "0.0.0-experimental-c5b937576-20231219",
+    "pg": "^8.11.3",
     "postcss": "^8",
     "prettier": "^3.1.1",
     "prettier-plugin-tailwindcss": "^0.5.9",
-    "prisma": "^5.7.1",
     "tailwind-merge": "^2.2.0",
     "tailwindcss": "^3.3.0",
+    "tsx": "^4.7.0",
     "typescript": "^5"
   }
 }

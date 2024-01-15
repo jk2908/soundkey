@@ -1,4 +1,4 @@
-export const APP_NAME = 'SoundKey'
+export const APP_NAME = 'soundkey'
 export const APP_DESCRIPTION = 'CRM for studio management'
 export const APP_VERSION = '0.0.1'
 export const APP_URL =

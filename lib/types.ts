@@ -1,6 +1,8 @@
+export type Variant = 'success' | 'error' | 'warning' | 'info'
+
 export type Toast = {
   id: number
-  type: 'success' | 'error' | 'warning' | 'info'
+  type: Variant
   message: string
   status?: number
   duration?: number | null
@@ -21,4 +23,5 @@ export type ActionResponse =
 export type Route = {
   label: string
   href: string
+  isProtected?: boolean
 }
