@@ -1,7 +1,7 @@
 import { APP_NAME, APP_URL } from '@/lib/config'
 
 export function VerifyEmailTemplate({ token }: { token: string }) {
-  const url = `${APP_URL}/email-verification/${token}`
+  const url = `${APP_URL}/verify-email/${token}`
 
   return (
     <div className="space-y-4">

@@ -10,9 +10,9 @@ export type Toast = {
 
 export type Theme = 'light' | 'dark' | undefined
 
-export type Icon = 'moon' | 'sun' | 'spinner' | 'x'
+export type Icon = 'moon' | 'sun' | 'spinner' | 'x' | 'logout' | 'user'
 
-export type ActionResponse =
+export type ServerResponse =
   | {
       type: 'success' | 'error'
       message: string

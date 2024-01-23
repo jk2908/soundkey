@@ -2,14 +2,13 @@
 
 import { useFormStatus } from 'react-dom'
 
-import { Button, type Props } from '@/components/global/button'
+import { Button, type Props as ButtonProps } from '@/components/global/button'
 
-export function SubmitButton({
-  children,
-  ...rest
-}: Omit<Props, 'children' | 'type'> & {
+export type Props = {
   children: React.ReactNode | (({ pending }: { pending: boolean }) => React.ReactNode)
-}) {
+} & Omit<ButtonProps, 'children' | 'type'>
+
+export function SubmitButton({ children, ...rest }: Props) {
   const { pending } = useFormStatus()
 
   return (

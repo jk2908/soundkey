@@ -1,6 +1,6 @@
 import type { NextRequest } from 'next/server'
 
-import { auth } from '@/lib/auth'
+import { _auth } from '@/lib/auth'
 import { validateEmailVerificationToken } from '@/lib/token'
 
 export async function GET(
@@ -17,19 +17,19 @@ export async function GET(
 
   try {
     const id = await validateEmailVerificationToken(token)
-    const { userId } = await auth.getUser(id)
+    const { userId } = await _auth.getUser(id)
 
-    await auth.invalidateAllUserSessions(userId)
-    await auth.updateUserAttributes(userId, {
+    await _auth.invalidateAllUserSessions(userId)
+    await _auth.updateUserAttributes(userId, {
       email_verified: true,
     })
 
-    const session = await auth.createSession({
+    const session = await _auth.createSession({
       userId,
       attributes: {},
     })
 
-    const sessionCookie = auth.createSessionCookie(session)
+    const sessionCookie = _auth.createSessionCookie(session)
 
     return new Response(null, {
       status: 302,

@@ -10,7 +10,7 @@ export const ThemeContext = createContext<{
   setTheme: () => {},
 })
 
-const s = `!function(){var e=localStorage.theme||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.dataset.theme=e}()`
+const s = `!function(){var e=localStorage.theme??(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.dataset.theme=e}()`
 
 const Script = memo(function Script() {
   return <script dangerouslySetInnerHTML={{ __html: s }} />

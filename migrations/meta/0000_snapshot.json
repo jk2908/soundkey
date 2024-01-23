@@ -1,16 +1,16 @@
 {
-  "id": "94a57b22-6ce9-4dd9-9944-bd4ce3fe1b3e",
+  "id": "cc8347ba-2788-42f4-9af3-295145fb7698",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
   "tables": {
-    "auth_email_verification_token": {
-      "name": "auth_email_verification_token",
+    "email_verification_token": {
+      "name": "email_verification_token",
       "schema": "",
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar(255)",
+          "type": "varchar(63)",
           "primaryKey": true,
           "notNull": true
         },
@@ -29,11 +29,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "auth_email_verification_token_user_id_auth_user_id_fk": {
-          "name": "auth_email_verification_token_user_id_auth_user_id_fk",
-          "tableFrom": "auth_email_verification_token",
-          "tableTo": "auth_user",
-          "schemaTo": "public",
+        "email_verification_token_user_id_user_id_fk": {
+          "name": "email_verification_token_user_id_user_id_fk",
+          "tableFrom": "email_verification_token",
+          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
@@ -47,8 +46,8 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "auth_key": {
-      "name": "auth_key",
+    "key": {
+      "name": "key",
       "schema": "",
       "columns": {
         "id": {
@@ -72,11 +71,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "auth_key_user_id_auth_user_id_fk": {
-          "name": "auth_key_user_id_auth_user_id_fk",
-          "tableFrom": "auth_key",
-          "tableTo": "auth_user",
-          "schemaTo": "public",
+        "key_user_id_user_id_fk": {
+          "name": "key_user_id_user_id_fk",
+          "tableFrom": "key",
+          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
@@ -90,13 +88,99 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "auth_password_reset_token": {
-      "name": "auth_password_reset_token",
+    "message": {
+      "name": "message",
       "schema": "",
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar(255)",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "from_user_id": {
+          "name": "from_user_id",
+          "type": "varchar(15)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "to_user_id": {
+          "name": "to_user_id",
+          "type": "varchar(15)[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "thread_id": {
+          "name": "thread_id",
+          "type": "varchar(15)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "content": {
+          "name": "content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "read": {
+          "name": "read",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "message_from_user_id_user_id_fk": {
+          "name": "message_from_user_id_user_id_fk",
+          "tableFrom": "message",
+          "tableTo": "user",
+          "columnsFrom": [
+            "from_user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "message_thread_id_thread_id_fk": {
+          "name": "message_thread_id_thread_id_fk",
+          "tableFrom": "message",
+          "tableTo": "thread",
+          "columnsFrom": [
+            "thread_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "password_reset_token": {
+      "name": "password_reset_token",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(63)",
           "primaryKey": true,
           "notNull": true
         },
@@ -115,11 +199,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "auth_password_reset_token_user_id_auth_user_id_fk": {
-          "name": "auth_password_reset_token_user_id_auth_user_id_fk",
-          "tableFrom": "auth_password_reset_token",
-          "tableTo": "auth_user",
-          "schemaTo": "public",
+        "password_reset_token_user_id_user_id_fk": {
+          "name": "password_reset_token_user_id_user_id_fk",
+          "tableFrom": "password_reset_token",
+          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
@@ -133,8 +216,8 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "auth_session": {
-      "name": "auth_session",
+    "session": {
+      "name": "session",
       "schema": "",
       "columns": {
         "id": {
@@ -164,11 +247,10 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "auth_session_user_id_auth_user_id_fk": {
-          "name": "auth_session_user_id_auth_user_id_fk",
-          "tableFrom": "auth_session",
-          "tableTo": "auth_user",
-          "schemaTo": "public",
+        "session_user_id_user_id_fk": {
+          "name": "session_user_id_user_id_fk",
+          "tableFrom": "session",
+          "tableTo": "user",
           "columnsFrom": [
             "user_id"
           ],
@@ -182,8 +264,80 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "auth_user": {
-      "name": "auth_user",
+    "thread": {
+      "name": "thread",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "thread_to_user": {
+      "name": "thread_to_user",
+      "schema": "",
+      "columns": {
+        "thread_id": {
+          "name": "thread_id",
+          "type": "varchar(15)[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "varchar(15)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "thread_to_user_user_id_user_id_fk": {
+          "name": "thread_to_user_user_id_user_id_fk",
+          "tableFrom": "thread_to_user",
+          "tableTo": "user",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "thread_to_user_user_id_thread_id_pk": {
+          "name": "thread_to_user_user_id_thread_id_pk",
+          "columns": [
+            "user_id",
+            "thread_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "user": {
+      "name": "user",
       "schema": "",
       "columns": {
         "id": {
@@ -204,6 +358,18 @@
           "primaryKey": false,
           "notNull": true,
           "default": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
         },
         "role": {
           "name": "role",

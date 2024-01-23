@@ -3,6 +3,7 @@ import { generateRandomString, isWithinExpiration } from 'lucia/utils'
 
 import { db } from '@/lib/db'
 import { emailVerificationToken, passwordResetToken } from '@/lib/schema'
+import { _auth } from './auth'
 
 const EXPIRES_IN = 1000 * 60 * 60 * 2
 

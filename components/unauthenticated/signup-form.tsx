@@ -4,7 +4,7 @@ import { useEffect, experimental_useEffectEvent as useEffectEvent, useId } from 
 import { useFormState } from 'react-dom'
 
 import { signup } from '@/lib/actions'
-import { ActionResponse } from '@/lib/types'
+import { ServerResponse } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
 
 import { FormGroup } from '@/components/global/form-group'
@@ -13,7 +13,7 @@ import { Label } from '@/components/global/label'
 import { SubmitButton } from '@/components/global/submit-button'
 import { LoadingSpinner } from '@/components/global/loading-spinner'
 
-const initialState: ActionResponse = {
+const initialState: ServerResponse = {
   type: undefined,
   message: null,
   status: undefined,
@@ -27,7 +27,7 @@ export function SignupForm() {
 
   const { toast } = useToast()
 
-  const onStateChange = useEffectEvent((state: ActionResponse) => {
+  const onStateChange = useEffectEvent((state: ServerResponse) => {
     if (!state.type) return
 
     toast({ ...state, duration: null })

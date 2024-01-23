@@ -18,7 +18,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
       <Header />
 
       <Wrapper>
-        <Section>{children}</Section>
+        <Section size="xl">{children}</Section>
       </Wrapper>
     </div>
   )

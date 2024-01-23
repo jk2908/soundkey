@@ -1,18 +1,18 @@
 import { redirect } from 'next/navigation'
 
-import { useAuth } from '@/hooks/use-auth'
+import { auth } from '@/lib/auth'
 
 export default async function Page() {
-  const user = await useAuth()
+  const user = await auth()
 
   if (!user) {
-    return redirect('/login')
+    throw redirect('/login')
   }
 
   const { emailVerified } = user
 
   if (emailVerified) {
-    return redirect('/dashboard')
+    throw redirect('/dashboard')
   }
 
   return <></>

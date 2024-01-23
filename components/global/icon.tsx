@@ -2,6 +2,7 @@ import type { Icon as $Icon } from '@/lib/types'
 
 export type Props = {
   name: $Icon
+  size?: number
   width?: number
   height?: number
   title?: string
@@ -11,6 +12,7 @@ export type Props = {
 
 export function Icon({
   name,
+  size = 24,
   width = 24,
   height = 24,
   title,
@@ -20,8 +22,8 @@ export function Icon({
 }: Props) {
   return (
     <svg
-      width={width}
-      height={height}
+      width={size ?? width}
+      height={size ?? height}
       className={className}
       style={{ '--c': colour } as React.CSSProperties}
       {...rest}

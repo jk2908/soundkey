@@ -1,5 +1,5 @@
 import type { Config } from 'tailwindcss'
-import { fontFamily } from 'tailwindcss/defaultTheme'
+import { fontFamily, screens } from 'tailwindcss/defaultTheme'
 
 const config: Config = {
   content: [
@@ -8,6 +8,12 @@ const config: Config = {
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    screens: {
+      '3xs': '375px',
+      '2xs': '410px',
+      'xs': '475px',
+      ...screens,
+    },
     extend: {
       screens: {
         md: '720px',
@@ -22,6 +28,7 @@ const config: Config = {
         warning: 'rgb(var(--warning) / <alpha-value>)',
         info: 'rgb(var(--info) / <alpha-value>)',
         keyline: 'rgb(var(--keyline) / <alpha-value>)',
+        'gr33n-100': 'rgb(var(--gr33n-100) / <alpha-value>)',
       },
       fontFamily: {
         sans: ['var(--font-geist-sans)', ...fontFamily.sans],
@@ -49,7 +56,16 @@ const config: Config = {
         bg: 'background-color',
       },
       aria: {
-        'current': 'current=page'
+        current: 'current=page',
+      },
+      animation: {
+        blink: 'blink 1s linear infinite',
+      },
+      keyframes: {
+        blink: {
+          '0%, 100%': { opacity: '0' },
+          '50%': { opacity: '1' },
+        },
       },
     },
   },

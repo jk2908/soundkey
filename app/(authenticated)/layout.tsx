@@ -1,4 +1,3 @@
-import { Suspense } from 'react'
 import { redirect } from 'next/navigation'
 
 import { auth } from '@/lib/auth'
@@ -16,16 +15,14 @@ export default async function Layout({ children }: { children: React.ReactNode }
   }
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <div className="flex grow">
-        <Sidebar>
-          <Nav />
-        </Sidebar>
+    <div className="flex grow">
+      <Sidebar>
+        <Nav />
+      </Sidebar>
 
-        <Wrapper>
-          <Section size="lg">{children}</Section>
-        </Wrapper>
-      </div>
-    </Suspense>
+      <Wrapper className="mx-0">
+        <Section size="lg">{children}</Section>
+      </Wrapper>
+    </div>
   )
 }

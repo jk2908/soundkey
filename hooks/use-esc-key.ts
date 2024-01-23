@@ -1,11 +1,11 @@
 import { useEffect } from 'react'
 
-export function useEscKey(fn: (e: KeyboardEvent) => void) {
+export function useEscKey(onKeyDown: (e: KeyboardEvent) => void, on: boolean) {
   useEffect(() => {
     function handler(e: KeyboardEvent) {
-      if (e.key !== 'Escape') return
+      if (e.key !== 'Escape' || !on) return
 
-      fn(e)
+      onKeyDown(e)
     }
 
     window.addEventListener('keydown', handler as EventListenerOrEventListenerObject)
@@ -13,5 +13,5 @@ export function useEscKey(fn: (e: KeyboardEvent) => void) {
     return () => {
       window.removeEventListener('keydown', handler as EventListenerOrEventListenerObject)
     }
-  }, [fn])
+  }, [onKeyDown, on])
 }

@@ -12,12 +12,16 @@ export function NavLink({
 }: {
   children: React.ReactNode
   href: string
+  isNew?: boolean
   className?: string
 }) {
   const pathname = usePathname()
 
   return (
-    <Link href={href} aria-current={pathname === href ? 'page' : false} className={cn(className)}>
+    <Link
+      href={href}
+      aria-current={pathname === href ? 'page' : false}
+      className={cn('relative', className)}>
       {children}
     </Link>
   )

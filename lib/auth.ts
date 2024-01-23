@@ -17,10 +17,11 @@ export const _auth = lucia({
   sessionCookie: {
     expires: false,
   },
-  getUserAttributes: ({ email, email_verified, role }) => {
+  getUserAttributes: ({ email, email_verified, created_at, role }) => {
     return {
       email,
       emailVerified: Boolean(email_verified),
+      createdAt: String(created_at),
       role,
     }
   },
@@ -31,9 +32,9 @@ export type Auth = typeof _auth
 export const getPageSession = cache(() => _auth.handleRequest('GET', context).validate())
 
 export async function auth() {
-  const { user } = await getPageSession() ?? {}
+  const { user } = (await getPageSession()) ?? {}
 
-  if (!user) return null 
+  if (!user) return null
 
   return user
 }
