@@ -141,16 +141,25 @@ export function Button({
         e.preventDefault()
         handleNext()
         break
+      case 'Home':
+        e.preventDefault()
+        tabNodes.current[0]?.focus()
+        break
+      case 'End':
+        e.preventDefault()
+        tabNodes.current[tabNodes.current.length - 1]?.focus()
+        break
     }
   }
 
   return (
     <button
       ref={ref}
-      type="button"
+      id={`${id}-${value}-t`}
       aria-selected={isSelected === value}
-      aria-controls={`${id}-${value}`}
+      aria-controls={`${id}-${value}-p`}
       role="tab"
+      type="button"
       tabIndex={isSelected === value ? 0 : -1}
       className={className}
       onClick={() => setSelected(value)}
@@ -189,9 +198,10 @@ export function Panel({
   return (
     <div
       ref={ref}
-      id={`${id}-${value}`}
+      id={`${id}-${value}-p`}
       hidden={isSelected !== value}
       role="tabpanel"
+      aria-labelledby={`${id}-${value}-t`}
       tabIndex={isFocusable ? 0 : undefined}
       className={className}>
       {children}
