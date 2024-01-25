@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import Link from 'next/link'
 
 import { useClickOutside } from '@/hooks/use-click-outside'
@@ -15,6 +15,8 @@ import { HorizontalRule } from '@/components/global/horizontal-rule'
 import { Icon } from '@/components/global/icon'
 import { Logo } from '@/components/global/logo'
 import { Section } from '@/components/global/section'
+
+import { LoadingSpinner } from '../global/loading-spinner'
 
 export function Sidebar({ children }: { children: React.ReactNode }) {
   const [isOpen, setOpen] = useState(false)
@@ -31,7 +33,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
   return (
     <>
       {!mq && (
-        <button onClick={() => setOpen(!isOpen)} className="fixed bottom-8 right-8">
+        <button onClick={() => setOpen(prev => !prev)} className="fixed bottom-8 right-8">
           Toggle
         </button>
       )}
@@ -53,12 +55,16 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
           <HorizontalRule />
 
           <div className="flex gap-4">
-            <LogoutButton />
+            <Suspense fallback={<LoadingSpinner />}>
+              <LogoutButton />
+            </Suspense>
 
-            <Link href="/profile">
-              <Icon name="user" size={20} title="Profile" />
-              <span className="sr-only">Profile</span>
-            </Link>
+            <Suspense fallback={<LoadingSpinner />}>
+              <Link href="/profile">
+                <Icon name="user" size={20} title="Profile" />
+                <span className="sr-only">Profile</span>
+              </Link>
+            </Suspense>
           </div>
         </div>
       </Section>

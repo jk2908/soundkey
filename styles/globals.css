@@ -15,16 +15,22 @@
     --blu3-0: 186 213 255;
     --blu3-50: 25 113 255;
 
+    --p1nk-0: 255 179 203;
+    --p1nk-50: 255 82 111;
+    --p1nk-70: 255 41 73;
+
     --error: var(--r3d-50);
     --success: var(--gr33n-50);
     --warning: var(--y3llow-50);
     --info: var(--blu3-50);
+    --danger: var(--r3d-50);
+    --highlight: var(--p1nk-70);
 
     --app-bg: var(--y3llow-0);
     --app-bg-inverted: var(--gr33n-100);
     --app-fg: var(--gr33n-100);
     --app-fg-inverted: var(--y3llow-0);
-    
+
     --keyline: 229 228 213;
 
     &[data-theme=dark] {
@@ -35,14 +41,18 @@
 
       --keyline: 29 48 24;
     }
+
+    :where(button, input, textarea, a, select) {
+      @apply sk-focus;
+    }
   }
 
   @layer components {
     .rounded-tab-group {
-      @apply rounded-full border border-keyline flex;
+      @apply flex rounded-full border border-keyline;
 
       > button {
-        @apply px-6 py-2 grow rounded-full aria-selected:bg-keyline/25;
+        @apply grow rounded-full px-6 py-2 outline-1 aria-selected:bg-keyline/25;
       }
     }
   }
@@ -50,6 +60,10 @@
   @layer utilities {
     .shadow-on-app-bg {
       @apply shadow-neutral-500/30 dark:shadow-neutral-900/50;
+    }
+
+    .sk-focus {
+      @apply focus-visible:outline-highlight outline-1 focus-visible:outline focus-visible:outline-offset-2;
     }
   }
 }

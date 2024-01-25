@@ -15,7 +15,7 @@ export function ThemeToggle() {
       {!isMounted ? (
         <LoadingSpinner />
       ) : (
-        <button onClick={toggleTheme}>
+        <button onClick={toggleTheme} style={{ borderRadius: '50%' }}>
           <span className="sr-only">Switch to {altTheme} theme</span>
           <Icon
             name={theme === 'light' ? 'moon' : 'sun'}

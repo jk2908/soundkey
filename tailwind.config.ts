@@ -27,7 +27,9 @@ const config: Config = {
         success: 'rgb(var(--success) / <alpha-value>)',
         warning: 'rgb(var(--warning) / <alpha-value>)',
         info: 'rgb(var(--info) / <alpha-value>)',
+        danger: 'rgb(var(--danger) / <alpha-value>)',
         keyline: 'rgb(var(--keyline) / <alpha-value>)',
+        highlight: 'rgb(var(--highlight) / <alpha-value>)',
         'gr33n-100': 'rgb(var(--gr33n-100) / <alpha-value>)',
       },
       fontFamily: {

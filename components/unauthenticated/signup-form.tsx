@@ -10,8 +10,8 @@ import { useToast } from '@/hooks/use-toast'
 import { FormGroup } from '@/components/global/form-group'
 import { Input } from '@/components/global/input'
 import { Label } from '@/components/global/label'
-import { SubmitButton } from '@/components/global/submit-button'
 import { LoadingSpinner } from '@/components/global/loading-spinner'
+import { SubmitButton } from '@/components/global/submit-button'
 
 const initialState: ServerResponse = {
   type: undefined,
@@ -39,7 +39,9 @@ export function SignupForm() {
   }, [state])
 
   return (
-    <form action={dispatch}>
+    <form action={dispatch} autoComplete="off">
+      <input type="hidden" name="foo" />
+
       <FormGroup>
         <Label htmlFor={emailId}>Email</Label>
         <Input id={emailId} type="email" name="email" required />
@@ -47,7 +49,13 @@ export function SignupForm() {
 
       <FormGroup>
         <Label htmlFor={passwordId}>Password</Label>
-        <Input id={passwordId} type="password" name="password" required />
+        <Input
+          id={passwordId}
+          type="password"
+          name="password"
+          autoComplete="new-password"
+          required
+        />
       </FormGroup>
 
       <FormGroup>

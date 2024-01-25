@@ -1,8 +1,10 @@
-export type Variant = 'success' | 'error' | 'warning' | 'info'
+export type StateVariant = 'success' | 'error' | 'danger' | 'warning' | 'info'
+
+export type IntentVariant = 'primary' | 'secondary' | 'tertiary'
 
 export type Toast = {
   id: number
-  type: Variant
+  type: StateVariant
   message: string
   status?: number
   duration?: number | null

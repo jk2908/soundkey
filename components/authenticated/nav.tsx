@@ -4,8 +4,8 @@ import { auth } from '@/lib/auth'
 import { authRoutes, protectedRoutes } from '@/lib/routes'
 import type { Route } from '@/lib/types'
 
-import { NavLink } from '@/components/authenticated/nav-link'
 import { LoadingSpinner } from '@/components/global/loading-spinner'
+import { NavLink } from '@/components/global/nav-link'
 
 export async function Nav() {
   const user = await auth()
@@ -16,11 +16,11 @@ export async function Nav() {
   ]
 
   return (
-    <Suspense fallback={<LoadingSpinner />}>
-      <nav>
-        <ul className="flex flex-col gap-1">
-          {routes.map(({ href, label, isProtected = false }) => (
-            <li key={href}>
+    <nav>
+      <ul className="flex flex-col gap-1">
+        {routes.map(({ href, label, isProtected = false }) => (
+          <Suspense key={href} fallback={<LoadingSpinner />}>
+            <li>
               {!isProtected && (
                 <NavLink
                   href={href}
@@ -29,9 +29,9 @@ export async function Nav() {
                 </NavLink>
               )}
             </li>
-          ))}
-        </ul>
-      </nav>
-    </Suspense>
+          </Suspense>
+        ))}
+      </ul>
+    </nav>
   )
 }

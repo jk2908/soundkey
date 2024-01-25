@@ -2,7 +2,6 @@
 
 import * as context from 'next/headers'
 import { eq } from 'drizzle-orm'
-import { generateRandomString } from 'lucia/utils'
 
 import { _auth, getPageSession } from '@/lib/auth'
 import { APP_NAME } from '@/lib/config'
@@ -11,6 +10,7 @@ import { sendPasswordResetEmail, sendVerificationEmail } from '@/lib/email'
 import { message, thread, user, type NewMessage } from '@/lib/schema'
 import { createEmailVerificationToken, createPasswordResetToken } from '@/lib/token'
 import type { ServerResponse } from '@/lib/types'
+import { capitalise } from '@/utils/capitalise'
 import { isValidEmail } from '@/utils/is-valid-email'
 
 export async function signup(prevState: ServerResponse, formData: FormData) {
@@ -43,7 +43,7 @@ export async function signup(prevState: ServerResponse, formData: FormData) {
       attributes: {
         email: email.toLowerCase(),
         email_verified: false,
-        created_at: Date.now().toString(),
+        created_at: new Date().toISOString(),
         role: 'user',
       },
     })
@@ -54,16 +54,14 @@ export async function signup(prevState: ServerResponse, formData: FormData) {
     })
 
     const _authRequest = _auth.handleRequest('POST', context)
-
     _authRequest.setSession(session)
 
     const token = await createEmailVerificationToken(userId)
 
     await sendVerificationEmail(email, token)
-
     await sendMessage({
       content: `Welcome to ${APP_NAME}. Please check your email to verify your account. Certain features may be unavailable until your account is verified.`,
-      created_at: Date.now().toString(),
+      created_at: new Date().toISOString(),
       from_user_id: 'system',
       to_user_id: [userId],
     })
@@ -76,7 +74,7 @@ export async function signup(prevState: ServerResponse, formData: FormData) {
   } catch (err) {
     return {
       type: 'error',
-      message: (err as DbError)?.message ?? 'An unknown error occurred',
+      message: capitalise((err as DbError)?.message) ?? 'An unknown error occurred',
       status: 500,
     } satisfies ServerResponse
   }
@@ -108,7 +106,7 @@ export async function login(prevState: ServerResponse, formData: FormData) {
   } catch (err) {
     return {
       type: 'error',
-      message: (err as DbError)?.message ?? 'An unknown error occurred',
+      message: capitalise((err as DbError)?.message) ?? 'An unknown error occurred',
       status: 500,
     } satisfies ServerResponse
   }
@@ -157,7 +155,7 @@ export async function verifyEmail(prevState: ServerResponse) {
   } catch (err) {
     return {
       type: 'error',
-      message: 'An unknown error occurred',
+      message: capitalise((err as DbError)?.message) ?? 'An unknown error occurred',
       status: 500,
     } satisfies ServerResponse
   }
@@ -194,7 +192,7 @@ export async function resetPassword(prevState: ServerResponse, formData: FormDat
   } catch (err) {
     return {
       type: 'error',
-      message: 'An unknown error occurred',
+      message: capitalise((err as DbError)?.message) ?? 'An unknown error occurred',
       status: 500,
     } satisfies ServerResponse
   }
@@ -208,7 +206,7 @@ export async function sendMessage(newMessage: NewMessage) {
       const [newThread] = await db
         .insert(thread)
         .values({
-          created_at: Date.now().toString(),
+          created_at: new Date().toISOString(),
         })
         .returning({ id: thread.id })
 
@@ -227,7 +225,7 @@ export async function sendMessage(newMessage: NewMessage) {
   } catch (err) {
     return {
       type: 'error',
-      message: 'An unknown error occurred',
+      message: capitalise((err as DbError)?.message) ?? 'An unknown error occurred',
       status: 500,
     } satisfies ServerResponse
   }

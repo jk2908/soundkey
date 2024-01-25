@@ -39,7 +39,7 @@ export const session = pgTable('session', {
     length: 15,
   })
     .notNull()
-    .references(() => user.id),
+    .references(() => user.id, { onDelete: 'cascade' }),
   active_expires: bigint('active_expires', {
     mode: 'number',
   }).notNull(),
@@ -63,7 +63,7 @@ export const key = pgTable('key', {
     length: 15,
   })
     .notNull()
-    .references(() => user.id),
+    .references(() => user.id, { onDelete: 'cascade' }),
   hashed_password: varchar('hashed_password', {
     length: 255,
   }),
@@ -77,7 +77,7 @@ export const emailVerificationToken = pgTable('email_verification_token', {
     length: 15,
   })
     .notNull()
-    .references(() => user.id),
+    .references(() => user.id, { onDelete: 'cascade' }),
   expires: bigint('expires', {
     mode: 'number',
   }).notNull(),
@@ -91,7 +91,7 @@ export const passwordResetToken = pgTable('password_reset_token', {
     length: 15,
   })
     .notNull()
-    .references(() => user.id),
+    .references(() => user.id, { onDelete: 'cascade' }),
   expires: bigint('expires', {
     mode: 'number',
   }).notNull(),

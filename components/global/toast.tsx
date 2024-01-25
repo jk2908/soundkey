@@ -31,6 +31,7 @@ export function Toast({ toast, className, ...rest }: { toast: Toast; className?:
     error: 'bg-error text-white',
     info: 'bg-info',
     warning: 'bg-warning',
+    danger: 'bg-danger text-white',
   }
 
   return (

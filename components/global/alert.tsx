@@ -1,9 +1,9 @@
-import { Variant } from '@/lib/types'
+import { StateVariant } from '@/lib/types'
 import { cn } from '@/utils/cn'
 
 type Props = {
   children: React.ReactNode
-  type: Variant
+  type: StateVariant
   className?: string
 }
 

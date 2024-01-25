@@ -4,13 +4,13 @@ import { useEffect, experimental_useEffectEvent as useEffectEvent } from 'react'
 import { useFormState } from 'react-dom'
 
 import { verifyEmail } from '@/lib/actions'
-import type { ActionResponse } from '@/lib/types'
+import type { ServerResponse } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
 
 import { LoadingSpinner } from '@/components/global/loading-spinner'
 import { SubmitButton } from '@/components/global/submit-button'
 
-const initialState: ActionResponse = {
+const initialState: ServerResponse = {
   type: undefined,
   message: null,
   status: undefined,
@@ -21,7 +21,7 @@ export function SendVerificationEmailForm() {
 
   const { toast } = useToast()
 
-  const onStateChange = useEffectEvent((state: ActionResponse) => {
+  const onStateChange = useEffectEvent((state: ServerResponse) => {
     if (!state.type) return
 
     toast({ ...state })
