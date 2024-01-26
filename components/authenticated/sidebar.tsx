@@ -15,8 +15,9 @@ import { HorizontalRule } from '@/components/global/horizontal-rule'
 import { Icon } from '@/components/global/icon'
 import { Logo } from '@/components/global/logo'
 import { Section } from '@/components/global/section'
+import { Button } from '@/components/global/button'
 
-import { LoadingSpinner } from '../global/loading-spinner'
+import { LoadingSpinner } from '@/components/global/loading-spinner'
 
 export function Sidebar({ children }: { children: React.ReactNode }) {
   const [isOpen, setOpen] = useState(false)
@@ -56,14 +57,17 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
 
           <div className="flex gap-4">
             <Suspense fallback={<LoadingSpinner />}>
-              <LogoutButton />
+              <LogoutButton iconOnly>
+                <Icon name="logout" size={18} title="Logout" />
+                <span className="sr-only">Log out</span>
+              </LogoutButton>
             </Suspense>
 
             <Suspense fallback={<LoadingSpinner />}>
-              <Link href="/profile">
-                <Icon name="user" size={20} title="Profile" />
+              <Button as={Link} href="/profile" iconOnly>
+                <Icon name="user" size={18} title="Profile" />
                 <span className="sr-only">Profile</span>
-              </Link>
+              </Button>
             </Suspense>
           </div>
         </div>

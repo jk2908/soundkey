@@ -2,6 +2,8 @@ import { neon, neonConfig, Pool } from '@neondatabase/serverless'
 import { drizzle } from 'drizzle-orm/neon-http'
 
 import * as schema from '@/lib/schema'
+import { ServerResponse } from '@/lib/types'
+import { capitalise } from '@/utils/capitalise'
 
 neonConfig.fetchConnectionCache = true
 
@@ -15,4 +17,12 @@ export interface DbError extends Error {
   detail: string
   table: string
   message: 'Duplicate key value violates unique constraint'
+}
+
+export function handleDbError(err: unknown) {
+  return {
+    type: 'error',
+    message: capitalise((err as DbError)?.message) ?? 'An unknown error occurred',
+    status: 500,
+  } satisfies ServerResponse
 }

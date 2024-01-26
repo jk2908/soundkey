@@ -3,7 +3,7 @@
 import { useEffect, experimental_useEffectEvent as useEffectEvent, useId } from 'react'
 import { useFormState } from 'react-dom'
 
-import { signup } from '@/lib/actions'
+import { signup } from '@/lib/auth-actions'
 import { ServerResponse } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
 
@@ -30,7 +30,7 @@ export function SignupForm() {
   const onStateChange = useEffectEvent((state: ServerResponse) => {
     if (!state.type) return
 
-    toast({ ...state, duration: null })
+    toast({ ...state })
   })
 
   useEffect(() => {

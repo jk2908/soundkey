@@ -7,7 +7,8 @@ import { _auth, getPageSession } from '@/lib/auth'
 import { APP_NAME } from '@/lib/config'
 import { db, type DbError } from '@/lib/db'
 import { sendPasswordResetEmail, sendVerificationEmail } from '@/lib/email'
-import { message, thread, user, type NewMessage } from '@/lib/schema'
+import { sendMessage } from '@/lib/message-actions'
+import { user } from '@/lib/schema'
 import { createEmailVerificationToken, createPasswordResetToken } from '@/lib/token'
 import type { ServerResponse } from '@/lib/types'
 import { capitalise } from '@/utils/capitalise'
@@ -61,9 +62,9 @@ export async function signup(prevState: ServerResponse, formData: FormData) {
     await sendVerificationEmail(email, token)
     await sendMessage({
       content: `Welcome to ${APP_NAME}. Please check your email to verify your account. Certain features may be unavailable until your account is verified.`,
-      created_at: new Date().toISOString(),
-      from_user_id: 'system',
-      to_user_id: [userId],
+      createdAt: new Date().toISOString(),
+      fromUserId: 'system',
+      toUserId: [userId],
     })
 
     return {
@@ -179,6 +180,7 @@ export async function resetPassword(prevState: ServerResponse, formData: FormDat
       return { type: 'error', message: 'Invalid email', status: 400 } satisfies ServerResponse
     }
 
+    // @ts-expect-error
     const { userId } = _auth.transformDatabaseUser(storedUser)
     const token = await createPasswordResetToken(userId)
 
@@ -188,39 +190,6 @@ export async function resetPassword(prevState: ServerResponse, formData: FormDat
       type: 'success',
       message: 'Password reset email sent',
       status: 200,
-    } satisfies ServerResponse
-  } catch (err) {
-    return {
-      type: 'error',
-      message: capitalise((err as DbError)?.message) ?? 'An unknown error occurred',
-      status: 500,
-    } satisfies ServerResponse
-  }
-}
-
-export async function sendMessage(newMessage: NewMessage) {
-  try {
-    const [existingThread] = await db.select().from(thread).where(eq(thread.id, message.thread_id))
-
-    if (!existingThread) {
-      const [newThread] = await db
-        .insert(thread)
-        .values({
-          created_at: new Date().toISOString(),
-        })
-        .returning({ id: thread.id })
-
-      newMessage.thread_id = newThread.id
-    }
-
-    await db.insert(message).values({
-      ...newMessage,
-    })
-
-    return {
-      type: 'success',
-      message: 'Message sent',
-      status: 201,
     } satisfies ServerResponse
   } catch (err) {
     return {

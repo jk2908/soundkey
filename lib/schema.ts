@@ -21,11 +21,11 @@ export const user = pgTable('user', {
   email: varchar('email', {
     length: 255,
   }).notNull(),
-  email_verified: boolean('email_verified').default(false).notNull(),
-  created_at: timestamp('created_at', {
+  emailVerified: boolean('email_verified').default(false).notNull(),
+  createdAt: timestamp('created_at', {
     mode: 'string',
   }).notNull(),
-  updated_at: timestamp('updated_at', {
+  updatedAt: timestamp('updated_at', {
     mode: 'string',
   }),
   role: userRole('role').default('user').notNull(),
@@ -35,22 +35,22 @@ export const session = pgTable('session', {
   id: varchar('id', {
     length: 128,
   }).primaryKey(),
-  user_id: varchar('user_id', {
+  userId: varchar('user_id', {
     length: 15,
   })
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
-  active_expires: bigint('active_expires', {
+  activeExpires: bigint('active_expires', {
     mode: 'number',
   }).notNull(),
-  idle_expires: bigint('idle_expires', {
+  idleExpires: bigint('idle_expires', {
     mode: 'number',
   }).notNull(),
 })
 
 export const sessionRelations = relations(session, ({ one }) => ({
   user: one(user, {
-    fields: [session.user_id],
+    fields: [session.userId],
     references: [user.id],
   }),
 }))
@@ -59,12 +59,12 @@ export const key = pgTable('key', {
   id: varchar('id', {
     length: 255,
   }).primaryKey(),
-  user_id: varchar('user_id', {
+  userId: varchar('user_id', {
     length: 15,
   })
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
-  hashed_password: varchar('hashed_password', {
+  hashedPassword: varchar('hashed_password', {
     length: 255,
   }),
 })
@@ -73,7 +73,7 @@ export const emailVerificationToken = pgTable('email_verification_token', {
   id: varchar('id', {
     length: 63,
   }).primaryKey(),
-  user_id: varchar('user_id', {
+  userId: varchar('user_id', {
     length: 15,
   })
     .notNull()
@@ -87,7 +87,7 @@ export const passwordResetToken = pgTable('password_reset_token', {
   id: varchar('id', {
     length: 63,
   }).primaryKey(),
-  user_id: varchar('user_id', {
+  userId: varchar('user_id', {
     length: 15,
   })
     .notNull()
@@ -99,10 +99,10 @@ export const passwordResetToken = pgTable('password_reset_token', {
 
 export const thread = pgTable('thread', {
   id: varchar('id').primaryKey().notNull().$defaultFn(nanoid),
-  created_at: timestamp('created_at', {
+  createdAt: timestamp('created_at', {
     mode: 'string',
   }).notNull(),
-  updated_at: timestamp('updated_at', {
+  updatedAt: timestamp('updated_at', {
     mode: 'string',
   }),
 })
@@ -110,42 +110,41 @@ export const thread = pgTable('thread', {
 export const threadToUser = pgTable(
   'thread_to_user',
   {
-    thread_id: varchar('thread_id', {
+    threadId: varchar('thread_id', {
       length: 15,
     })
       .notNull()
-      .references(() => thread.id)
-      .array(),
-    user_id: varchar('user_id', {
+      .references(() => thread.id),
+    userId: varchar('user_id', {
       length: 15,
     })
       .notNull()
-      .references(() => user.id),
+      .references(() => user.id, { onDelete: 'cascade' }),
   },
   t => ({
-    pk: primaryKey({ columns: [t.user_id, t.thread_id] }),
+    pk: primaryKey({ columns: [t.userId, t.threadId] }),
   })
 )
 
 export const message = pgTable('message', {
   id: varchar('id').primaryKey().notNull().$defaultFn(nanoid),
-  from_user_id: varchar('from_user_id', {
+  fromUserId: varchar('from_user_id', {
     length: 15,
   })
     .notNull()
     .references(() => user.id),
-  to_user_id: varchar('to_user_id', { length: 15 })
+  toUserId: varchar('to_user_id', { length: 15 })
     .notNull()
     .references(() => user.id)
     .array(),
-  thread_id: varchar('thread_id', {
+  threadId: varchar('thread_id', {
     length: 15,
   }).references(() => thread.id),
   content: text('content').notNull(),
-  created_at: timestamp('created_at', {
+  createdAt: timestamp('created_at', {
     mode: 'string',
   }).notNull(),
-  updated_at: timestamp('updated_at', {
+  updatedAt: timestamp('updated_at', {
     mode: 'string',
   }),
   read: boolean('read').default(false).notNull(),
@@ -154,51 +153,51 @@ export const message = pgTable('message', {
 export const userRelations = relations(user, ({ many }) => ({
   session: many(session),
   key: many(key),
-  email_verification_token: many(emailVerificationToken),
-  password_reset_token: many(passwordResetToken),
-  thread_to_user: many(threadToUser),
+  emailVerificationToken: many(emailVerificationToken),
+  passwordResetToken: many(passwordResetToken),
+  threadToUser: many(threadToUser),
 }))
 
 export const keyRelations = relations(key, ({ one }) => ({
   user: one(user, {
-    fields: [key.user_id],
+    fields: [key.userId],
     references: [user.id],
   }),
 }))
 
 export const emailVerificationTokenRelations = relations(emailVerificationToken, ({ one }) => ({
   user: one(user, {
-    fields: [emailVerificationToken.user_id],
+    fields: [emailVerificationToken.userId],
     references: [user.id],
   }),
 }))
 
 export const passwordResetTokenRelations = relations(passwordResetToken, ({ one }) => ({
   user: one(user, {
-    fields: [passwordResetToken.user_id],
+    fields: [passwordResetToken.userId],
     references: [user.id],
   }),
 }))
 
 export const threadRelations = relations(thread, ({ many }) => ({
-  thread_to_user: many(threadToUser),
+  threadToUser: many(threadToUser),
   message: many(message),
 }))
 
 export const threadToUserRelations = relations(threadToUser, ({ one }) => ({
   thread: one(thread, {
-    fields: [threadToUser.thread_id],
+    fields: [threadToUser.threadId],
     references: [thread.id],
   }),
   user: one(user, {
-    fields: [threadToUser.user_id],
+    fields: [threadToUser.userId],
     references: [user.id],
   }),
 }))
 
 export const messageRelations = relations(message, ({ one }) => ({
   thread: one(thread, {
-    fields: [message.thread_id],
+    fields: [message.threadId],
     references: [thread.id],
   }),
 }))

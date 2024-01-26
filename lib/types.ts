@@ -20,7 +20,9 @@ export type ServerResponse =
       message: string
       status: number
     }
-  | { type: undefined; message: null; status: number | undefined }
+  | { type: undefined; message: null; status: undefined }
+
+export type ServerResponseWithPayload<T> = ServerResponse & { payload: T }
 
 export type Route = {
   label: string

@@ -3,7 +3,7 @@
 import { useEffect, experimental_useEffectEvent as useEffectEvent, useId } from 'react'
 import { useFormState } from 'react-dom'
 
-import { login } from '@/lib/actions'
+import { login } from '@/lib/auth-actions'
 import { ServerResponse } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
 

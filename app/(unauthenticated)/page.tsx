@@ -3,7 +3,7 @@ import * as Tabs from '@/components/global/tabs'
 import { LoginForm } from '@/components/unauthenticated/login-form'
 import { SignupForm } from '@/components/unauthenticated/signup-form'
 
-export default function Page() {
+export default async function Page() {
   return (
     <KeylineBox>
       <Tabs.Root initialValue="signup" loop>

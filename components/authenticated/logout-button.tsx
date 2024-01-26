@@ -1,6 +1,6 @@
 'use client'
 
-import { logout } from '@/lib/actions'
+import { logout } from '@/lib/auth-actions'
 
 import { Icon } from '@/components/global/icon'
 import { LoadingSpinner } from '@/components/global/loading-spinner'
@@ -16,15 +16,8 @@ export function LogoutButton({
       <SubmitButton {...rest}>
         {({ pending }) => (
           <>
-            {pending && <LoadingSpinner />}
-            {children ? (
-              children
-            ) : (
-              <>
-                <Icon name="logout" size={20} title="Logout" />
-                <span className="sr-only">Logout</span>
-              </>
-            )}
+            {pending && <LoadingSpinner size={16} />}
+            {children}
           </>
         )}
       </SubmitButton>

@@ -11,7 +11,7 @@ export async function createEmailVerificationToken(userId: string) {
   const storedTokens = await db
     .select()
     .from(emailVerificationToken)
-    .where(eq(emailVerificationToken.user_id, userId))
+    .where(eq(emailVerificationToken.userId, userId))
 
   if (storedTokens.length) {
     const reusableStoredToken = storedTokens.find(({ expires }) =>
@@ -25,7 +25,7 @@ export async function createEmailVerificationToken(userId: string) {
 
   await db.insert(emailVerificationToken).values({
     id: token,
-    user_id: userId,
+    userId,
     expires: Date.now() + EXPIRES_IN,
   })
 
@@ -44,14 +44,14 @@ export async function validateEmailVerificationToken(token: string) {
 
   await db.delete(emailVerificationToken).where(eq(emailVerificationToken.id, token))
 
-  return storedToken.user_id
+  return storedToken.userId
 }
 
 export async function createPasswordResetToken(userId: string) {
   const storedTokens = await db
     .select()
     .from(passwordResetToken)
-    .where(eq(passwordResetToken.user_id, userId))
+    .where(eq(passwordResetToken.userId, userId))
 
   if (storedTokens.length) {
     const reusableStoredToken = storedTokens.find(({ expires }) =>
@@ -65,7 +65,7 @@ export async function createPasswordResetToken(userId: string) {
 
   await db.insert(passwordResetToken).values({
     id: token,
-    user_id: userId,
+    userId,
     expires: Date.now() + EXPIRES_IN,
   })
 
@@ -86,7 +86,7 @@ export async function validatePasswordResetToken(token: string) {
 
   await db.delete(passwordResetToken).where(eq(passwordResetToken.id, token))
 
-  return storedToken.user_id
+  return storedToken.userId
 }
 
 export async function isValidPasswordResetToken(token: string) {

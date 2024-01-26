@@ -1,23 +1,34 @@
-'use client'
+import React, { forwardRef } from 'react'
+import Link from 'next/link'
 
 import type { IntentVariant, StateVariant } from '@/lib/types'
 import { cn } from '@/utils/cn'
 
-export type Props = {
+export const asDefault = 'button' as const
+export type AsDefaultType = typeof asDefault
+
+export type OwnProps<E extends React.ElementType> = {
   children: React.ReactNode
+  as?: E
   variant?: IntentVariant | StateVariant
   className?: string
-  type?: 'button' | 'submit' | 'reset'
-} & React.DetailedHTMLProps<React.HTMLAttributes<HTMLButtonElement>, HTMLButtonElement>
+  iconOnly?: boolean
+}
 
-export function Button({
+export type Props<E extends React.ElementType> = OwnProps<E> &
+  Omit<React.ComponentProps<E>, keyof OwnProps<E>>
+
+export function Button<E extends React.ElementType = AsDefaultType>({
   children,
+  as,
   variant = 'primary',
   className,
-  type = 'button',
+  iconOnly,
   ...rest
-}: Props) {
-  const styleMap: Record<IntentVariant | StateVariant, string> = {
+}: Props<E>) {
+  const Cmp = as ?? asDefault
+
+  const styleMap: { [key in StateVariant | IntentVariant]: string } = {
     primary: 'bg-app-bg-inverted text-app-fg-inverted',
     secondary: 'bg-neutral-200 hover:bg-neutral-300 text-neutral-900',
     tertiary: 'bg-transparent hover:bg-neutral-100 text-neutral-900',
@@ -29,11 +40,15 @@ export function Button({
   }
 
   return (
-    <button
-      type={type}
-      className={cn('rounded-full px-8 py-2 tracking-wide flex items-center gap-4', styleMap[variant], className)}
+    <Cmp
+      className={cn(
+        'flex items-center gap-4 rounded-full px-8 py-2 tracking-wide',
+        styleMap[variant],
+        iconOnly && 'p-2',
+        className
+      )}
       {...rest}>
       {children}
-    </button>
+    </Cmp>
   )
 }

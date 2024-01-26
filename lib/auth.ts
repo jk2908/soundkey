@@ -21,7 +21,7 @@ export const _auth = lucia({
     return {
       email,
       emailVerified: Boolean(email_verified),
-      createdAt: String(created_at),
+      createdAt: created_at,
       role,
     }
   },
