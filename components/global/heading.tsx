@@ -22,7 +22,9 @@ export function Heading({ children, level = 2, styleAsLevel, className, ...rest 
   }
 
   return (
-    <Cmp className={cn(className, styleMap[styleAsLevel ?? level])} {...rest}>
+    <Cmp
+      className={cn('font-medium tracking-wide', className, styleMap[styleAsLevel ?? level])}
+      {...rest}>
       {children}
     </Cmp>
   )

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { cn } from '@/utils/cn'
-import { copyToClipboard } from '@/utils/copy-to-clipboard'
+import { copy } from '@/utils/copy'
 import { motion } from 'framer-motion'
 
 import type { Toast } from '@/lib/types'
@@ -18,7 +18,7 @@ export function Toast({ toast, className, ...rest }: { toast: Toast; className?:
   const [isCopied, setCopied] = useState(false)
 
   function handleCopy() {
-    copyToClipboard(`Error message: ${message} \nStatus code: ${status}`)
+    copy(`Error message: ${message} \nStatus code: ${status}`)
     setCopied(true)
 
     setTimeout(() => {

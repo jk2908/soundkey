@@ -1,8 +1,7 @@
 'use client'
 
-import { logout } from '@/lib/auth-actions'
+import { logout } from '@/actions/auth'
 
-import { Icon } from '@/components/global/icon'
 import { LoadingSpinner } from '@/components/global/loading-spinner'
 import { SubmitButton } from '@/components/global/submit-button'
 import type { Props } from '@/components/global/submit-button'

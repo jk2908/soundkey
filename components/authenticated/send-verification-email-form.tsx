@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, experimental_useEffectEvent as useEffectEvent } from 'react'
+import { useEffect } from 'react'
 import { useFormState } from 'react-dom'
 
-import { verifyEmail } from '@/lib/auth-actions'
+import { verifyEmail } from '@/actions/auth'
 import type { ServerResponse } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
 
@@ -21,14 +21,10 @@ export function SendVerificationEmailForm() {
 
   const { toast } = useToast()
 
-  const onStateChange = useEffectEvent((state: ServerResponse) => {
+  useEffect(() => {
     if (!state.type) return
 
     toast({ ...state })
-  })
-
-  useEffect(() => {
-    onStateChange(state)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state])
 

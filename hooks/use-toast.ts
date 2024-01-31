@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { ToastContext } from '@/context/toast'
+import { ToastContext } from '@/ctx/toast'
 
 import type { Toast } from '@/lib/types'
 

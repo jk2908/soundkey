@@ -8,7 +8,7 @@ import { GeistSans } from 'geist/font/sans'
 import { APP_DESCRIPTION, APP_NAME } from '@/lib/config'
 import { cn } from '@/utils/cn'
 
-import { Provider } from '@/components/global/provider'
+import { Providers } from '@/components/global/providers'
 import { Toaster } from '@/components/global/toaster'
 
 export const metadata: Metadata = {
@@ -24,7 +24,7 @@ const MinorPraxis = localFont({
   variable: '--font-mono',
 })
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
@@ -32,13 +32,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       className={cn('h-full font-sans', GeistSans.variable, MinorPraxis.variable)}
       suppressHydrationWarning>
       <body className="flex min-h-full flex-col bg-app-bg text-app-fg">
-        <Provider>
+        <Providers>
           {children}
 
           <div id="portal">
             <Toaster />
           </div>
-        </Provider>
+        </Providers>
       </body>
     </html>
   )

@@ -13,6 +13,7 @@ import {
 import { nanoid } from '@/utils/nanoid'
 
 export const userRole = pgEnum('user_role', ['user', 'admin'])
+export const messageType = pgEnum('message_type', ['message', 'system_message'])
 
 export const user = pgTable('user', {
   id: varchar('id', {
@@ -97,16 +98,6 @@ export const passwordResetToken = pgTable('password_reset_token', {
   }).notNull(),
 })
 
-export const thread = pgTable('thread', {
-  id: varchar('id').primaryKey().notNull().$defaultFn(nanoid),
-  createdAt: timestamp('created_at', {
-    mode: 'string',
-  }).notNull(),
-  updatedAt: timestamp('updated_at', {
-    mode: 'string',
-  }),
-})
-
 export const threadToUser = pgTable(
   'thread_to_user',
   {
@@ -126,8 +117,27 @@ export const threadToUser = pgTable(
   })
 )
 
+export const thread = pgTable('thread', {
+  id: varchar('id').primaryKey().notNull().$defaultFn(nanoid),
+  messageId: varchar('message_id', {
+    length: 15,
+  })
+    .notNull()
+    .array()
+    .references(() => message.id || systemMessage.id),
+  createdAt: timestamp('created_at', {
+    mode: 'string',
+  }).notNull(),
+  updatedAt: timestamp('updated_at', {
+    mode: 'string',
+  }),
+})
+
 export const message = pgTable('message', {
   id: varchar('id').primaryKey().notNull().$defaultFn(nanoid),
+  threadId: varchar('thread_id', {
+    length: 15,
+  }).notNull(),
   fromUserId: varchar('from_user_id', {
     length: 15,
   })
@@ -137,9 +147,6 @@ export const message = pgTable('message', {
     .notNull()
     .references(() => user.id)
     .array(),
-  threadId: varchar('thread_id', {
-    length: 15,
-  }).references(() => thread.id),
   content: text('content').notNull(),
   createdAt: timestamp('created_at', {
     mode: 'string',
@@ -148,6 +155,30 @@ export const message = pgTable('message', {
     mode: 'string',
   }),
   read: boolean('read').default(false).notNull(),
+  type: messageType('message_type').default('message').notNull(),
+})
+
+export const systemMessage = pgTable('system_message', {
+  id: varchar('id').primaryKey().notNull().$defaultFn(nanoid),
+  threadId: varchar('thread_id', {
+    length: 15,
+  }).notNull(),
+  fromUserId: varchar('from_user_id', {
+    enum: ['system'],
+  }).notNull(),
+  toUserId: varchar('to_user_id', { length: 15 })
+    .notNull()
+    .references(() => user.id)
+    .array(),
+  content: text('content').notNull(),
+  createdAt: timestamp('created_at', {
+    mode: 'string',
+  }).notNull(),
+  updatedAt: timestamp('updated_at', {
+    mode: 'string',
+  }),
+  read: boolean('read').default(false).notNull(),
+  type: messageType('message_type').default('system_message').notNull(),
 })
 
 export const userRelations = relations(user, ({ many }) => ({
@@ -179,11 +210,6 @@ export const passwordResetTokenRelations = relations(passwordResetToken, ({ one 
   }),
 }))
 
-export const threadRelations = relations(thread, ({ many }) => ({
-  threadToUser: many(threadToUser),
-  message: many(message),
-}))
-
 export const threadToUserRelations = relations(threadToUser, ({ one }) => ({
   thread: one(thread, {
     fields: [threadToUser.threadId],
@@ -195,14 +221,18 @@ export const threadToUserRelations = relations(threadToUser, ({ one }) => ({
   }),
 }))
 
-export const messageRelations = relations(message, ({ one }) => ({
-  thread: one(thread, {
-    fields: [message.threadId],
-    references: [thread.id],
-  }),
+export const threadRelations = relations(thread, ({ many }) => ({
+  threadToUser: many(threadToUser),
+  message: many(message),
+  systemMessage: many(systemMessage),
 }))
 
 export type User = InferSelectModel<typeof user>
 export type NewUser = InferInsertModel<typeof user>
 export type Message = InferSelectModel<typeof message>
-export type NewMessage = InferInsertModel<typeof message>
+export type NewMessage = Omit<InferInsertModel<typeof message>, 'threadId'>
+export type SystemMessage = Omit<InferSelectModel<typeof systemMessage>, 'messageType'>
+export type NewSystemMessage = Omit<
+  InferInsertModel<typeof systemMessage>,
+  'threadId' | 'messageType' | 'fromUserId'
+>

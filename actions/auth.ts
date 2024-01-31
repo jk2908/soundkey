@@ -1,15 +1,15 @@
 'use server'
 
 import * as context from 'next/headers'
+import { sendPasswordResetEmail, sendVerificationEmail } from '@/actions/email'
+import { sendMessage, sendSystemMessage } from '@/actions/message'
+import { createEmailVerificationToken, createPasswordResetToken } from '@/actions/token'
 import { eq } from 'drizzle-orm'
 
 import { _auth, getPageSession } from '@/lib/auth'
 import { APP_NAME } from '@/lib/config'
-import { db, type DbError } from '@/lib/db'
-import { sendPasswordResetEmail, sendVerificationEmail } from '@/lib/email'
-import { sendMessage } from '@/lib/message-actions'
+import { db } from '@/lib/db'
 import { user } from '@/lib/schema'
-import { createEmailVerificationToken, createPasswordResetToken } from '@/lib/token'
 import type { ServerResponse } from '@/lib/types'
 import { capitalise } from '@/utils/capitalise'
 import { isValidEmail } from '@/utils/is-valid-email'
@@ -60,10 +60,9 @@ export async function signup(prevState: ServerResponse, formData: FormData) {
     const token = await createEmailVerificationToken(userId)
 
     await sendVerificationEmail(email, token)
-    await sendMessage({
+    await sendSystemMessage({
       content: `Welcome to ${APP_NAME}. Please check your email to verify your account. Certain features may be unavailable until your account is verified.`,
       createdAt: new Date().toISOString(),
-      fromUserId: 'system',
       toUserId: [userId],
     })
 
@@ -75,7 +74,7 @@ export async function signup(prevState: ServerResponse, formData: FormData) {
   } catch (err) {
     return {
       type: 'error',
-      message: capitalise((err as DbError)?.message) ?? 'An unknown error occurred',
+      message: err instanceof Error ? capitalise(err?.message) : 'An unknown error occurred',
       status: 500,
     } satisfies ServerResponse
   }
@@ -107,7 +106,7 @@ export async function login(prevState: ServerResponse, formData: FormData) {
   } catch (err) {
     return {
       type: 'error',
-      message: capitalise((err as DbError)?.message) ?? 'An unknown error occurred',
+      message: err instanceof Error ? capitalise(err?.message) : 'An unknown error occurred',
       status: 500,
     } satisfies ServerResponse
   }
@@ -156,7 +155,7 @@ export async function verifyEmail(prevState: ServerResponse) {
   } catch (err) {
     return {
       type: 'error',
-      message: capitalise((err as DbError)?.message) ?? 'An unknown error occurred',
+      message: err instanceof Error ? capitalise(err?.message) : 'An unknown error occurred',
       status: 500,
     } satisfies ServerResponse
   }
@@ -194,7 +193,7 @@ export async function resetPassword(prevState: ServerResponse, formData: FormDat
   } catch (err) {
     return {
       type: 'error',
-      message: capitalise((err as DbError)?.message) ?? 'An unknown error occurred',
+      message: err instanceof Error ? capitalise(err?.message) : 'An unknown error occurred',
       status: 500,
     } satisfies ServerResponse
   }

@@ -1,7 +1,7 @@
 import type { NextRequest } from 'next/server'
 
 import { _auth } from '@/lib/auth'
-import { validateEmailVerificationToken } from '@/lib/token'
+import { validateEmailVerificationToken } from '@/actions/token'
 
 export async function GET(
   _: NextRequest,

@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, experimental_useEffectEvent as useEffectEvent, useId } from 'react'
+import { useEffect, useId } from 'react'
 import { useFormState } from 'react-dom'
 
-import { signup } from '@/lib/auth-actions'
+import { signup } from '@/actions/auth'
 import { ServerResponse } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
 
@@ -27,14 +27,11 @@ export function SignupForm() {
 
   const { toast } = useToast()
 
-  const onStateChange = useEffectEvent((state: ServerResponse) => {
+  useEffect(() => {
     if (!state.type) return
 
     toast({ ...state })
-  })
 
-  useEffect(() => {
-    onStateChange(state)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state])
 

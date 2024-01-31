@@ -1,6 +1,16 @@
 'use client'
 
-import { createContext, useContext, useEffect, useId, useMemo, useRef, useState } from 'react'
+import {
+  createContext,
+  startTransition,
+  useCallback,
+  useContext,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import selectors from 'focusable-selectors'
 
@@ -13,7 +23,7 @@ const loopInitial = false
 
 const TabsContext = createContext<{
   isSelected: string
-  setSelected: React.Dispatch<React.SetStateAction<string>>
+  selectTab: (value: string) => void
   tabNodes: React.MutableRefObject<HTMLElement[]>
   values: React.MutableRefObject<string[]>
   initialValue?: string
@@ -24,7 +34,7 @@ const TabsContext = createContext<{
   params?: boolean
 }>({
   isSelected: '',
-  setSelected: () => {},
+  selectTab: () => null,
   tabNodes: { current: [] },
   values: { current: [] },
   initialValue: '',
@@ -64,10 +74,14 @@ export function Root({
     params ? searchParams.get(paramsPrefix) ?? defaultValue : defaultValue
   )
 
+  const selectTab = useCallback((value: string) => {
+    startTransition(() => setSelected(value))
+  }, [])
+
   const value = useMemo(
     () => ({
       isSelected,
-      setSelected,
+      selectTab,
       tabNodes,
       values,
       initialValue,
@@ -79,7 +93,7 @@ export function Root({
     }),
     [
       isSelected,
-      setSelected,
+      selectTab,
       tabNodes,
       values,
       initialValue,
@@ -121,7 +135,7 @@ export function Button({
   children: React.ReactNode
   value: string
 } & React.HTMLProps<HTMLButtonElement>) {
-  const { isSelected, setSelected, tabNodes, values, activation, orientation, loop, id } =
+  const { isSelected, selectTab, tabNodes, values, activation, orientation, loop, id } =
     useContext(TabsContext)
   const ref = useRef<HTMLButtonElement>(null)
 
@@ -206,8 +220,8 @@ export function Button({
       type="button"
       tabIndex={isSelected === value ? 0 : -1}
       className={className}
-      onClick={() => setSelected(value)}
-      onFocus={() => (activation === 'auto' ? setSelected(value) : null)}
+      onClick={() => selectTab(value)}
+      onFocus={() => (activation === 'auto' ? selectTab(value) : null)}
       onKeyDown={handleKeyDown}>
       {children}
     </button>

@@ -1,13 +1,9 @@
-import React, { forwardRef } from 'react'
-import Link from 'next/link'
+import React, { forwardRef, HTMLAttributes } from 'react'
 
 import type { IntentVariant, StateVariant } from '@/lib/types'
 import { cn } from '@/utils/cn'
 
-export const asDefault = 'button' as const
-export type AsDefaultType = typeof asDefault
-
-export type OwnProps<E extends React.ElementType> = {
+type OwnProps<E extends React.ElementType = React.ElementType> = {
   children: React.ReactNode
   as?: E
   variant?: IntentVariant | StateVariant
@@ -16,9 +12,11 @@ export type OwnProps<E extends React.ElementType> = {
 }
 
 export type Props<E extends React.ElementType> = OwnProps<E> &
-  Omit<React.ComponentProps<E>, keyof OwnProps<E>>
+  Omit<React.ComponentProps<E>, keyof OwnProps>
 
-export function Button<E extends React.ElementType = AsDefaultType>({
+const __DEFAULT_ELEMENT__ = 'button'
+
+export function Button<E extends React.ElementType = typeof __DEFAULT_ELEMENT__>({
   children,
   as,
   variant = 'primary',
@@ -26,7 +24,7 @@ export function Button<E extends React.ElementType = AsDefaultType>({
   iconOnly,
   ...rest
 }: Props<E>) {
-  const Cmp = as ?? asDefault
+  const Cmp = as ?? __DEFAULT_ELEMENT__
 
   const styleMap: { [key in StateVariant | IntentVariant]: string } = {
     primary: 'bg-app-bg-inverted text-app-fg-inverted',
@@ -42,7 +40,7 @@ export function Button<E extends React.ElementType = AsDefaultType>({
   return (
     <Cmp
       className={cn(
-        'flex items-center gap-4 rounded-full px-8 py-2 tracking-wide',
+        'flex items-center gap-3 rounded-full px-8 py-2 tracking-wide',
         styleMap[variant],
         iconOnly && 'p-2',
         className
