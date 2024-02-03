@@ -19,9 +19,9 @@ export default async function Page() {
         Messages
       </Heading>
       <ul>
-        {messages.map(({ threadId, messageId, content }) => (
+        {messages.map(({ threadId, messageId, body }) => (
           <li key={messageId}>
-            {content} <Link href={`/messages/${threadId}`}>View</Link>
+            {body} <Link href={`/messages/${threadId}`}>View</Link>
           </li>
         ))}
       </ul>

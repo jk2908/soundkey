@@ -9,10 +9,8 @@ import { Wrapper } from '@/components/global/wrapper'
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
   const user = await auth()
-
-  if (!user) {
-    throw redirect('/login')
-  }
+  
+  if (!user) throw redirect('/login')
 
   return (
     <div className="flex grow">

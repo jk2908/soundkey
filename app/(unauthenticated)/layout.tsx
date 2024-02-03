@@ -9,9 +9,7 @@ import { Header } from '@/components/unauthenticated/header'
 export default async function Layout({ children }: { children: React.ReactNode }) {
   const user = await auth()
 
-  if (user) {
-    throw redirect('/dashboard')
-  }
+  if (user) throw redirect('/dashboard')
 
   return (
     <div className="grow">

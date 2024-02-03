@@ -5,6 +5,7 @@ import { lucia } from 'lucia'
 import { nextjs_future } from 'lucia/middleware'
 
 import { pool } from '@/lib/db'
+import type { UserRole } from '@/lib/schema'
 
 export const _auth = lucia({
   adapter: pg(pool, {
@@ -38,3 +39,5 @@ export async function auth() {
 
   return user
 }
+
+export const isAAAUser = (role: UserRole) => ['admin', 'system'].includes(role)

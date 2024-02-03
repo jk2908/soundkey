@@ -2,17 +2,45 @@
 
 import * as context from 'next/headers'
 import { sendPasswordResetEmail, sendVerificationEmail } from '@/actions/email'
-import { sendMessage, sendSystemMessage } from '@/actions/message'
+import { sendMessage } from '@/actions/message'
 import { createEmailVerificationToken, createPasswordResetToken } from '@/actions/token'
+import { getSystemUser } from '@/actions/user'
 import { eq } from 'drizzle-orm'
 
 import { _auth, getPageSession } from '@/lib/auth'
 import { APP_NAME } from '@/lib/config'
 import { db } from '@/lib/db'
-import { user } from '@/lib/schema'
+import { NewUser, user } from '@/lib/schema'
 import type { ServerResponse } from '@/lib/types'
 import { capitalise } from '@/utils/capitalise'
 import { isValidEmail } from '@/utils/is-valid-email'
+
+export async function createUser({
+  email,
+  password,
+  role = 'user',
+}: NewUser & { password: string }) {
+  try {
+    const user = await _auth.createUser({
+      key: {
+        providerId: 'email',
+        providerUserId: email.toLowerCase(),
+        password,
+      },
+      attributes: {
+        email: email.toLowerCase(),
+        email_verified: false,
+        created_at: new Date().toISOString(),
+        role,
+      },
+    })
+
+    return user
+  } catch (err) {
+    console.error(err)
+    throw err
+  }
+}
 
 export async function signup(prevState: ServerResponse, formData: FormData) {
   const email = formData.get('email')
@@ -35,35 +63,25 @@ export async function signup(prevState: ServerResponse, formData: FormData) {
   }
 
   try {
-    const { userId } = await _auth.createUser({
-      key: {
-        providerId: 'email',
-        providerUserId: email.toLowerCase(),
-        password,
-      },
-      attributes: {
-        email: email.toLowerCase(),
-        email_verified: false,
-        created_at: new Date().toISOString(),
-        role: 'user',
-      },
-    })
-
-    const session = await _auth.createSession({
+    const { userId } = await createUser({ email, password })
+    const _session = await _auth.createSession({
       userId,
       attributes: {},
     })
 
     const _authRequest = _auth.handleRequest('POST', context)
-    _authRequest.setSession(session)
+    _authRequest.setSession(_session)
 
     const token = await createEmailVerificationToken(userId)
-
     await sendVerificationEmail(email, token)
-    await sendSystemMessage({
-      content: `Welcome to ${APP_NAME}. Please check your email to verify your account. Certain features may be unavailable until your account is verified.`,
+
+    const { userId: systemUserId } = await getSystemUser()
+    await sendMessage({
+      body: `Welcome to ${APP_NAME}. Please check your email to verify your account. Certain features may be unavailable until your account is verified.`,
       createdAt: new Date().toISOString(),
-      toUserId: [userId],
+      senderId: systemUserId,
+      recipientIds: [userId],
+      type: 'system_message',
     })
 
     return {

@@ -1,5 +1,3 @@
-import { NewMessage, NewSystemMessage } from '@/lib/schema'
-
 export type StateVariant = 'success' | 'error' | 'danger' | 'warning' | 'info'
 
 export type IntentVariant = 'primary' | 'secondary' | 'tertiary'
@@ -31,9 +29,3 @@ export type Route = {
   href: string
   isProtected?: boolean
 }
-
-export type NewMessageConfig = { system?: boolean }
-
-export type NewMessageSource<C extends NewMessageConfig> = C extends { system: true }
-  ? NewSystemMessage
-  : NewMessage

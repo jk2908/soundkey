@@ -1,4 +1,5 @@
-import { getMessage, getMessagesByThread, getThread } from '@/actions/message'
+import { getMessage, getMessagesByThread, } from '@/actions/message'
+import { getUsers } from '@/actions/user'
 
 import { auth } from '@/lib/auth'
 
@@ -7,7 +8,7 @@ export async function generateMetadata({ params }: { params: { threadId: string 
 
   if (!message) return
 
-  const title = message.content.match('^.*?[.!?](?=s[A-Z]|s?$)(?!.*))')
+  const title = message.body.match('^.*?[.!?](?=s[A-Z]|s?$)(?!.*))')
 
   return { title }
 }
@@ -19,5 +20,5 @@ export default async function Page({ params }: { params: { messageId: string } }
 
   const message = await getMessage(params.messageId)
 
-  return <ul>{message?.content}</ul>
+  return <ul>{message?.body}</ul>
 }

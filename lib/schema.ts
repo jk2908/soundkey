@@ -12,20 +12,27 @@ import {
 
 import { nanoid } from '@/utils/nanoid'
 
-export const userRole = pgEnum('user_role', ['user', 'admin'])
-export const messageType = pgEnum('message_type', ['message', 'system_message'])
+export const userRoles = ['user', 'admin', 'system'] as const
+export const userRole = pgEnum('user_role', userRoles)
+
+export const messageTypes = ['message', 'system_message'] as const
+export const messageType = pgEnum('message_type', messageTypes)
 
 export const user = pgTable('user', {
   id: varchar('id', {
     length: 15,
-  }).primaryKey(),
+  })
+    .primaryKey()
+    .$defaultFn(nanoid),
   email: varchar('email', {
     length: 255,
   }).notNull(),
   emailVerified: boolean('email_verified').default(false).notNull(),
   createdAt: timestamp('created_at', {
     mode: 'string',
-  }).notNull(),
+  })
+    .notNull()
+    .defaultNow(),
   updatedAt: timestamp('updated_at', {
     mode: 'string',
   }),
@@ -119,15 +126,17 @@ export const threadToUser = pgTable(
 
 export const thread = pgTable('thread', {
   id: varchar('id').primaryKey().notNull().$defaultFn(nanoid),
-  messageId: varchar('message_id', {
+  messageIds: varchar('message_ids', {
     length: 15,
   })
-    .notNull()
+    .references(() => message.id)
     .array()
-    .references(() => message.id || systemMessage.id),
+    .notNull(),
   createdAt: timestamp('created_at', {
     mode: 'string',
-  }).notNull(),
+  })
+    .notNull()
+    .defaultNow(),
   updatedAt: timestamp('updated_at', {
     mode: 'string',
   }),
@@ -138,47 +147,26 @@ export const message = pgTable('message', {
   threadId: varchar('thread_id', {
     length: 15,
   }).notNull(),
-  fromUserId: varchar('from_user_id', {
+  senderId: varchar('sender_id', {
     length: 15,
   })
     .notNull()
     .references(() => user.id),
-  toUserId: varchar('to_user_id', { length: 15 })
-    .notNull()
+  recipientIds: varchar('recipient_ids', { length: 15 })
     .references(() => user.id)
-    .array(),
-  content: text('content').notNull(),
+    .array()
+    .notNull(),
+  body: text('body').notNull(),
   createdAt: timestamp('created_at', {
     mode: 'string',
-  }).notNull(),
+  })
+    .notNull()
+    .defaultNow(),
   updatedAt: timestamp('updated_at', {
     mode: 'string',
   }),
   read: boolean('read').default(false).notNull(),
-  type: messageType('message_type').default('message').notNull(),
-})
-
-export const systemMessage = pgTable('system_message', {
-  id: varchar('id').primaryKey().notNull().$defaultFn(nanoid),
-  threadId: varchar('thread_id', {
-    length: 15,
-  }).notNull(),
-  fromUserId: varchar('from_user_id', {
-    enum: ['system'],
-  }).notNull(),
-  toUserId: varchar('to_user_id', { length: 15 })
-    .notNull()
-    .references(() => user.id)
-    .array(),
-  content: text('content').notNull(),
-  createdAt: timestamp('created_at', {
-    mode: 'string',
-  }).notNull(),
-  updatedAt: timestamp('updated_at', {
-    mode: 'string',
-  }),
-  read: boolean('read').default(false).notNull(),
-  type: messageType('message_type').default('system_message').notNull(),
+  type: messageType('message_type').notNull(),
 })
 
 export const userRelations = relations(user, ({ many }) => ({
@@ -224,15 +212,22 @@ export const threadToUserRelations = relations(threadToUser, ({ one }) => ({
 export const threadRelations = relations(thread, ({ many }) => ({
   threadToUser: many(threadToUser),
   message: many(message),
-  systemMessage: many(systemMessage),
+}))
+
+export const messageRelations = relations(message, ({ one }) => ({
+  thread: one(thread, {
+    fields: [message.threadId],
+    references: [thread.id],
+  }),
 }))
 
 export type User = InferSelectModel<typeof user>
 export type NewUser = InferInsertModel<typeof user>
 export type Message = InferSelectModel<typeof message>
-export type NewMessage = Omit<InferInsertModel<typeof message>, 'threadId'>
-export type SystemMessage = Omit<InferSelectModel<typeof systemMessage>, 'messageType'>
-export type NewSystemMessage = Omit<
-  InferInsertModel<typeof systemMessage>,
-  'threadId' | 'messageType' | 'fromUserId'
->
+export type NewMessage = Omit<
+  InferInsertModel<typeof message>,
+  'threadId' | 'recipientIds' | 'type'
+> & { threadId?: string; recipientIds: string[]; type: MessageType }
+export type EditMessage = Omit<InferInsertModel<typeof message>, 'threadId' | 'createdAt' | 'type'>
+export type MessageType = (typeof messageTypes)[number]
+export type UserRole = (typeof userRoles)[number]

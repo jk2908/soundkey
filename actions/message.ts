@@ -3,11 +3,11 @@
 import { desc, eq, sql } from 'drizzle-orm'
 
 import { db } from '@/lib/db'
-import { message, systemMessage, thread, threadToUser } from '@/lib/schema'
-import type { NewMessage, NewSystemMessage } from '@/lib/schema'
+import { message, thread, threadToUser } from '@/lib/schema'
+import type { EditMessage, NewMessage } from '@/lib/schema'
 import type { ServerResponse } from '@/lib/types'
-import { buildMessage } from '@/utils/build-message'
 import { capitalise } from '@/utils/capitalise'
+import { nanoid } from '@/utils/nanoid'
 
 export async function createThread(userIds: string[], messageId: string) {
   try {
@@ -28,6 +28,7 @@ export async function createThread(userIds: string[], messageId: string) {
 
     return newThread.id
   } catch (err) {
+    console.log(err)
     throw err
   }
 }
@@ -55,22 +56,23 @@ export async function resolveThread(
 
     return existingThread.id
   } catch (err) {
+    console.log(err)
     throw err
   }
 }
 
-export async function sendMessage(newMessage: NewMessage, threadId?: string) {
+export async function sendMessage(payload: NewMessage) {
   try {
-    const { id: messageId, toUserId } = newMessage
+    const { id: messageId = nanoid(), recipientIds, threadId } = payload
 
-    if (!toUserId || !messageId) return
+    if (!recipientIds) throw new Error('No recipient specified')
 
-    const resolvedThreadId = await resolveThread(threadId, toUserId, messageId)
+    const resolvedThreadId = await resolveThread(threadId, recipientIds, messageId)
 
-    if (!resolvedThreadId) return
+    if (!resolvedThreadId) throw new Error('Could not resolve thread')
 
     await db.insert(message).values({
-      ...newMessage,
+      ...(payload as NewMessage),
       threadId: resolvedThreadId,
     })
 
@@ -80,6 +82,7 @@ export async function sendMessage(newMessage: NewMessage, threadId?: string) {
       status: 201,
     } satisfies ServerResponse
   } catch (err) {
+    console.log(err)
     return {
       type: 'error',
       message: err instanceof Error ? capitalise(err?.message) : 'An unknown error occurred',
@@ -88,28 +91,22 @@ export async function sendMessage(newMessage: NewMessage, threadId?: string) {
   }
 }
 
-export async function sendSystemMessage(newSystemMessage: NewSystemMessage, threadId?: string) {
+export async function editMessage(payload: EditMessage & { messageId: string }) {
   try {
-    const { id: messageId, toUserId } = newSystemMessage
+    const { messageId, body } = payload
 
-    if (!toUserId || !messageId) return
-
-    const resolvedThreadId = await resolveThread(threadId, toUserId, messageId)
-
-    if (!resolvedThreadId) return
-
-    await db.insert(systemMessage).values({
-      ...newSystemMessage,
-      threadId: resolvedThreadId,
-      fromUserId: 'system',
-    })
+    await db
+      .update(message)
+      .set({ body, updatedAt: new Date().toISOString() })
+      .where(eq(message.id, messageId))
 
     return {
       type: 'success',
-      message: 'Message sent',
-      status: 201,
+      message: 'Message edited',
+      status: 200,
     } satisfies ServerResponse
   } catch (err) {
+    console.log(err)
     return {
       type: 'error',
       message: err instanceof Error ? capitalise(err?.message) : 'An unknown error occurred',
@@ -134,7 +131,6 @@ export async function getThreads(userId: string) {
 
     return threads
   } catch (err) {
-    console.error(err)
     return []
   }
 }
@@ -147,7 +143,6 @@ export async function getThread(threadId: string) {
 
     return t
   } catch (err) {
-    console.error(err)
     return null
   }
 }
@@ -159,23 +154,23 @@ export async function getMessagesByUser(userId: string) {
     if (!threads.length) return []
 
     const messages = await db
-      .select({ ...buildMessage('message') })
+      .select({
+        messageId: message.id,
+        threadId: message.threadId,
+        senderId: message.senderId,
+        recipientIds: message.recipientIds,
+        body: message.body,
+        createdAt: message.createdAt,
+        updatedAt: message.updatedAt,
+        read: message.read,
+        type: message.type,
+      })
       .from(message)
       .where(sql`thread_id IN (${threads.map(thread => thread.threadId)})`)
-      .unionAll(
-        db
-          .select({
-            ...buildMessage('system'),
-          })
-          .from(systemMessage)
-          .where(sql`thread_id IN (${threads.map(thread => thread.threadId)})`)
-          .orderBy(desc(systemMessage.createdAt))
-      )
       .orderBy(desc(message.createdAt))
 
     return messages
   } catch (err) {
-    console.error(err)
     return []
   }
 }
@@ -184,24 +179,22 @@ export async function getMessagesByThread(threadId: string) {
   try {
     const messages = await db
       .select({
-        ...buildMessage('message'),
+        messageId: message.id,
+        threadId: message.threadId,
+        senderId: message.senderId,
+        recipientIds: message.recipientIds,
+        body: message.body,
+        createdAt: message.createdAt,
+        updatedAt: message.updatedAt,
+        read: message.read,
+        type: message.type,
       })
       .from(message)
       .where(eq(message.threadId, threadId))
-      .unionAll(
-        db
-          .select({
-            ...buildMessage('system'),
-          })
-          .from(systemMessage)
-          .where(eq(systemMessage.threadId, threadId))
-          .orderBy(desc(systemMessage.createdAt))
-      )
       .orderBy(desc(message.createdAt))
 
     return messages
   } catch (err) {
-    console.error(err)
     return []
   }
 }
@@ -214,7 +207,24 @@ export async function getMessage(messageId: string) {
 
     return m
   } catch (err) {
-    console.error(err)
     return null
+  }
+}
+
+export async function markMessageAsRead(messageId: string) {
+  try {
+    await db.update(message).set({ read: true }).where(eq(message.id, messageId))
+
+    return {
+      type: 'success',
+      message: 'Message marked as read',
+      status: 200,
+    } satisfies ServerResponse
+  } catch (err) {
+    return {
+      type: 'error',
+      message: err instanceof Error ? capitalise(err?.message) : 'An unknown error occurred',
+      status: 500,
+    } satisfies ServerResponse
   }
 }

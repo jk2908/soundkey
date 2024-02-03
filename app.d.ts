@@ -6,7 +6,7 @@ declare namespace Lucia {
     email: string
     email_verified: boolean
     created_at: string
-    role: 'user' | 'admin'
+    role: 'user' | 'admin' | 'system'
   }
 
   type DatabaseSessionAttributes = {}
