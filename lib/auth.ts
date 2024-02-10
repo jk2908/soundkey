@@ -1,7 +1,7 @@
 import { cache } from 'react'
 import * as context from 'next/headers'
 import { pg } from '@lucia-auth/adapter-postgresql'
-import { lucia } from 'lucia'
+import { User, lucia } from 'lucia'
 import { nextjs_future } from 'lucia/middleware'
 
 import { pool } from '@/lib/db'
@@ -40,4 +40,4 @@ export async function auth() {
   return user
 }
 
-export const isAAAUser = (role: UserRole) => ['admin', 'system'].includes(role)
+export const is$User = (role: UserRole) => ['admin', 'system'].includes(role)

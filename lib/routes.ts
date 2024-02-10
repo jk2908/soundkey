@@ -33,10 +33,3 @@ export const authRoutes: Route[] = [
     href: '/settings',
   },
 ]
-
-export const protectedRoutes: Route[] = [
-  {
-    label: 'Admin',
-    href: '/admin',
-  },
-]

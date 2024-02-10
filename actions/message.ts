@@ -14,7 +14,7 @@ export async function createThread(userIds: string[], messageId: string) {
     const [newThread] = await db
       .insert(thread)
       .values({
-        messageId: [messageId],
+        messageIds: [messageId],
         createdAt: new Date().toISOString(),
       })
       .returning({ id: thread.id })
@@ -51,7 +51,7 @@ export async function resolveThread(
 
     await db
       .update(thread)
-      .set({ messageId: sql`message_id || ${messageId}`, updatedAt: new Date().toISOString() })
+      .set({ messageIds: sql`message_ids || ${messageId}`, updatedAt: new Date().toISOString() })
       .where(eq(thread.id, existingThread.id))
 
     return existingThread.id

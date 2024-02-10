@@ -3,7 +3,7 @@
 import { useEffect, useId } from 'react'
 import { useFormState } from 'react-dom'
 
-import { signup } from '@/actions/auth'
+import { signup } from '@/actions/user'
 import { ServerResponse } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
 

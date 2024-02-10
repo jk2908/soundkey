@@ -1,5 +1,4 @@
 import { getMessage, getMessagesByThread, } from '@/actions/message'
-import { getUsers } from '@/actions/user'
 
 import { auth } from '@/lib/auth'
 
