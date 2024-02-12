@@ -13,7 +13,7 @@ export default async function Layout({
 
   if (!u) throw redirect('/login')
 
-  const $user = is$User(u.role)
+  const $User = is$User(u.role)
 
-  return <>{$user ? admin : user}</>
+  return <>{$User ? admin : user}</>
 }

@@ -10,7 +10,7 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core'
 
-import { nanoid } from '@/utils/nanoid'
+import { generateId } from '@/utils/generate-id'
 
 export const userRoles = ['user', 'admin', 'system'] as const
 export const userRole = pgEnum('user_role', userRoles)
@@ -23,8 +23,18 @@ export const user = pgTable('user', {
     length: 15,
   })
     .primaryKey()
-    .$defaultFn(nanoid),
+    .$defaultFn(generateId),
+  userId: varchar('user_id', {
+    length: 15,
+  })
+    .unique()
+    .notNull(),
   email: varchar('email', {
+    length: 255,
+  })
+    .unique()
+    .notNull(),
+  password: varchar('password', {
     length: 255,
   }).notNull(),
   emailVerified: boolean('email_verified').default(false).notNull(),
@@ -48,33 +58,9 @@ export const session = pgTable('session', {
   })
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
-  activeExpires: bigint('active_expires', {
-    mode: 'number',
+  expiresAt: timestamp('expires_at', {
+    mode: 'string',
   }).notNull(),
-  idleExpires: bigint('idle_expires', {
-    mode: 'number',
-  }).notNull(),
-})
-
-export const sessionRelations = relations(session, ({ one }) => ({
-  user: one(user, {
-    fields: [session.userId],
-    references: [user.id],
-  }),
-}))
-
-export const key = pgTable('key', {
-  id: varchar('id', {
-    length: 255,
-  }).primaryKey(),
-  userId: varchar('user_id', {
-    length: 15,
-  })
-    .notNull()
-    .references(() => user.id, { onDelete: 'cascade' }),
-  hashedPassword: varchar('hashed_password', {
-    length: 255,
-  }),
 })
 
 export const emailVerificationToken = pgTable('email_verification_token', {
@@ -86,7 +72,7 @@ export const emailVerificationToken = pgTable('email_verification_token', {
   })
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
-  expires: bigint('expires', {
+  expiresAt: bigint('expires_at', {
     mode: 'number',
   }).notNull(),
 })
@@ -100,7 +86,7 @@ export const passwordResetToken = pgTable('password_reset_token', {
   })
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
-  expires: bigint('expires', {
+  expiresAt: bigint('expires_at', {
     mode: 'number',
   }).notNull(),
 })
@@ -125,7 +111,7 @@ export const threadToUser = pgTable(
 )
 
 export const thread = pgTable('thread', {
-  id: varchar('id').primaryKey().notNull().$defaultFn(nanoid),
+  id: varchar('id').primaryKey().notNull().$defaultFn(generateId),
   messageIds: varchar('message_ids', {
     length: 15,
   })
@@ -143,7 +129,7 @@ export const thread = pgTable('thread', {
 })
 
 export const message = pgTable('message', {
-  id: varchar('id').primaryKey().notNull().$defaultFn(nanoid),
+  id: varchar('id').primaryKey().notNull().$defaultFn(generateId),
   threadId: varchar('thread_id', {
     length: 15,
   }).notNull(),
@@ -171,15 +157,14 @@ export const message = pgTable('message', {
 
 export const userRelations = relations(user, ({ many }) => ({
   session: many(session),
-  key: many(key),
   emailVerificationToken: many(emailVerificationToken),
   passwordResetToken: many(passwordResetToken),
   threadToUser: many(threadToUser),
 }))
 
-export const keyRelations = relations(key, ({ one }) => ({
+export const sessionRelations = relations(session, ({ one }) => ({
   user: one(user, {
-    fields: [key.userId],
+    fields: [session.userId],
     references: [user.id],
   }),
 }))
@@ -222,7 +207,7 @@ export const messageRelations = relations(message, ({ one }) => ({
 }))
 
 export type User = InferSelectModel<typeof user>
-export type NewUser = InferInsertModel<typeof user>
+export type NewUser = Omit<InferInsertModel<typeof user>, 'userId'>
 export type Message = InferSelectModel<typeof message>
 export type NewMessage = Omit<
   InferInsertModel<typeof message>,

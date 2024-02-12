@@ -1,41 +1,44 @@
 'use server'
 
 import { cache } from 'react'
-import * as context from 'next/headers'
+import { cookies } from 'next/headers'
 import { sendPasswordResetEmail, sendVerificationEmail } from '@/actions/email'
 import { sendMessage } from '@/actions/message'
 import { createEmailVerificationToken, createPasswordResetToken } from '@/actions/token'
 import { eq, inArray } from 'drizzle-orm'
+import { Argon2id } from 'oslo/password'
 
-import { _auth, getPageSession } from '@/lib/auth'
+import { lucia } from '@/lib/auth'
 import { APP_EMAIL, APP_NAME } from '@/lib/config'
 import { db } from '@/lib/db'
 import { NewUser, user } from '@/lib/schema'
 import type { ServerResponse } from '@/lib/types'
 import { capitalise } from '@/utils/capitalise'
+import { generateId } from '@/utils/generate-id'
 import { isValidEmail } from '@/utils/is-valid-email'
 
-export async function createUser({
-  email,
-  password,
-  role = 'user',
-}: NewUser & { password: string }) {
+export async function createUser({ email, password, role = 'user' }: NewUser) {
   try {
-    const user = await _auth.createUser({
-      key: {
-        providerId: 'email',
-        providerUserId: email.toLowerCase(),
-        password,
-      },
-      attributes: {
-        email: email.toLowerCase(),
-        email_verified: false,
-        created_at: new Date().toISOString(),
-        role,
-      },
-    })
+    const userId = generateId()
+    const [existingUser] = await db.select().from(user).where(eq(user.email, email.toLowerCase()))
 
-    return user
+    if (existingUser) throw new Error('Email already in use')
+
+    const hashedPassword = await new Argon2id().hash(password)
+
+    const [u] = await db
+      .insert(user)
+      .values({
+        userId,
+        email: email.toLowerCase(),
+        password: hashedPassword,
+        role,
+        emailVerified: false,
+        createdAt: new Date().toISOString(),
+      })
+      .returning({ userId: user.userId })
+
+    return u
   } catch (err) {
     console.error(err)
     throw err
@@ -63,16 +66,13 @@ export async function signup(prevState: ServerResponse, formData: FormData) {
   }
 
   try {
-    const { userId } = await createUser({ email, password })
-    const _session = await _auth.createSession({
-      userId,
-      attributes: {},
-    })
+    const u = await createUser({ email, password })
+    const session = await lucia.createSession(u.userId, {})
 
-    const _authRequest = _auth.handleRequest('POST', context)
-    _authRequest.setSession(_session)
+    const sessionCookie = lucia.createSessionCookie(session.id)
+    cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes)
 
-    const token = await createEmailVerificationToken(userId)
+    const token = await createEmailVerificationToken(u.userId)
     await sendVerificationEmail(email, token)
 
     const { userId: systemUserId } = await getSystemUser()
@@ -80,7 +80,7 @@ export async function signup(prevState: ServerResponse, formData: FormData) {
       body: `Welcome to ${APP_NAME}. Please check your email to verify your account. Certain features may be unavailable until your account is verified.`,
       createdAt: new Date().toISOString(),
       senderId: systemUserId,
-      recipientIds: [userId],
+      recipientIds: [u.userId],
       type: 'system_message',
     })
 
@@ -111,14 +111,17 @@ export async function login(prevState: ServerResponse, formData: FormData) {
   }
 
   try {
-    const { userId } = await _auth.useKey('email', email.toLowerCase(), password)
-    const session = await _auth.createSession({
-      userId,
-      attributes: {},
-    })
+    const [u] = await db
+      .select({ userId: user.userId })
+      .from(user)
+      .where(eq(user.email, email.toLowerCase()))
 
-    const _authRequest = _auth.handleRequest('POST', context)
-    _authRequest.setSession(session)
+    if (!u) throw new Error('User not found')
+
+    const session = await lucia.createSession(u.userId, {})
+    const sessionCookie = lucia.createSessionCookie(session.id)
+
+    cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes)
 
     return { type: 'success', message: 'Logged in', status: 200 } satisfies ServerResponse
   } catch (err) {
@@ -131,27 +134,35 @@ export async function login(prevState: ServerResponse, formData: FormData) {
 }
 
 export async function logout() {
-  const _authRequest = _auth.handleRequest('POST', context)
-  const session = await _authRequest.validate()
+  const sessionId = lucia.readSessionCookie('auth_session=abc')
+
+  if (!sessionId) {
+    return { type: 'error', message: 'No session', status: 401 } satisfies ServerResponse
+  }
+
+  const { session } = await lucia.validateSession(sessionId)
 
   if (!session) {
     return { type: 'error', message: 'No session', status: 401 } satisfies ServerResponse
   }
 
-  await _auth.invalidateSession(session.sessionId)
-  _authRequest.setSession(null)
+  await lucia.invalidateSession(sessionId)
 
   return { type: 'success', message: 'Logged out', status: 200 } satisfies ServerResponse
 }
 
 export async function verifyEmail(prevState: ServerResponse) {
-  const session = await getPageSession()
+  const sessionId = lucia.readSessionCookie('auth_session=abc')
 
-  if (!session) {
+  if (!sessionId) {
     return { type: 'error', message: 'No session', status: 401 } satisfies ServerResponse
   }
 
-  const { user } = session
+  const { user } = await lucia.validateSession(sessionId)
+
+  if (!user) {
+    return { type: 'error', message: 'No user', status: 401 } satisfies ServerResponse
+  }
 
   if (user.emailVerified) {
     return {
@@ -187,19 +198,13 @@ export async function resetPassword(prevState: ServerResponse, formData: FormDat
   }
 
   try {
-    const [storedUser] = await db
-      .select()
-      .from(user)
-      .where(eq(user.email, email.toLowerCase()))
-      .limit(1)
+    const [u] = await db.select().from(user).where(eq(user.email, email.toLowerCase())).limit(1)
 
-    if (!storedUser) {
+    if (!u) {
       return { type: 'error', message: 'Invalid email', status: 400 } satisfies ServerResponse
     }
 
-    // @ts-expect-error
-    const { userId } = _auth.transformDatabaseUser(storedUser)
-    const token = await createPasswordResetToken(userId)
+    const token = await createPasswordResetToken(u.userId)
 
     await sendPasswordResetEmail(email, token)
 
@@ -219,21 +224,14 @@ export async function resetPassword(prevState: ServerResponse, formData: FormDat
 
 export const getUser = cache(async (userId: string) => {
   const [u] = await db.select().from(user).where(eq(user.id, userId)).limit(1)
-
-  // @ts-expect-error
-  return _auth.transformDatabaseUser(u)
+  return u
 })
 
-export const getUsers = cache(async (userIds: string[]) => {
-  const users = await db.select().from(user).where(inArray(user.id, userIds))
-
-  // @ts-expect-error
-  return users.map(_auth.transformDatabaseUser)
-})
+export const getUsers = cache(
+  async (userIds: string[]) => await db.select().from(user).where(inArray(user.id, userIds))
+)
 
 export const getSystemUser = cache(async () => {
-  const [s] = await db.select().from(user).where(eq(user.email, APP_EMAIL)).limit(1)
-
-  // @ts-expect-error
-  return _auth.transformDatabaseUser(s)
+  const [u] = await db.select().from(user).where(eq(user.email, APP_EMAIL)).limit(1)
+  return u
 })

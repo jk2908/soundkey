@@ -1,3 +1,23 @@
+import { lucia } from '@/lib/auth'
+
+declare module 'lucia' {
+  export interface Register {
+    Lucia: typeof lucia
+    DatabaseSessionAttributes: DatabaseSessionAttributes
+    DatabaseUserAttributes: DatabaseUserAttributes
+  }
+}
+
+export interface DatabaseSessionAttributes {}
+
+export interface DatabaseUserAttributes {
+  user_id: string
+  email: string
+  email_verified: boolean
+  created_at: string
+  role: 'user' | 'admin' | 'system'
+}
+
 export type StateVariant = 'success' | 'error' | 'danger' | 'warning' | 'info'
 
 export type IntentVariant = 'primary' | 'secondary' | 'tertiary'

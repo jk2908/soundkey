@@ -1,9 +1,9 @@
 import { eq } from 'drizzle-orm'
-import { generateRandomString, isWithinExpiration } from 'lucia/utils'
+import { createDate, isWithinExpirationDate, TimeSpan } from 'oslo'
 
 import { db } from '@/lib/db'
 import { emailVerificationToken, passwordResetToken } from '@/lib/schema'
-import { _auth } from '../lib/auth'
+import { generateId } from '@/utils/generate-id'
 
 const EXPIRES_IN = 1000 * 60 * 60 * 2
 
@@ -14,19 +14,21 @@ export async function createEmailVerificationToken(userId: string) {
     .where(eq(emailVerificationToken.userId, userId))
 
   if (tokens.length) {
-    const reusabletokens = tokens.find(({ expires }) =>
-      isWithinExpiration(Number(expires) - EXPIRES_IN / 2)
-    )
+    const reusabletokens = tokens.find(({ expiresAt }) => {
+      const d = createDate(new TimeSpan(Number(expiresAt), 'ms'))
+
+      return isWithinExpirationDate(d)
+    })
 
     if (reusabletokens) return reusabletokens.id
   }
 
-  const token = generateRandomString(63)
+  const token = generateId(63)
 
   await db.insert(emailVerificationToken).values({
     id: token,
     userId,
-    expires: Date.now() + EXPIRES_IN,
+    expiresAt: Date.now() + EXPIRES_IN,
   })
 
   return token
@@ -40,7 +42,11 @@ export async function validateEmailVerificationToken(token: string) {
 
   if (!tokens) throw new Error('Invalid token')
 
-  if (!isWithinExpiration(Number(tokens.expires))) throw new Error('Expired token')
+  const d = createDate(new TimeSpan(Number(tokens.expiresAt), 'ms'))
+
+  if (!isWithinExpirationDate(d)) {
+    throw new Error('Expired token')
+  }
 
   await db.delete(emailVerificationToken).where(eq(emailVerificationToken.id, token))
 
@@ -48,25 +54,27 @@ export async function validateEmailVerificationToken(token: string) {
 }
 
 export async function createPasswordResetToken(userId: string) {
-  const tokenss = await db
+  const tokens = await db
     .select()
     .from(passwordResetToken)
     .where(eq(passwordResetToken.userId, userId))
 
-  if (tokenss.length) {
-    const reusabletokens = tokenss.find(({ expires }) =>
-      isWithinExpiration(Number(expires) - EXPIRES_IN / 2)
-    )
+  if (tokens.length) {
+    const reusabletokens = tokens.find(({ expiresAt }) => {
+      const d = createDate(new TimeSpan(Number(expiresAt), 'ms'))
+
+      return isWithinExpirationDate(d)
+    })
 
     if (reusabletokens) return reusabletokens.id
   }
 
-  const token = generateRandomString(63)
+  const token = generateId(63)
 
   await db.insert(passwordResetToken).values({
     id: token,
     userId,
-    expires: Date.now() + EXPIRES_IN,
+    expiresAt: Date.now() + EXPIRES_IN,
   })
 
   return token
@@ -80,7 +88,9 @@ export async function validatePasswordResetToken(token: string) {
 
   if (!tokens) throw new Error('Invalid token')
 
-  if (!isWithinExpiration(Number(tokens.expires))) {
+  const d = createDate(new TimeSpan(Number(tokens.expiresAt), 'ms'))
+
+  if (!isWithinExpirationDate(d)) {
     throw new Error('Expired token')
   }
 
@@ -95,7 +105,9 @@ export async function isValidPasswordResetToken(token: string) {
     .from(passwordResetToken)
     .where(eq(passwordResetToken.id, token))
 
-  if (!tokens || !isWithinExpiration(Number(tokens.expires))) {
+  const d = createDate(new TimeSpan(Number(tokens.expiresAt), 'ms'))
+
+  if (!tokens || !isWithinExpirationDate(d)) {
     return false
   }
 

@@ -7,7 +7,7 @@ import { message, thread, threadToUser } from '@/lib/schema'
 import type { EditMessage, NewMessage } from '@/lib/schema'
 import type { ServerResponse } from '@/lib/types'
 import { capitalise } from '@/utils/capitalise'
-import { nanoid } from '@/utils/nanoid'
+import { generateId } from '@/utils/generate-id'
 
 export async function createThread(userIds: string[], messageId: string) {
   try {
@@ -63,7 +63,7 @@ export async function resolveThread(
 
 export async function sendMessage(payload: NewMessage) {
   try {
-    const { id: messageId = nanoid(), recipientIds, threadId } = payload
+    const { id: messageId = generateId(), recipientIds, threadId } = payload
 
     if (!recipientIds) throw new Error('No recipient specified')
 
