@@ -13,6 +13,7 @@
     "studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@lucia-auth/adapter-drizzle": "^1.0.1",
     "@lucia-auth/adapter-postgresql": "^3.1.0",
     "@neondatabase/serverless": "^0.7.2",
     "dotenv": "^16.4.1",

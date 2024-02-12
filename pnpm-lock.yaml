@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@lucia-auth/adapter-drizzle':
+    specifier: ^1.0.1
+    version: 1.0.1(lucia@3.0.1)
   '@lucia-auth/adapter-postgresql':
     specifier: ^3.1.0
     version: 3.1.0(@neondatabase/serverless@0.7.2)(lucia@3.0.1)(pg@8.11.3)(postgres@3.4.3)
@@ -895,6 +898,14 @@ packages:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.1
       '@jridgewell/sourcemap-codec': 1.4.15
+
+  /@lucia-auth/adapter-drizzle@1.0.1(lucia@3.0.1):
+    resolution: {integrity: sha512-xHgYwVh3ZmccEGsmkYWCALp2GlhCnomrpO5sgABCkIWgHvsmMZuJ5BYfgfaKmed1PDok81Dk6xFbj1tMH/uD6A==}
+    peerDependencies:
+      lucia: 3.x
+    dependencies:
+      lucia: 3.0.1
+    dev: false
 
   /@lucia-auth/adapter-postgresql@3.1.0(@neondatabase/serverless@0.7.2)(lucia@3.0.1)(pg@8.11.3)(postgres@3.4.3):
     resolution: {integrity: sha512-W6LXc9nfoyAwew5JCDnv63i4BKT3wLbmG9+QtnfmsD0xfOLOUiIi3wA1t0cpIXaJsq69/I3TRYXdb8e8yXRo9Q==}

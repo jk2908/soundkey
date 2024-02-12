@@ -11,7 +11,7 @@ declare module 'lucia' {
 export interface DatabaseSessionAttributes {}
 
 export interface DatabaseUserAttributes {
-  user_id: string
+  id: string
   email: string
   email_verified: boolean
   created_at: string

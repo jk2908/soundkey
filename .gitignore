@@ -41,3 +41,4 @@ next-env.d.ts
 # soundkey
 /lib/config.ts
 /utils/_*.ts
+/cli

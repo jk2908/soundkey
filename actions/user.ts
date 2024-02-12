@@ -8,7 +8,7 @@ import { createEmailVerificationToken, createPasswordResetToken } from '@/action
 import { eq, inArray } from 'drizzle-orm'
 import { Argon2id } from 'oslo/password'
 
-import { lucia } from '@/lib/auth'
+import { lucia, transformDbUser } from '@/lib/auth'
 import { APP_EMAIL, APP_NAME } from '@/lib/config'
 import { db } from '@/lib/db'
 import { NewUser, user } from '@/lib/schema'
@@ -17,9 +17,15 @@ import { capitalise } from '@/utils/capitalise'
 import { generateId } from '@/utils/generate-id'
 import { isValidEmail } from '@/utils/is-valid-email'
 
-export async function createUser({ email, password, role = 'user' }: NewUser) {
+export async function createUser({
+  email,
+  password,
+  emailVerified = false,
+  role = 'user',
+  token = true,
+}: NewUser & { token?: boolean }) {
   try {
-    const userId = generateId()
+    const id = generateId()
     const [existingUser] = await db.select().from(user).where(eq(user.email, email.toLowerCase()))
 
     if (existingUser) throw new Error('Email already in use')
@@ -29,14 +35,18 @@ export async function createUser({ email, password, role = 'user' }: NewUser) {
     const [u] = await db
       .insert(user)
       .values({
-        userId,
+        id,
         email: email.toLowerCase(),
-        password: hashedPassword,
+        hashedPassword,
+        emailVerified,
         role,
-        emailVerified: false,
         createdAt: new Date().toISOString(),
       })
-      .returning({ userId: user.userId })
+      .returning({ userId: user.id })
+
+    if (!emailVerified && token) {
+      await sendVerificationEmail(email, await createEmailVerificationToken(u.userId))
+    }
 
     return u
   } catch (err) {
@@ -45,24 +55,21 @@ export async function createUser({ email, password, role = 'user' }: NewUser) {
   }
 }
 
-export async function signup(prevState: ServerResponse, formData: FormData) {
-  const email = formData.get('email')
-  const password = formData.get('password')
+export async function signup(
+  prevState: ServerResponse,
+  formData: FormData
+): Promise<ServerResponse> {
+  const email = formData.get('email') as string
+  const password = formData.get('password') as string
 
-  if (!isValidEmail(email)) {
-    return {
-      type: 'error',
-      message: 'Invalid email',
-      status: 400,
-    } satisfies ServerResponse
-  }
+  if (!isValidEmail(email)) return { type: 'error', message: 'Invalid email', status: 400 }
 
   if (typeof password !== 'string' || password.length < 8 || password.length > 255) {
     return {
       type: 'error',
       message: 'Invalid password',
       status: 400,
-    } satisfies ServerResponse
+    }
   }
 
   try {
@@ -70,12 +77,9 @@ export async function signup(prevState: ServerResponse, formData: FormData) {
     const session = await lucia.createSession(u.userId, {})
 
     const sessionCookie = lucia.createSessionCookie(session.id)
-    cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes)
+    cookies().set(sessionCookie)
 
-    const token = await createEmailVerificationToken(u.userId)
-    await sendVerificationEmail(email, token)
-
-    const { userId: systemUserId } = await getSystemUser()
+    const { id: systemUserId } = await getSystemUser()
     await sendMessage({
       body: `Welcome to ${APP_NAME}. Please check your email to verify your account. Certain features may be unavailable until your account is verified.`,
       createdAt: new Date().toISOString(),
@@ -88,80 +92,78 @@ export async function signup(prevState: ServerResponse, formData: FormData) {
       type: 'success',
       message: 'Account created',
       status: 201,
-    } satisfies ServerResponse
+    }
   } catch (err) {
     return {
       type: 'error',
       message: err instanceof Error ? capitalise(err?.message) : 'An unknown error occurred',
       status: 500,
-    } satisfies ServerResponse
+    }
   }
 }
 
-export async function login(prevState: ServerResponse, formData: FormData) {
-  const email = formData.get('email')
-  const password = formData.get('password')
+export async function login(
+  prevState: ServerResponse,
+  formData: FormData
+): Promise<ServerResponse> {
+  const email = formData.get('email') as string
+  const password = formData.get('password') as string
 
-  if (!isValidEmail(email)) {
-    return { type: 'error', message: 'Invalid email', status: 400 } satisfies ServerResponse
-  }
+  if (!isValidEmail(email)) return { type: 'error', message: 'Invalid email', status: 400 }
 
   if (typeof password !== 'string' || password.length < 8 || password.length > 255) {
-    return { type: 'error', message: 'Invalid password', status: 400 } satisfies ServerResponse
+    return { type: 'error', message: 'Invalid password', status: 400 }
   }
 
   try {
     const [u] = await db
-      .select({ userId: user.userId })
+      .select({ userId: user.id, hashedPassword: user.hashedPassword })
       .from(user)
       .where(eq(user.email, email.toLowerCase()))
 
-    if (!u) throw new Error('User not found')
+    if (!u) return { type: 'error', message: 'Invalid email', status: 400 }
+
+    const validPassword = await new Argon2id().verify(u.hashedPassword, password)
+
+    if (!validPassword) return { type: 'error', message: 'Invalid password', status: 400 }
 
     const session = await lucia.createSession(u.userId, {})
     const sessionCookie = lucia.createSessionCookie(session.id)
+    cookies().set(sessionCookie)
 
-    cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes)
-
-    return { type: 'success', message: 'Logged in', status: 200 } satisfies ServerResponse
+    return { type: 'success', message: 'Logged in', status: 200 }
   } catch (err) {
     return {
       type: 'error',
       message: err instanceof Error ? capitalise(err?.message) : 'An unknown error occurred',
       status: 500,
-    } satisfies ServerResponse
+    }
   }
 }
 
 export async function logout() {
   const sessionId = lucia.readSessionCookie('auth_session=abc')
 
-  if (!sessionId) {
-    return { type: 'error', message: 'No session', status: 401 } satisfies ServerResponse
-  }
+  if (!sessionId) return { type: 'error', message: 'No session', status: 401 }
 
   const { session } = await lucia.validateSession(sessionId)
 
-  if (!session) {
-    return { type: 'error', message: 'No session', status: 401 } satisfies ServerResponse
-  }
+  if (!session) return { type: 'error', message: 'No session', status: 401 }
 
   await lucia.invalidateSession(sessionId)
 
-  return { type: 'success', message: 'Logged out', status: 200 } satisfies ServerResponse
+  return { type: 'success', message: 'Logged out', status: 200 }
 }
 
 export async function verifyEmail(prevState: ServerResponse) {
   const sessionId = lucia.readSessionCookie('auth_session=abc')
 
-  if (!sessionId) {
-    return { type: 'error', message: 'No session', status: 401 } satisfies ServerResponse
-  }
+  if (!sessionId) return { type: 'error', message: 'No session', status: 401 }
 
   const { user } = await lucia.validateSession(sessionId)
 
   if (!user) {
-    return { type: 'error', message: 'No user', status: 401 } satisfies ServerResponse
+    return { type: 'error', message: 'No user', status: 401 }
   }
 
   if (user.emailVerified) {
@@ -169,7 +171,7 @@ export async function verifyEmail(prevState: ServerResponse) {
       type: 'error',
       message: 'Email already verified',
       status: 400,
-    } satisfies ServerResponse
+    }
   }
 
   try {
@@ -180,45 +182,47 @@ export async function verifyEmail(prevState: ServerResponse) {
       type: 'success',
       message: 'Verification email sent',
       status: 200,
-    } satisfies ServerResponse
+    }
   } catch (err) {
     return {
       type: 'error',
       message: err instanceof Error ? capitalise(err?.message) : 'An unknown error occurred',
       status: 500,
-    } satisfies ServerResponse
+    }
   }
 }
 
-export async function resetPassword(prevState: ServerResponse, formData: FormData) {
-  const email = formData.get('email')
+export async function resetPassword(
+  prevState: ServerResponse,
+  formData: FormData
+): Promise<ServerResponse> {
+  const email = formData.get('email') as string
 
   if (!isValidEmail(email)) {
-    return { type: 'error', message: 'Invalid email', status: 400 } satisfies ServerResponse
+    return { type: 'error', message: 'Invalid email', status: 400 }
   }
 
   try {
     const [u] = await db.select().from(user).where(eq(user.email, email.toLowerCase())).limit(1)
 
     if (!u) {
-      return { type: 'error', message: 'Invalid email', status: 400 } satisfies ServerResponse
+      return { type: 'error', message: 'Invalid email', status: 400 }
     }
 
-    const token = await createPasswordResetToken(u.userId)
-
-    await sendPasswordResetEmail(email, token)
+    const { userId } = await transformDbUser(u)
+    await sendPasswordResetEmail(email, await createPasswordResetToken(userId))
 
     return {
       type: 'success',
       message: 'Password reset email sent',
       status: 200,
-    } satisfies ServerResponse
+    }
   } catch (err) {
     return {
       type: 'error',
       message: err instanceof Error ? capitalise(err?.message) : 'An unknown error occurred',
       status: 500,
-    } satisfies ServerResponse
+    }
   }
 }
 

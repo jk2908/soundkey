@@ -1,20 +1,19 @@
 import { cache } from 'react'
 import { cookies } from 'next/headers'
-import { NodePostgresAdapter } from '@lucia-auth/adapter-postgresql'
+import { DrizzlePostgreSQLAdapter } from '@lucia-auth/adapter-drizzle'
 import { Lucia, TimeSpan } from 'lucia'
 
-import { pool } from '@/lib/db'
+import { db} from '@/lib/db'
+import { type User } from '@/lib/schema'
 import type { UserRole } from '@/lib/schema'
+import { user, session } from '@/lib/schema'
 
-const adapter = new NodePostgresAdapter(pool, {
-  user: 'user',
-  session: 'session',
-})
+const adapter = new DrizzlePostgreSQLAdapter(db, user, session)
 
 export const lucia = new Lucia(adapter, {
-  getUserAttributes: ({ user_id, email, email_verified, created_at, role }) => {
+  getUserAttributes: ({ id, email, email_verified, created_at, role }) => {
     return {
-      userId: user_id,
+      userId: id,
       email,
       emailVerified: Boolean(email_verified),
       createdAt: created_at,
@@ -44,10 +43,16 @@ export const auth = cache(async () => {
         ? lucia.createSessionCookie(session.id)
         : lucia.createBlankSessionCookie()
 
-    cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes)
+    cookies().set(sessionCookie)
   } catch {}
 
   return user
 })
+
+export async function transformDbUser(user: User) {
+  const { id, ...rest } = user
+
+  return { userId: id, ...rest }
+}
 
 export const is$User = (role: UserRole) => ['admin', 'system'].includes(role)

@@ -61,15 +61,17 @@ export async function resolveThread(
   }
 }
 
-export async function sendMessage(payload: NewMessage) {
+export async function sendMessage(payload: NewMessage): Promise<ServerResponse> {
   try {
     const { id: messageId = generateId(), recipientIds, threadId } = payload
 
-    if (!recipientIds) throw new Error('No recipient specified')
+    if (!recipientIds) return { type: 'error', message: 'No recipient specified', status: 400 }
 
     const resolvedThreadId = await resolveThread(threadId, recipientIds, messageId)
 
-    if (!resolvedThreadId) throw new Error('Could not resolve thread')
+    if (!resolvedThreadId) {
+      return { type: 'error', message: 'Could not resolve thread', status: 500 }
+    }
 
     await db.insert(message).values({
       ...(payload as NewMessage),
@@ -80,18 +82,20 @@ export async function sendMessage(payload: NewMessage) {
       type: 'success',
       message: 'Message sent',
       status: 201,
-    } satisfies ServerResponse
+    }
   } catch (err) {
     console.log(err)
     return {
       type: 'error',
       message: err instanceof Error ? capitalise(err?.message) : 'An unknown error occurred',
       status: 500,
-    } satisfies ServerResponse
+    }
   }
 }
 
-export async function editMessage(payload: EditMessage & { messageId: string }) {
+export async function editMessage(
+  payload: EditMessage & { messageId: string }
+): Promise<ServerResponse> {
   try {
     const { messageId, body } = payload
 
@@ -104,14 +108,14 @@ export async function editMessage(payload: EditMessage & { messageId: string }) 
       type: 'success',
       message: 'Message edited',
       status: 200,
-    } satisfies ServerResponse
+    }
   } catch (err) {
     console.log(err)
     return {
       type: 'error',
       message: err instanceof Error ? capitalise(err?.message) : 'An unknown error occurred',
       status: 500,
-    } satisfies ServerResponse
+    }
   }
 }
 

@@ -24,17 +24,12 @@ export const user = pgTable('user', {
   })
     .primaryKey()
     .$defaultFn(generateId),
-  userId: varchar('user_id', {
-    length: 15,
-  })
-    .unique()
-    .notNull(),
   email: varchar('email', {
     length: 255,
   })
     .unique()
     .notNull(),
-  password: varchar('password', {
+  hashedPassword: varchar('hashed_password', {
     length: 255,
   }).notNull(),
   emailVerified: boolean('email_verified').default(false).notNull(),
@@ -207,7 +202,9 @@ export const messageRelations = relations(message, ({ one }) => ({
 }))
 
 export type User = InferSelectModel<typeof user>
-export type NewUser = Omit<InferInsertModel<typeof user>, 'userId'>
+export type NewUser = Omit<InferInsertModel<typeof user>, 'id' | 'hashedPassword'> & {
+  password: string
+}
 export type Message = InferSelectModel<typeof message>
 export type NewMessage = Omit<
   InferInsertModel<typeof message>,
