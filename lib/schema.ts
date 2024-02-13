@@ -1,100 +1,91 @@
-import { InferInsertModel, InferSelectModel, relations } from 'drizzle-orm'
-import {
-  bigint,
-  boolean,
-  pgEnum,
-  pgTable,
-  primaryKey,
-  text,
-  timestamp,
-  varchar,
-} from 'drizzle-orm/pg-core'
+import { InferInsertModel, InferSelectModel, relations, sql } from 'drizzle-orm'
+import { integer, primaryKey, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 import { generateId } from '@/utils/generate-id'
 
 export const userRoles = ['user', 'admin', 'system'] as const
-export const userRole = pgEnum('user_role', userRoles)
+export const userRole = text('user_role', { enum: userRoles })
 
 export const messageTypes = ['message', 'system_message'] as const
-export const messageType = pgEnum('message_type', messageTypes)
+export const messageType = text('message_type', { enum: messageTypes })
 
-export const user = pgTable('user', {
-  id: varchar('id', {
+export const user = sqliteTable('user', {
+  id: text('id', {
     length: 15,
   })
     .primaryKey()
     .$defaultFn(generateId),
-  email: varchar('email', {
+  email: text('email', {
     length: 255,
   })
     .unique()
     .notNull(),
-  hashedPassword: varchar('hashed_password', {
+  hashedPassword: text('hashed_password', {
     length: 255,
   }).notNull(),
-  emailVerified: boolean('email_verified').default(false).notNull(),
-  createdAt: timestamp('created_at', {
-    mode: 'string',
+  emailVerified: integer('email_verified', { mode: 'boolean' }).default(false).notNull(),
+  createdAt: integer('created_at', {
+    mode: 'timestamp_ms',
   })
     .notNull()
-    .defaultNow(),
-  updatedAt: timestamp('updated_at', {
-    mode: 'string',
+    .default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: integer('updated_at', {
+    mode: 'timestamp_ms',
   }),
-  role: userRole('role').default('user').notNull(),
+  role: userRole.default('user').notNull(),
 })
 
-export const session = pgTable('session', {
-  id: varchar('id', {
+export const session = sqliteTable('session', {
+  id: text('id', {
     length: 128,
   }).primaryKey(),
-  userId: varchar('user_id', {
+  userId: text('user_id', {
     length: 15,
   })
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
-  expiresAt: timestamp('expires_at', {
-    mode: 'string',
+  expiresAt: integer('expires_at', {
+    mode: 'timestamp_ms',
   }).notNull(),
 })
 
-export const emailVerificationToken = pgTable('email_verification_token', {
-  id: varchar('id', {
+export const emailVerificationToken = sqliteTable('email_verification_token', {
+  id: text('id', {
     length: 63,
   }).primaryKey(),
-  userId: varchar('user_id', {
+  userId: text('user_id', {
     length: 15,
   })
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
-  expiresAt: bigint('expires_at', {
-    mode: 'number',
+  expiresAt: integer('expires_at', {
+    mode: 'timestamp_ms',
   }).notNull(),
 })
 
-export const passwordResetToken = pgTable('password_reset_token', {
-  id: varchar('id', {
+export const passwordResetToken = sqliteTable('password_reset_token', {
+  id: text('id', {
     length: 63,
   }).primaryKey(),
-  userId: varchar('user_id', {
+  userId: text('user_id', {
     length: 15,
   })
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
-  expiresAt: bigint('expires_at', {
-    mode: 'number',
+  expiresAt: integer('expires_at', {
+    mode: 'timestamp_ms',
   }).notNull(),
 })
 
-export const threadToUser = pgTable(
+export const threadToUser = sqliteTable(
   'thread_to_user',
   {
-    threadId: varchar('thread_id', {
+    threadId: text('thread_id', {
       length: 15,
     })
       .notNull()
       .references(() => thread.id),
-    userId: varchar('user_id', {
+    userId: text('user_id', {
       length: 15,
     })
       .notNull()
@@ -105,49 +96,47 @@ export const threadToUser = pgTable(
   })
 )
 
-export const thread = pgTable('thread', {
-  id: varchar('id').primaryKey().notNull().$defaultFn(generateId),
-  messageIds: varchar('message_ids', {
+export const thread = sqliteTable('thread', {
+  id: text('id').primaryKey().notNull().$defaultFn(generateId),
+  messageIds: text('message_ids', {
     length: 15,
   })
     .references(() => message.id)
-    .array()
     .notNull(),
-  createdAt: timestamp('created_at', {
-    mode: 'string',
+  createdAt: integer('created_at', {
+    mode: 'timestamp_ms',
   })
     .notNull()
-    .defaultNow(),
-  updatedAt: timestamp('updated_at', {
-    mode: 'string',
+    .default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: integer('updated_at', {
+    mode: 'timestamp_ms',
   }),
 })
 
-export const message = pgTable('message', {
-  id: varchar('id').primaryKey().notNull().$defaultFn(generateId),
-  threadId: varchar('thread_id', {
+export const message = sqliteTable('message', {
+  id: text('id').primaryKey().notNull().$defaultFn(generateId),
+  threadId: text('thread_id', {
     length: 15,
   }).notNull(),
-  senderId: varchar('sender_id', {
+  senderId: text('sender_id', {
     length: 15,
   })
     .notNull()
     .references(() => user.id),
-  recipientIds: varchar('recipient_ids', { length: 15 })
+  recipientIds: text('recipient_ids', { length: 15 })
     .references(() => user.id)
-    .array()
     .notNull(),
   body: text('body').notNull(),
-  createdAt: timestamp('created_at', {
-    mode: 'string',
+  createdAt: integer('created_at', {
+    mode: 'timestamp_ms',
   })
     .notNull()
-    .defaultNow(),
-  updatedAt: timestamp('updated_at', {
-    mode: 'string',
+    .default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: integer('updated_at', {
+    mode: 'timestamp_ms',
   }),
-  read: boolean('read').default(false).notNull(),
-  type: messageType('message_type').notNull(),
+  read: integer('read', { mode: 'boolean' }).default(false).notNull(),
+  type: messageType.notNull(),
 })
 
 export const userRelations = relations(user, ({ many }) => ({
