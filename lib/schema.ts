@@ -9,196 +9,156 @@ export const userRole = text('user_role', { enum: userRoles })
 export const messageTypes = ['message', 'system_message'] as const
 export const messageType = text('message_type', { enum: messageTypes })
 
-export const user = sqliteTable('user', {
-  id: text('id', {
-    length: 15,
-  })
+export const userTable = sqliteTable('user', {
+  id: text('id')
     .primaryKey()
-    .$defaultFn(generateId),
-  email: text('email', {
-    length: 255,
-  })
+    .$defaultFn(() => generateId()),
+  email: text('email')
     .unique()
     .notNull(),
-  hashedPassword: text('hashed_password', {
-    length: 255,
-  }).notNull(),
+  hashedPassword: text('hashed_password').notNull(),
   emailVerified: integer('email_verified', { mode: 'boolean' }).default(false).notNull(),
-  createdAt: integer('created_at', {
-    mode: 'timestamp_ms',
-  })
+  createdAt: integer('created_at')
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: integer('updated_at', {
-    mode: 'timestamp_ms',
-  }),
+  updatedAt: integer('updated_at'),
   role: userRole.default('user').notNull(),
 })
 
-export const session = sqliteTable('session', {
-  id: text('id', {
-    length: 128,
-  }).primaryKey(),
-  userId: text('user_id', {
-    length: 15,
-  })
+export const sessionTable = sqliteTable('session', {
+  id: text('id').primaryKey(),
+  userId: text('user_id')
     .notNull()
-    .references(() => user.id, { onDelete: 'cascade' }),
-  expiresAt: integer('expires_at', {
-    mode: 'timestamp_ms',
-  }).notNull(),
+    .references(() => userTable.id, {
+      onUpdate: 'cascade',
+      onDelete: 'cascade',
+    }),
+  expiresAt: integer('expires_at').notNull(),
 })
 
-export const emailVerificationToken = sqliteTable('email_verification_token', {
-  id: text('id', {
-    length: 63,
-  }).primaryKey(),
-  userId: text('user_id', {
-    length: 15,
-  })
+export const emailVerificationTokenTable = sqliteTable('email_verification_token', {
+  id: text('id').primaryKey(),
+  userId: text('user_id')
     .notNull()
-    .references(() => user.id, { onDelete: 'cascade' }),
-  expiresAt: integer('expires_at', {
-    mode: 'timestamp_ms',
-  }).notNull(),
+    .references(() => userTable.id, { onUpdate: 'cascade', onDelete: 'cascade' }),
+  expiresAt: integer('expires_at').notNull(),
 })
 
-export const passwordResetToken = sqliteTable('password_reset_token', {
-  id: text('id', {
-    length: 63,
-  }).primaryKey(),
-  userId: text('user_id', {
-    length: 15,
-  })
+export const passwordResetTokenTable = sqliteTable('password_reset_token', {
+  id: text('id').primaryKey(),
+  userId: text('user_id')
     .notNull()
-    .references(() => user.id, { onDelete: 'cascade' }),
-  expiresAt: integer('expires_at', {
-    mode: 'timestamp_ms',
-  }).notNull(),
+    .references(() => userTable.id, { onUpdate: 'cascade', onDelete: 'cascade' }),
+  expiresAt: integer('expires_at').notNull(),
 })
 
-export const threadToUser = sqliteTable(
+export const threadToUserTable = sqliteTable(
   'thread_to_user',
   {
-    threadId: text('thread_id', {
-      length: 15,
-    })
+    threadId: text('thread_id')
       .notNull()
-      .references(() => thread.id),
-    userId: text('user_id', {
-      length: 15,
-    })
+      .references(() => threadTable.id),
+    userId: text('user_id')
       .notNull()
-      .references(() => user.id, { onDelete: 'cascade' }),
+      .references(() => userTable.id, { onUpdate: 'cascade', onDelete: 'cascade' }),
   },
   t => ({
     pk: primaryKey({ columns: [t.userId, t.threadId] }),
   })
 )
 
-export const thread = sqliteTable('thread', {
-  id: text('id').primaryKey().notNull().$defaultFn(generateId),
-  messageIds: text('message_ids', {
-    length: 15,
-  })
-    .references(() => message.id)
-    .notNull(),
-  createdAt: integer('created_at', {
-    mode: 'timestamp_ms',
-  })
+export const threadTable = sqliteTable('thread', {
+  id: text('id').primaryKey().notNull().$defaultFn(() => generateId()),
+  createdAt: integer('created_at')
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: integer('updated_at', {
-    mode: 'timestamp_ms',
-  }),
+  updatedAt: integer('updated_at'),
 })
 
-export const message = sqliteTable('message', {
-  id: text('id').primaryKey().notNull().$defaultFn(generateId),
-  threadId: text('thread_id', {
-    length: 15,
-  }).notNull(),
-  senderId: text('sender_id', {
-    length: 15,
-  })
+export const messageTable = sqliteTable('message', {
+  id: text('id').primaryKey().notNull().$defaultFn(() => generateId()),
+  threadId: text('thread_id').notNull(),
+  senderId: text('sender_id')
     .notNull()
-    .references(() => user.id),
-  recipientIds: text('recipient_ids', { length: 15 })
-    .references(() => user.id)
+    .references(() => userTable.id),
+  recipientIds: text('recipient_ids')
+    .references(() => userTable.id)
     .notNull(),
   body: text('body').notNull(),
-  createdAt: integer('created_at', {
-    mode: 'timestamp_ms',
-  })
+  createdAt: integer('created_at')
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: integer('updated_at', {
-    mode: 'timestamp_ms',
-  }),
+  updatedAt: integer('updated_at'),
   read: integer('read', { mode: 'boolean' }).default(false).notNull(),
   type: messageType.notNull(),
 })
 
-export const userRelations = relations(user, ({ many }) => ({
-  session: many(session),
-  emailVerificationToken: many(emailVerificationToken),
-  passwordResetToken: many(passwordResetToken),
-  threadToUser: many(threadToUser),
+export const userRelations = relations(userTable, ({ many }) => ({
+  session: many(sessionTable),
+  emailVerificationToken: many(emailVerificationTokenTable),
+  passwordResetToken: many(passwordResetTokenTable),
+  threadToUser: many(threadToUserTable),
 }))
 
-export const sessionRelations = relations(session, ({ one }) => ({
-  user: one(user, {
-    fields: [session.userId],
-    references: [user.id],
+export const sessionRelations = relations(sessionTable, ({ one }) => ({
+  user: one(userTable, {
+    fields: [sessionTable.userId],
+    references: [userTable.id],
   }),
 }))
 
-export const emailVerificationTokenRelations = relations(emailVerificationToken, ({ one }) => ({
-  user: one(user, {
-    fields: [emailVerificationToken.userId],
-    references: [user.id],
+export const emailVerificationTokenRelations = relations(
+  emailVerificationTokenTable,
+  ({ one }) => ({
+    user: one(userTable, {
+      fields: [emailVerificationTokenTable.userId],
+      references: [userTable.id],
+    }),
+  })
+)
+
+export const passwordResetTokenRelations = relations(passwordResetTokenTable, ({ one }) => ({
+  user: one(userTable, {
+    fields: [passwordResetTokenTable.userId],
+    references: [userTable.id],
   }),
 }))
 
-export const passwordResetTokenRelations = relations(passwordResetToken, ({ one }) => ({
-  user: one(user, {
-    fields: [passwordResetToken.userId],
-    references: [user.id],
+export const threadToUserRelations = relations(threadToUserTable, ({ one }) => ({
+  thread: one(threadTable, {
+    fields: [threadToUserTable.threadId],
+    references: [threadTable.id],
+  }),
+  user: one(userTable, {
+    fields: [threadToUserTable.userId],
+    references: [userTable.id],
   }),
 }))
 
-export const threadToUserRelations = relations(threadToUser, ({ one }) => ({
-  thread: one(thread, {
-    fields: [threadToUser.threadId],
-    references: [thread.id],
-  }),
-  user: one(user, {
-    fields: [threadToUser.userId],
-    references: [user.id],
-  }),
+export const threadRelations = relations(threadTable, ({ many }) => ({
+  threadToUser: many(threadToUserTable),
+  message: many(messageTable),
 }))
 
-export const threadRelations = relations(thread, ({ many }) => ({
-  threadToUser: many(threadToUser),
-  message: many(message),
-}))
-
-export const messageRelations = relations(message, ({ one }) => ({
-  thread: one(thread, {
-    fields: [message.threadId],
-    references: [thread.id],
+export const messageRelations = relations(messageTable, ({ one }) => ({
+  thread: one(threadTable, {
+    fields: [messageTable.threadId],
+    references: [threadTable.id],
   }),
 }))
 
-export type User = InferSelectModel<typeof user>
-export type NewUser = Omit<InferInsertModel<typeof user>, 'id' | 'hashedPassword'> & {
+export type User = InferSelectModel<typeof userTable>
+export type NewUser = Omit<InferInsertModel<typeof userTable>, 'id' | 'hashedPassword'> & {
   password: string
 }
-export type Message = InferSelectModel<typeof message>
+export type Message = InferSelectModel<typeof messageTable>
 export type NewMessage = Omit<
-  InferInsertModel<typeof message>,
+  InferInsertModel<typeof messageTable>,
   'threadId' | 'recipientIds' | 'type'
 > & { threadId?: string; recipientIds: string[]; type: MessageType }
-export type EditMessage = Omit<InferInsertModel<typeof message>, 'threadId' | 'createdAt' | 'type'>
+export type EditMessage = Omit<
+  InferInsertModel<typeof messageTable>,
+  'threadId' | 'createdAt' | 'type'
+>
 export type MessageType = (typeof messageTypes)[number]
 export type UserRole = (typeof userRoles)[number]

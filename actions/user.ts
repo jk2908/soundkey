@@ -11,7 +11,7 @@ import { Argon2id } from 'oslo/password'
 import { lucia, transformDbUser } from '@/lib/auth'
 import { APP_EMAIL, APP_NAME } from '@/lib/config'
 import { db } from '@/lib/db'
-import { NewUser, user } from '@/lib/schema'
+import { NewUser, userTable } from '@/lib/schema'
 import type { ServerResponse } from '@/lib/types'
 import { capitalise } from '@/utils/capitalise'
 import { generateId } from '@/utils/generate-id'
@@ -25,24 +25,29 @@ export async function createUser({
   token = true,
 }: NewUser & { token?: boolean }) {
   try {
+    const { db } = await import('@/lib/db')
+
     const id = generateId()
-    const [existingUser] = await db.select().from(user).where(eq(user.email, email.toLowerCase()))
+    const [existingUser] = await db
+      .select()
+      .from(userTable)
+      .where(eq(userTable.email, email.toLowerCase()))
 
     if (existingUser) throw new Error('Email already in use')
 
     const hashedPassword = await new Argon2id().hash(password)
 
     const [u] = await db
-      .insert(user)
+      .insert(userTable)
       .values({
         id,
         email: email.toLowerCase(),
         hashedPassword,
         emailVerified,
         role,
-        createdAt: new Date().toISOString(),
+        createdAt: Date.now(),
       })
-      .returning({ userId: user.id })
+      .returning({ userId: userTable.id })
 
     if (!emailVerified && token) {
       await sendVerificationEmail(email, await createEmailVerificationToken(u.userId))
@@ -82,7 +87,7 @@ export async function signup(
     const { id: systemUserId } = await getSystemUser()
     await sendMessage({
       body: `Welcome to ${APP_NAME}. Please check your email to verify your account. Certain features may be unavailable until your account is verified.`,
-      createdAt: new Date().toISOString(),
+      createdAt: Date.now(),
       senderId: systemUserId,
       recipientIds: [u.userId],
       type: 'system_message',
@@ -117,9 +122,9 @@ export async function login(
 
   try {
     const [u] = await db
-      .select({ userId: user.id, hashedPassword: user.hashedPassword })
-      .from(user)
-      .where(eq(user.email, email.toLowerCase()))
+      .select({ userId: userTable.id, hashedPassword: userTable.hashedPassword })
+      .from(userTable)
+      .where(eq(userTable.email, email.toLowerCase()))
 
     if (!u) return { type: 'error', message: 'Invalid email', status: 400 }
 
@@ -142,15 +147,14 @@ export async function login(
 }
 
 export async function logout() {
-  const sessionId = lucia.readSessionCookie('auth_session=abc')
+  const sessionId = cookies().get(lucia.sessionCookieName)?.value
 
   if (!sessionId) return { type: 'error', message: 'No session', status: 401 }
 
-  const { session } = await lucia.validateSession(sessionId)
-
-  if (!session) return { type: 'error', message: 'No session', status: 401 }
-
   await lucia.invalidateSession(sessionId)
+  
+  const sessionCookie = lucia.createBlankSessionCookie();
+	cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 
   return { type: 'success', message: 'Logged out', status: 200 }
 }
@@ -203,7 +207,11 @@ export async function resetPassword(
   }
 
   try {
-    const [u] = await db.select().from(user).where(eq(user.email, email.toLowerCase())).limit(1)
+    const [u] = await db
+      .select()
+      .from(userTable)
+      .where(eq(userTable.email, email.toLowerCase()))
+      .limit(1)
 
     if (!u) {
       return { type: 'error', message: 'Invalid email', status: 400 }
@@ -227,15 +235,16 @@ export async function resetPassword(
 }
 
 export const getUser = cache(async (userId: string) => {
-  const [u] = await db.select().from(user).where(eq(user.id, userId)).limit(1)
+  const [u] = await db.select().from(userTable).where(eq(userTable.id, userId)).limit(1)
   return u
 })
 
 export const getUsers = cache(
-  async (userIds: string[]) => await db.select().from(user).where(inArray(user.id, userIds))
+  async (userIds: string[]) =>
+    await db.select().from(userTable).where(inArray(userTable.id, userIds))
 )
 
 export const getSystemUser = cache(async () => {
-  const [u] = await db.select().from(user).where(eq(user.email, APP_EMAIL)).limit(1)
+  const [u] = await db.select().from(userTable).where(eq(userTable.email, APP_EMAIL)).limit(1)
   return u
 })

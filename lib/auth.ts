@@ -1,14 +1,12 @@
 import { cache } from 'react'
 import { cookies } from 'next/headers'
-import { DrizzlePostgreSQLAdapter } from '@lucia-auth/adapter-drizzle'
+import { DrizzleSQLiteAdapter } from '@lucia-auth/adapter-drizzle'
 import { Lucia, TimeSpan } from 'lucia'
 
-import { db} from '@/lib/db'
-import { type User } from '@/lib/schema'
-import type { UserRole } from '@/lib/schema'
-import { user, session } from '@/lib/schema'
+import { db } from '@/lib/db'
+import { userTable, sessionTable, type User, type UserRole } from '@/lib/schema'
 
-const adapter = new DrizzlePostgreSQLAdapter(db, user, session)
+const adapter = new DrizzleSQLiteAdapter(db, sessionTable, userTable)
 
 export const lucia = new Lucia(adapter, {
   getUserAttributes: ({ id, email, email_verified, created_at, role }) => {

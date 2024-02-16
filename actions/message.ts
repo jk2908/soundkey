@@ -3,7 +3,7 @@
 import { desc, eq, sql } from 'drizzle-orm'
 
 import { db } from '@/lib/db'
-import { message, thread, threadToUser } from '@/lib/schema'
+import { messageTable, threadTable, threadToUserTable } from '@/lib/schema'
 import type { EditMessage, NewMessage } from '@/lib/schema'
 import type { ServerResponse } from '@/lib/types'
 import { capitalise } from '@/utils/capitalise'
@@ -12,14 +12,13 @@ import { generateId } from '@/utils/generate-id'
 export async function createThread(userIds: string[], messageId: string) {
   try {
     const [newThread] = await db
-      .insert(thread)
+      .insert(threadTable)
       .values({
-        messageIds: [messageId],
-        createdAt: new Date().toISOString(),
+        createdAt: Date.now(),
       })
-      .returning({ id: thread.id })
+      .returning({ id: threadTable.id })
 
-    await db.insert(threadToUser).values(
+    await db.insert(threadToUserTable).values(
       userIds.map(userId => ({
         threadId: newThread.id,
         userId,
@@ -43,16 +42,16 @@ export async function resolveThread(
       return await createThread(userIds, messageId)
     }
 
-    const [existingThread] = await db.select().from(thread).where(eq(thread.id, threadId))
+    const [existingThread] = await db.select().from(threadTable).where(eq(threadTable.id, threadId))
 
     if (!existingThread) {
       throw new Error('Could not find thread')
     }
 
     await db
-      .update(thread)
-      .set({ messageIds: sql`message_ids || ${messageId}`, updatedAt: new Date().toISOString() })
-      .where(eq(thread.id, existingThread.id))
+      .update(threadTable)
+      .set({ updatedAt: Date.now() })
+      .where(eq(threadTable.id, existingThread.id))
 
     return existingThread.id
   } catch (err) {
@@ -73,9 +72,10 @@ export async function sendMessage(payload: NewMessage): Promise<ServerResponse> 
       return { type: 'error', message: 'Could not resolve thread', status: 500 }
     }
 
-    await db.insert(message).values({
+    await db.insert(messageTable).values({
       ...(payload as NewMessage),
       threadId: resolvedThreadId,
+      recipientIds: recipientIds.join(','),
     })
 
     return {
@@ -100,9 +100,9 @@ export async function editMessage(
     const { messageId, body } = payload
 
     await db
-      .update(message)
-      .set({ body, updatedAt: new Date().toISOString() })
-      .where(eq(message.id, messageId))
+      .update(messageTable)
+      .set({ body, updatedAt: Date.now() })
+      .where(eq(messageTable.id, messageId))
 
     return {
       type: 'success',
@@ -123,13 +123,13 @@ export async function getThreads(userId: string) {
   try {
     const threads = await db
       .select({
-        threadId: threadToUser.threadId,
-        createdAt: thread.createdAt,
-        updatedAt: thread.updatedAt,
+        threadId: threadToUserTable.threadId,
+        createdAt: threadTable.createdAt,
+        updatedAt: threadTable.updatedAt,
       })
-      .from(threadToUser)
-      .leftJoin(thread, eq(thread.id, threadToUser.threadId))
-      .where(eq(threadToUser.userId, userId))
+      .from(threadToUserTable)
+      .leftJoin(threadTable, eq(threadTable.id, threadToUserTable.threadId))
+      .where(eq(threadToUserTable.userId, userId))
 
     if (!threads.length) return []
 
@@ -141,7 +141,7 @@ export async function getThreads(userId: string) {
 
 export async function getThread(threadId: string) {
   try {
-    const [t] = await db.select().from(thread).where(eq(thread.id, threadId))
+    const [t] = await db.select().from(threadTable).where(eq(threadTable.id, threadId))
 
     if (!t) return null
 
@@ -159,19 +159,19 @@ export async function getMessagesByUser(userId: string) {
 
     const messages = await db
       .select({
-        messageId: message.id,
-        threadId: message.threadId,
-        senderId: message.senderId,
-        recipientIds: message.recipientIds,
-        body: message.body,
-        createdAt: message.createdAt,
-        updatedAt: message.updatedAt,
-        read: message.read,
-        type: message.type,
+        messageId: messageTable.id,
+        threadId: messageTable.threadId,
+        senderId: messageTable.senderId,
+        recipientIds: messageTable.recipientIds,
+        body: messageTable.body,
+        createdAt: messageTable.createdAt,
+        updatedAt: messageTable.updatedAt,
+        read: messageTable.read,
+        type: messageTable.type,
       })
-      .from(message)
+      .from(messageTable)
       .where(sql`thread_id IN (${threads.map(thread => thread.threadId)})`)
-      .orderBy(desc(message.createdAt))
+      .orderBy(desc(messageTable.createdAt))
 
     return messages
   } catch (err) {
@@ -183,19 +183,19 @@ export async function getMessagesByThread(threadId: string) {
   try {
     const messages = await db
       .select({
-        messageId: message.id,
-        threadId: message.threadId,
-        senderId: message.senderId,
-        recipientIds: message.recipientIds,
-        body: message.body,
-        createdAt: message.createdAt,
-        updatedAt: message.updatedAt,
-        read: message.read,
-        type: message.type,
+        messageId: messageTable.id,
+        threadId: messageTable.threadId,
+        senderId: messageTable.senderId,
+        recipientIds: messageTable.recipientIds,
+        body: messageTable.body,
+        createdAt: messageTable.createdAt,
+        updatedAt: messageTable.updatedAt,
+        read: messageTable.read,
+        type: messageTable.type,
       })
-      .from(message)
-      .where(eq(message.threadId, threadId))
-      .orderBy(desc(message.createdAt))
+      .from(messageTable)
+      .where(eq(messageTable.threadId, threadId))
+      .orderBy(desc(messageTable.createdAt))
 
     return messages
   } catch (err) {
@@ -205,7 +205,7 @@ export async function getMessagesByThread(threadId: string) {
 
 export async function getMessage(messageId: string) {
   try {
-    const [m] = await db.select().from(message).where(eq(message.id, messageId))
+    const [m] = await db.select().from(messageTable).where(eq(messageTable.id, messageId))
 
     if (!m) return null
 
@@ -217,7 +217,7 @@ export async function getMessage(messageId: string) {
 
 export async function markMessageAsRead(messageId: string) {
   try {
-    await db.update(message).set({ read: true }).where(eq(message.id, messageId))
+    await db.update(messageTable).set({ read: true }).where(eq(messageTable.id, messageId))
 
     return {
       type: 'success',
