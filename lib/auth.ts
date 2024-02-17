@@ -1,43 +1,56 @@
 import { cache } from 'react'
-import * as context from 'next/headers'
-import { pg } from '@lucia-auth/adapter-postgresql'
-import { User, lucia } from 'lucia'
-import { nextjs_future } from 'lucia/middleware'
+import { cookies } from 'next/headers'
+import { DrizzleSQLiteAdapter } from '@lucia-auth/adapter-drizzle'
+import { Lucia, TimeSpan } from 'lucia'
 
-import { pool } from '@/lib/db'
-import type { UserRole } from '@/lib/schema'
+import { db } from '@/lib/db'
+import { userTable, sessionTable, type User, type UserRole } from '@/lib/schema'
 
-export const _auth = lucia({
-  adapter: pg(pool, {
-    user: 'user',
-    session: 'session',
-    key: 'key',
-  }),
-  env: process.env.NODE_ENV === 'development' ? 'DEV' : 'PROD',
-  middleware: nextjs_future(),
-  sessionCookie: {
-    expires: false,
-  },
-  getUserAttributes: ({ email, email_verified, created_at, role }) => {
+const adapter = new DrizzleSQLiteAdapter(db, sessionTable, userTable)
+
+export const lucia = new Lucia(adapter, {
+  getUserAttributes: ({ id, email, email_verified, created_at, role }) => {
     return {
+      userId: id,
       email,
       emailVerified: Boolean(email_verified),
       createdAt: created_at,
       role,
     }
   },
+  sessionExpiresIn: new TimeSpan(30, 'd'),
+  sessionCookie: {
+    name: 'session',
+    expires: false,
+    attributes: {
+      secure: process.env.NODE_ENV === 'production',
+    },
+  },
 })
 
-export type Auth = typeof _auth
+export const auth = cache(async () => {
+  const sessionId = cookies().get(lucia.sessionCookieName)?.value ?? null
 
-export const getPageSession = cache(() => _auth.handleRequest('GET', context).validate())
+  if (!sessionId) return null
 
-export async function auth() {
-  const { user } = (await getPageSession()) ?? {}
+  const { user, session } = await lucia.validateSession(sessionId)
 
-  if (!user) return null
+  try {
+    const sessionCookie =
+      session && session.fresh
+        ? lucia.createSessionCookie(session.id)
+        : lucia.createBlankSessionCookie()
+
+    cookies().set(sessionCookie)
+  } catch {}
 
   return user
+})
+
+export async function transformDbUser(user: User) {
+  const { id, ...rest } = user
+
+  return { userId: id, ...rest }
 }
 
 export const is$User = (role: UserRole) => ['admin', 'system'].includes(role)

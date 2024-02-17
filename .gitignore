@@ -43,5 +43,6 @@ next-env.d.ts
 /utils/_*.ts
 /cli
 
-# db
+# db 
 sqlite.db
+db.sqlite
