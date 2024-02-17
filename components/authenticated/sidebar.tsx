@@ -11,13 +11,12 @@ import { breakpoints } from '@/utils/breakpoints'
 import { cn } from '@/utils/cn'
 
 import { LogoutButton } from '@/components/authenticated/logout-button'
+import { Button } from '@/components/global/button'
 import { HorizontalRule } from '@/components/global/horizontal-rule'
 import { Icon } from '@/components/global/icon'
+import { LoadingSpinner } from '@/components/global/loading-spinner'
 import { Logo } from '@/components/global/logo'
 import { Section } from '@/components/global/section'
-import { Button } from '@/components/global/button'
-
-import { LoadingSpinner } from '@/components/global/loading-spinner'
 
 export function Sidebar({ children }: { children: React.ReactNode }) {
   const [isOpen, setOpen] = useState(false)
@@ -34,17 +33,21 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
   return (
     <>
       {!mq && (
-        <button onClick={() => setOpen(prev => !prev)} className="fixed bottom-8 right-8">
+        <button
+          onClick={() => setOpen(prev => !prev)}
+          className="fixed bottom-8 right-8 z-50 md:hidden">
           Toggle
         </button>
       )}
+      
       <Section
         ref={ref}
         size="lg"
         className={cn(
           'flex h-screen w-56 shrink-0 flex-col rounded-e-3xl border border-keyline bg-app-bg aria-current:bg-app-bg-inverted',
-          !mq && 'fixed inset-0 z-50 transition-transform',
-          !isOpen && '-translate-x-full'
+          'fixed inset-0 z-40 transition-transform',
+          !isOpen && '-translate-x-full',
+          'md:static md:translate-x-0'
         )}>
         <div className="mb-8 px-4">
           <Logo />
