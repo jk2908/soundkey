@@ -25,8 +25,6 @@ export async function createUser({
   token = true,
 }: NewUser & { token?: boolean }) {
   try {
-    const { db } = await import('@/lib/db')
-
     const id = generateId()
     const [existingUser] = await db
       .select()
@@ -50,7 +48,8 @@ export async function createUser({
       .returning({ userId: userTable.id })
 
     if (!emailVerified && token) {
-      await sendVerificationEmail(email, await createEmailVerificationToken(u.userId))
+      const t = await createEmailVerificationToken(u.userId)
+      await sendVerificationEmail(email, t)
     }
 
     return u
@@ -81,8 +80,12 @@ export async function signup(
     const u = await createUser({ email, password })
     const session = await lucia.createSession(u.userId, {})
 
+    console.log('session', session)
+
     const sessionCookie = lucia.createSessionCookie(session.id)
     cookies().set(sessionCookie)
+
+    console.log('sessionCookie', sessionCookie)
 
     const { id: systemUserId } = await getSystemUser()
     await sendMessage({

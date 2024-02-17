@@ -9,6 +9,8 @@ const rateLimiter = new RateLimiterMemory({
 })
 
 export async function middleware(request: NextRequest) {
+  if (process.env.NODE_ENV === 'development') return NextResponse.next()
+
   const originHeader = request.headers.get('Origin')
   const hostHeader = request.headers.get('Host')
 
@@ -22,8 +24,6 @@ export async function middleware(request: NextRequest) {
     case 'GET':
       return NextResponse.next()
     case 'POST':
-      if (process.env.NODE_ENV === 'development') return NextResponse.next()
-      
       let res: any
 
       try {
