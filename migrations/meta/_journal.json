@@ -1,19 +1,12 @@
 {
   "version": "5",
-  "dialect": "pg",
+  "dialect": "sqlite",
   "entries": [
     {
       "idx": 0,
       "version": "5",
-      "when": 1705862134352,
-      "tag": "0000_nebulous_songbird",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1707751807765,
-      "tag": "0001_premium_scarlet_witch",
+      "when": 1708183549282,
+      "tag": "0000_nice_rafael_vega",
       "breakpoints": true
     }
   ]

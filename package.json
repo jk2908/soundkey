@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db:generate": "drizzle-kit generate:pg",
+    "db:generate": "drizzle-kit generate:sqlite",
     "db:migrate": "tsx ./lib/migrate.ts",
     "db:studio": "drizzle-kit studio",
     "db:push": "drizzle-kit push:sqlite",

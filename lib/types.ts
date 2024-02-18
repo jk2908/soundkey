@@ -1,5 +1,11 @@
 import { lucia } from '@/lib/auth'
 
+declare module 'react' {
+  interface CSSProperties {
+    [key: `--${string}`]: string | number
+  }
+}
+
 declare module 'lucia' {
   export interface Register {
     Lucia: typeof lucia

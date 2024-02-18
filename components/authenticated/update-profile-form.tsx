@@ -1,17 +1,17 @@
 'use client'
 
 import { useEffect, useId } from 'react'
+import { updateProfile } from '@/actions/profile'
 import { useFormState } from 'react-dom'
 
-import { login } from '@/actions/user'
 import { ServerResponse } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
 
 import { FormGroup } from '@/components/global/form-group'
 import { Input } from '@/components/global/input'
 import { Label } from '@/components/global/label'
-import { SubmitButton } from '@/components/global/submit-button'
 import { LoadingSpinner } from '@/components/global/loading-spinner'
+import { SubmitButton } from '@/components/global/submit-button'
 
 const initialState: ServerResponse = {
   type: undefined,
@@ -19,10 +19,15 @@ const initialState: ServerResponse = {
   status: undefined,
 }
 
-export function LoginForm() {
-  const emailId = useId()
-  const passwordId = useId()
-  const [state, dispatch] = useFormState(login, initialState)
+export function UpdateProfileForm({
+  userId,
+  username,
+}: {
+  userId: string
+  username: string | null
+}) {
+  const usernameId = useId()
+  const [state, dispatch] = useFormState(updateProfile, initialState)
   const { toast } = useToast()
 
   useEffect(() => {
@@ -35,21 +40,16 @@ export function LoginForm() {
   return (
     <form action={dispatch}>
       <FormGroup>
-        <Label htmlFor={emailId}>Email</Label>
-        <Input id={emailId} type="email" name="email" required />
+        <Label htmlFor={usernameId}>Username</Label>
+        <Input id={usernameId} type="text" placeholder={username ? username : 'Username'} />
       </FormGroup>
 
       <FormGroup>
-        <Label htmlFor={passwordId}>Password</Label>
-        <Input id={passwordId} type="password" name="password" required />
-      </FormGroup>
-
-      <FormGroup>
-        <SubmitButton>
+        <SubmitButton className="mx-auto">
           {({ pending }) => (
             <>
               {pending && <LoadingSpinner />}
-              Login
+              Update
             </>
           )}
         </SubmitButton>

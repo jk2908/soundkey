@@ -130,7 +130,7 @@ export async function getThreads(userId: string) {
       .from(threadToUserTable)
       .leftJoin(threadTable, eq(threadTable.id, threadToUserTable.threadId))
       .where(eq(threadToUserTable.userId, userId))
-
+    
     if (!threads.length) return []
 
     return threads
@@ -205,30 +205,12 @@ export async function getMessagesByThread(threadId: string) {
 
 export async function getMessage(messageId: string) {
   try {
-    const [m] = await db.select().from(messageTable).where(eq(messageTable.id, messageId))
+    const [message] = await db.select().from(messageTable).where(eq(messageTable.id, messageId))
 
-    if (!m) return null
+    if (!message) return null
 
-    return m
+    return message
   } catch (err) {
     return null
-  }
-}
-
-export async function markMessageAsRead(messageId: string) {
-  try {
-    await db.update(messageTable).set({ read: true }).where(eq(messageTable.id, messageId))
-
-    return {
-      type: 'success',
-      message: 'Message marked as read',
-      status: 200,
-    } satisfies ServerResponse
-  } catch (err) {
-    return {
-      type: 'error',
-      message: err instanceof Error ? capitalise(err?.message) : 'An unknown error occurred',
-      status: 500,
-    } satisfies ServerResponse
   }
 }

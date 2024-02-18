@@ -13,9 +13,7 @@ export const userTable = sqliteTable('user', {
   id: text('id')
     .primaryKey()
     .$defaultFn(() => generateId()),
-  email: text('email')
-    .unique()
-    .notNull(),
+  email: text('email').unique().notNull(),
   hashedPassword: text('hashed_password').notNull(),
   emailVerified: integer('email_verified', { mode: 'boolean' }).default(false).notNull(),
   createdAt: integer('created_at')
@@ -68,7 +66,10 @@ export const threadToUserTable = sqliteTable(
 )
 
 export const threadTable = sqliteTable('thread', {
-  id: text('id').primaryKey().notNull().$defaultFn(() => generateId()),
+  id: text('id')
+    .primaryKey()
+    .notNull()
+    .$defaultFn(() => generateId()),
   createdAt: integer('created_at')
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
@@ -76,7 +77,10 @@ export const threadTable = sqliteTable('thread', {
 })
 
 export const messageTable = sqliteTable('message', {
-  id: text('id').primaryKey().notNull().$defaultFn(() => generateId()),
+  id: text('id')
+    .primaryKey()
+    .notNull()
+    .$defaultFn(() => generateId()),
   threadId: text('thread_id').notNull(),
   senderId: text('sender_id')
     .notNull()
@@ -93,11 +97,27 @@ export const messageTable = sqliteTable('message', {
   type: messageType.notNull(),
 })
 
-export const userRelations = relations(userTable, ({ many }) => ({
+export const profileTable = sqliteTable('profile', {
+  id: text('id')
+    .primaryKey()
+    .notNull()
+    .$defaultFn(() => generateId()),
+  userId: text('user_id').references(() => userTable.id, {
+    onUpdate: 'cascade',
+    onDelete: 'cascade',
+  }),
+  username: text('username').unique(),
+})
+
+export const userRelations = relations(userTable, ({ one, many }) => ({
   session: many(sessionTable),
   emailVerificationToken: many(emailVerificationTokenTable),
   passwordResetToken: many(passwordResetTokenTable),
   threadToUser: many(threadToUserTable),
+  profile: one(profileTable, {
+    fields: [userTable.id],
+    references: [profileTable.userId],
+  }),
 }))
 
 export const sessionRelations = relations(sessionTable, ({ one }) => ({
@@ -147,6 +167,13 @@ export const messageRelations = relations(messageTable, ({ one }) => ({
   }),
 }))
 
+export const profileRelations = relations(profileTable, ({ one }) => ({
+  user: one(userTable, {
+    fields: [profileTable.userId],
+    references: [userTable.id],
+  }),
+}))
+
 export type User = InferSelectModel<typeof userTable>
 export type NewUser = Omit<InferInsertModel<typeof userTable>, 'id' | 'hashedPassword'> & {
   password: string
@@ -160,5 +187,8 @@ export type EditMessage = Omit<
   InferInsertModel<typeof messageTable>,
   'threadId' | 'createdAt' | 'type'
 >
+export type Thread = InferSelectModel<typeof threadTable>
+export type Profile = Omit<InferSelectModel<typeof profileTable>, 'id' | 'userId'>
+
 export type MessageType = (typeof messageTypes)[number]
 export type UserRole = (typeof userRoles)[number]

@@ -22,9 +22,7 @@ const initialState: ServerResponse = {
 export function SignupForm() {
   const emailId = useId()
   const passwordId = useId()
-
   const [state, dispatch] = useFormState(signup, initialState)
-
   const { toast } = useToast()
 
   useEffect(() => {

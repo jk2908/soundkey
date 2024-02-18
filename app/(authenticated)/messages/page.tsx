@@ -5,26 +5,29 @@ import { auth } from '@/lib/auth'
 
 import { Heading } from '@/components/global/heading'
 import { KeylineBox } from '@/components/global/keyline-box'
+import { redirect } from 'next/navigation'
 
 export default async function Page() {
   const user = await auth()
 
-  if (!user) return
+  if (!user) throw redirect('/login')
 
   const messages = await getMessagesByUser(user.userId)
 
   return (
-    <KeylineBox>
-      <Heading level={1} styleAsLevel={4}>
+    <>
+      <Heading level={1} className="sr-only">
         Messages
       </Heading>
       <ul>
-        {messages.map(({ threadId, messageId, body }) => (
-          <li key={messageId}>
-            {body} <Link href={`/messages/${threadId}`}>View</Link>
-          </li>
-        ))}
+        {messages
+          ? messages.map(({ threadId, messageId, body }) => (
+              <li key={messageId}>
+                {body} <Link href={`/messages/${threadId}`}>View</Link>
+              </li>
+            ))
+          : 'Inbox empty'}
       </ul>
-    </KeylineBox>
+    </>
   )
 }

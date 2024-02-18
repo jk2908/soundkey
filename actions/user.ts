@@ -16,6 +16,22 @@ import type { ServerResponse } from '@/lib/types'
 import { capitalise } from '@/utils/capitalise'
 import { generateId } from '@/utils/generate-id'
 import { isValidEmail } from '@/utils/is-valid-email'
+import { unstable_cache } from 'next/cache'
+
+export const getUser = cache(async (userId: string) => {
+  const [user] = await db.select().from(userTable).where(eq(userTable.id, userId)).limit(1)
+  return user
+})
+
+export const getUsers = cache(
+  async (userIds: string[]) =>
+    await db.select().from(userTable).where(inArray(userTable.id, userIds))
+)
+
+export const getSystemUser = cache(async () => {
+  const [user] = await db.select().from(userTable).where(eq(userTable.email, APP_EMAIL)).limit(1)
+  return user
+})
 
 export async function createUser({
   email,
@@ -35,7 +51,7 @@ export async function createUser({
 
     const hashedPassword = await new Argon2id().hash(password)
 
-    const [u] = await db
+    const [user] = await db
       .insert(userTable)
       .values({
         id,
@@ -48,11 +64,11 @@ export async function createUser({
       .returning({ userId: userTable.id })
 
     if (!emailVerified && token) {
-      const t = await createEmailVerificationToken(u.userId)
+      const t = await createEmailVerificationToken(user.userId)
       await sendVerificationEmail(email, t)
     }
 
-    return u
+    return user
   } catch (err) {
     console.error(err)
     throw err
@@ -124,18 +140,18 @@ export async function login(
   }
 
   try {
-    const [u] = await db
+    const [user] = await db
       .select({ userId: userTable.id, hashedPassword: userTable.hashedPassword })
       .from(userTable)
       .where(eq(userTable.email, email.toLowerCase()))
 
-    if (!u) return { type: 'error', message: 'Invalid email', status: 400 }
+    if (!user) return { type: 'error', message: 'Invalid email', status: 400 }
 
-    const validPassword = await new Argon2id().verify(u.hashedPassword, password)
+    const validPassword = await new Argon2id().verify(user.hashedPassword, password)
 
     if (!validPassword) return { type: 'error', message: 'Invalid password', status: 400 }
 
-    const session = await lucia.createSession(u.userId, {})
+    const session = await lucia.createSession(user.userId, {})
     const sessionCookie = lucia.createSessionCookie(session.id)
     cookies().set(sessionCookie)
 
@@ -155,14 +171,14 @@ export async function logout() {
   if (!sessionId) return { type: 'error', message: 'No session', status: 401 }
 
   await lucia.invalidateSession(sessionId)
-  
-  const sessionCookie = lucia.createBlankSessionCookie();
-	cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
+
+  const sessionCookie = lucia.createBlankSessionCookie()
+  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes)
 
   return { type: 'success', message: 'Logged out', status: 200 }
 }
 
-export async function verifyEmail(prevState: ServerResponse) {
+export async function verifyEmail(prevState: ServerResponse): Promise<ServerResponse> {
   const sessionId = lucia.readSessionCookie('auth_session=abc')
 
   if (!sessionId) return { type: 'error', message: 'No session', status: 401 }
@@ -210,18 +226,19 @@ export async function resetPassword(
   }
 
   try {
-    const [u] = await db
+    const [user] = await db
       .select()
       .from(userTable)
       .where(eq(userTable.email, email.toLowerCase()))
       .limit(1)
 
-    if (!u) {
+    if (!user) {
       return { type: 'error', message: 'Invalid email', status: 400 }
     }
 
-    const { userId } = await transformDbUser(u)
-    await sendPasswordResetEmail(email, await createPasswordResetToken(userId))
+    const { userId } = await transformDbUser(user)
+    const token = await createPasswordResetToken(userId)
+    await sendPasswordResetEmail(email, token)
 
     return {
       type: 'success',
@@ -236,18 +253,3 @@ export async function resetPassword(
     }
   }
 }
-
-export const getUser = cache(async (userId: string) => {
-  const [u] = await db.select().from(userTable).where(eq(userTable.id, userId)).limit(1)
-  return u
-})
-
-export const getUsers = cache(
-  async (userIds: string[]) =>
-    await db.select().from(userTable).where(inArray(userTable.id, userIds))
-)
-
-export const getSystemUser = cache(async () => {
-  const [u] = await db.select().from(userTable).where(eq(userTable.email, APP_EMAIL)).limit(1)
-  return u
-})

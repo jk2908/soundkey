@@ -4,7 +4,8 @@ import { DrizzleSQLiteAdapter } from '@lucia-auth/adapter-drizzle'
 import { Lucia, TimeSpan } from 'lucia'
 
 import { db } from '@/lib/db'
-import { userTable, sessionTable, type User, type UserRole } from '@/lib/schema'
+import { sessionTable, userTable, type User, type UserRole } from '@/lib/schema'
+import { type User as LuciaUser } from 'lucia'
 
 const adapter = new DrizzleSQLiteAdapter(db, sessionTable, userTable)
 
@@ -35,6 +36,8 @@ export const auth = cache(async () => {
 
   const { user, session } = await lucia.validateSession(sessionId)
 
+  if (!user || !session) return null
+
   try {
     const sessionCookie =
       session && session.fresh
@@ -44,13 +47,12 @@ export const auth = cache(async () => {
     cookies().set(sessionCookie)
   } catch {}
 
-  return user
+  return transformDbUser(user)
 })
 
-export async function transformDbUser(user: User) {
+export function transformDbUser(user: User | LuciaUser) {
   const { id, ...rest } = user
-
-  return { userId: id, ...rest }
+  return { ...rest, userId: id, }
 }
 
 export const is$User = (role: UserRole) => ['admin', 'system'].includes(role)
