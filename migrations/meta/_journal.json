@@ -8,6 +8,20 @@
       "when": 1708183549282,
       "tag": "0000_nice_rafael_vega",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1708345628025,
+      "tag": "0001_fluffy_boomer",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1708345827906,
+      "tag": "0002_dry_tattoo",
+      "breakpoints": true
     }
   ]
 }

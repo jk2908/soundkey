@@ -1,11 +1,10 @@
 import { cache } from 'react'
 import { cookies } from 'next/headers'
 import { DrizzleSQLiteAdapter } from '@lucia-auth/adapter-drizzle'
-import { Lucia, TimeSpan } from 'lucia'
+import { Lucia, TimeSpan, type User as LuciaUser } from 'lucia'
 
 import { db } from '@/lib/db'
 import { sessionTable, userTable, type User, type UserRole } from '@/lib/schema'
-import { type User as LuciaUser } from 'lucia'
 
 const adapter = new DrizzleSQLiteAdapter(db, sessionTable, userTable)
 
@@ -52,7 +51,7 @@ export const auth = cache(async () => {
 
 export function transformDbUser(user: User | LuciaUser) {
   const { id, ...rest } = user
-  return { ...rest, userId: id, }
+  return { ...rest, userId: id }
 }
 
 export const is$User = (role: UserRole) => ['admin', 'system'].includes(role)

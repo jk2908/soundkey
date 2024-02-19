@@ -1,7 +1,7 @@
 export default async function Page() {
   return (
     <>
-      Admin only content
+      Admin only dashboard
     </>
   )
 }

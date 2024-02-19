@@ -27,7 +27,7 @@ export function Toast({ toast, className, ...rest }: { toast: Toast; className?:
   }
 
   const styleMap: Record<Toast['type'], string> = {
-    success: 'bg-success',
+    success: 'bg-success text-white',
     error: 'bg-error text-white',
     info: 'bg-info',
     warning: 'bg-warning',

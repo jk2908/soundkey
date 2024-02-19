@@ -12,12 +12,12 @@ export default async function Page() {
   if (!user) throw redirect('/login')
 
   const { userId } = user
-  const { username } = await getProfile(userId)
+  const { username, bio } = await getProfile(userId)
 
   return (
     <ProseBox>
       <h1 className="sr-only">Profile</h1>
-      <UpdateProfileForm userId={userId} username={username} />
+      <UpdateProfileForm userId={userId} username={username} bio={bio} />
     </ProseBox>
   )
 }

@@ -20,7 +20,7 @@ export default async function Page() {
         Messages
       </Heading>
       <ul>
-        {messages
+        {messages.length
           ? messages.map(({ threadId, messageId, body }) => (
               <li key={messageId}>
                 {body} <Link href={`/messages/${threadId}`}>View</Link>

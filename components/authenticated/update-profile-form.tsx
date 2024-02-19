@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useId } from 'react'
+import { useEffect, useId, useRef } from 'react'
 import { updateProfile } from '@/actions/profile'
 import { useFormState } from 'react-dom'
 
@@ -22,12 +22,18 @@ const initialState: ServerResponse = {
 export function UpdateProfileForm({
   userId,
   username,
+  bio,
 }: {
   userId: string
-  username: string | null
+  username: string
+  bio: string
 }) {
+  const ref = useRef<HTMLFormElement>(null)
+
   const usernameId = useId()
-  const [state, dispatch] = useFormState(updateProfile, initialState)
+  const bioId = useId()
+
+  const [state, dispatch] = useFormState(updateProfile.bind(null, userId), initialState)
   const { toast } = useToast()
 
   useEffect(() => {
@@ -38,14 +44,24 @@ export function UpdateProfileForm({
   }, [state])
 
   return (
-    <form action={dispatch}>
+    <form key={state?.key} ref={ref} action={dispatch}>
       <FormGroup>
         <Label htmlFor={usernameId}>Username</Label>
-        <Input id={usernameId} type="text" placeholder={username ? username : 'Username'} />
+        <Input
+          id={usernameId}
+          name="username"
+          type="text"
+          placeholder={username ? username : 'No username set'}
+        />
       </FormGroup>
 
       <FormGroup>
-        <SubmitButton className="mx-auto">
+        <Label htmlFor={bioId}>Bio</Label>
+        <Input id={bioId} name="bio" type="text" placeholder={bio ? bio : 'No bio set'} />
+      </FormGroup>
+
+      <FormGroup>
+        <SubmitButton>
           {({ pending }) => (
             <>
               {pending && <LoadingSpinner />}

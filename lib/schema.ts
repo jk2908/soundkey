@@ -106,7 +106,8 @@ export const profileTable = sqliteTable('profile', {
     onUpdate: 'cascade',
     onDelete: 'cascade',
   }),
-  username: text('username').unique(),
+  username: text('username').default('').unique().notNull(),
+  bio: text('bio').default('').notNull(),
 })
 
 export const userRelations = relations(userTable, ({ one, many }) => ({
@@ -178,6 +179,7 @@ export type User = InferSelectModel<typeof userTable>
 export type NewUser = Omit<InferInsertModel<typeof userTable>, 'id' | 'hashedPassword'> & {
   password: string
 }
+
 export type Message = InferSelectModel<typeof messageTable>
 export type NewMessage = Omit<
   InferInsertModel<typeof messageTable>,
@@ -187,8 +189,11 @@ export type EditMessage = Omit<
   InferInsertModel<typeof messageTable>,
   'threadId' | 'createdAt' | 'type'
 >
+
 export type Thread = InferSelectModel<typeof threadTable>
+
 export type Profile = Omit<InferSelectModel<typeof profileTable>, 'id' | 'userId'>
+export type NewProfile = InferInsertModel<typeof profileTable>
 
 export type MessageType = (typeof messageTypes)[number]
 export type UserRole = (typeof userRoles)[number]

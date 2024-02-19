@@ -9,29 +9,29 @@ import { eq, inArray } from 'drizzle-orm'
 import { Argon2id } from 'oslo/password'
 
 import { lucia, transformDbUser } from '@/lib/auth'
-import { APP_EMAIL, APP_NAME } from '@/lib/config'
+import { APP_NAME } from '@/lib/config'
 import { db } from '@/lib/db'
 import { NewUser, userTable } from '@/lib/schema'
 import type { ServerResponse } from '@/lib/types'
 import { capitalise } from '@/utils/capitalise'
 import { generateId } from '@/utils/generate-id'
 import { isValidEmail } from '@/utils/is-valid-email'
-import { unstable_cache } from 'next/cache'
 
-export const getUser = cache(async (userId: string) => {
-  const [user] = await db.select().from(userTable).where(eq(userTable.id, userId)).limit(1)
-  return user
-})
+import { createProfile } from './profile'
+
+export const getUser = cache(
+  async (userId: string) =>
+    (await db.select().from(userTable).where(eq(userTable.id, userId)).limit(1))[0]
+)
 
 export const getUsers = cache(
   async (userIds: string[]) =>
     await db.select().from(userTable).where(inArray(userTable.id, userIds))
 )
 
-export const getSystemUser = cache(async () => {
-  const [user] = await db.select().from(userTable).where(eq(userTable.email, APP_EMAIL)).limit(1)
-  return user
-})
+export const getSystemUser = cache(
+  async () => (await db.select().from(userTable).where(eq(userTable.role, 'system')).limit(1))[0]
+)
 
 export async function createUser({
   email,
@@ -63,6 +63,8 @@ export async function createUser({
       })
       .returning({ userId: userTable.id })
 
+    await createProfile(user.userId)
+
     if (!emailVerified && token) {
       const t = await createEmailVerificationToken(user.userId)
       await sendVerificationEmail(email, t)
@@ -93,22 +95,18 @@ export async function signup(
   }
 
   try {
-    const u = await createUser({ email, password })
-    const session = await lucia.createSession(u.userId, {})
-
-    console.log('session', session)
+    const user = await createUser({ email, password })
+    const session = await lucia.createSession(user.userId, {})
 
     const sessionCookie = lucia.createSessionCookie(session.id)
     cookies().set(sessionCookie)
-
-    console.log('sessionCookie', sessionCookie)
 
     const { id: systemUserId } = await getSystemUser()
     await sendMessage({
       body: `Welcome to ${APP_NAME}. Please check your email to verify your account. Certain features may be unavailable until your account is verified.`,
       createdAt: Date.now(),
       senderId: systemUserId,
-      recipientIds: [u.userId],
+      recipientIds: [user.userId],
       type: 'system_message',
     })
 

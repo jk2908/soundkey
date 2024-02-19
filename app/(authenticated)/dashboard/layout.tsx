@@ -1,6 +1,8 @@
 import { redirect } from 'next/navigation'
+import { getProfile } from '@/actions/profile'
 
 import { auth, is$User } from '@/lib/auth'
+import { getTimeMessage } from '@/utils/get-time-message'
 
 export default async function Layout({
   user,
@@ -14,6 +16,15 @@ export default async function Layout({
   if (!u) throw redirect('/login')
 
   const $User = is$User(u.role)
+  const { username } = await getProfile(u.userId)
+  const greeting = getTimeMessage(Date.now())
 
-  return <>{$User ? admin : user}</>
+  return (
+    <>
+      <h1 className="sr-only">Dashboard</h1>
+      <h2 className="font-medium">{greeting} {username}</h2>
+
+      {$User ? admin : user}
+    </>
+  )
 }

@@ -45,8 +45,9 @@ export type ServerResponse =
       type: 'success' | 'error'
       message: string
       status: number
+      key?: string
     }
-  | { type: undefined; message: null; status: undefined }
+  | { type: undefined; message: null; status: undefined; key?: string }
 
 export type ServerResponseWithPayload<T> = ServerResponse & { payload: T }
 
