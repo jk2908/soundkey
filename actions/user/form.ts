@@ -1,81 +1,20 @@
 'use server'
 
-import { cache } from 'react'
 import { cookies } from 'next/headers'
-import { sendPasswordResetEmail, sendVerificationEmail } from '@/actions/email'
-import { sendMessage } from '@/actions/message'
+import { sendPasswordResetEmail, sendVerificationEmail } from '@/actions/email/handlers'
+import { createMessage } from '@/actions/message/handlers'
 import { createEmailVerificationToken, createPasswordResetToken } from '@/actions/token'
-import { eq, inArray } from 'drizzle-orm'
+import { createUser, getSystemUser } from '@/actions/user/handlers'
+import { eq } from 'drizzle-orm'
 import { Argon2id } from 'oslo/password'
 
 import { lucia, transformDbUser } from '@/lib/auth'
 import { APP_NAME } from '@/lib/config'
 import { db } from '@/lib/db'
-import { NewUser, userTable } from '@/lib/schema'
+import { userTable } from '@/lib/schema'
 import type { ServerResponse } from '@/lib/types'
 import { capitalise } from '@/utils/capitalise'
-import { generateId } from '@/utils/generate-id'
 import { isValidEmail } from '@/utils/is-valid-email'
-
-import { createProfile } from './profile'
-
-export const getUser = cache(
-  async (userId: string) =>
-    (await db.select().from(userTable).where(eq(userTable.id, userId)).limit(1))[0]
-)
-
-export const getUsers = cache(
-  async (userIds: string[]) =>
-    await db.select().from(userTable).where(inArray(userTable.id, userIds))
-)
-
-export const getSystemUser = cache(
-  async () => (await db.select().from(userTable).where(eq(userTable.role, 'system')).limit(1))[0]
-)
-
-export async function createUser({
-  email,
-  password,
-  emailVerified = false,
-  role = 'user',
-  token = true,
-}: NewUser & { token?: boolean }) {
-  try {
-    const id = generateId()
-    const [existingUser] = await db
-      .select()
-      .from(userTable)
-      .where(eq(userTable.email, email.toLowerCase()))
-
-    if (existingUser) throw new Error('Email already in use')
-
-    const hashedPassword = await new Argon2id().hash(password)
-
-    const [user] = await db
-      .insert(userTable)
-      .values({
-        id,
-        email: email.toLowerCase(),
-        hashedPassword,
-        emailVerified,
-        role,
-        createdAt: Date.now(),
-      })
-      .returning({ userId: userTable.id })
-
-    await createProfile(user.userId)
-
-    if (!emailVerified && token) {
-      const t = await createEmailVerificationToken(user.userId)
-      await sendVerificationEmail(email, t)
-    }
-
-    return user
-  } catch (err) {
-    console.error(err)
-    throw err
-  }
-}
 
 export async function signup(
   prevState: ServerResponse,
@@ -102,7 +41,7 @@ export async function signup(
     cookies().set(sessionCookie)
 
     const { id: systemUserId } = await getSystemUser()
-    await sendMessage({
+    await createMessage({
       body: `Welcome to ${APP_NAME}. Please check your email to verify your account. Certain features may be unavailable until your account is verified.`,
       createdAt: Date.now(),
       senderId: systemUserId,
@@ -176,7 +115,7 @@ export async function logout() {
   return { type: 'success', message: 'Logged out', status: 200 }
 }
 
-export async function verifyEmail(prevState: ServerResponse): Promise<ServerResponse> {
+export async function verify(prevState: ServerResponse): Promise<ServerResponse> {
   const sessionId = lucia.readSessionCookie('auth_session=abc')
 
   if (!sessionId) return { type: 'error', message: 'No session', status: 401 }
@@ -213,7 +152,7 @@ export async function verifyEmail(prevState: ServerResponse): Promise<ServerResp
   }
 }
 
-export async function resetPassword(
+export async function reset(
   prevState: ServerResponse,
   formData: FormData
 ): Promise<ServerResponse> {

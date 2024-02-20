@@ -3,19 +3,25 @@
 import { useEffect, useId, useRef } from 'react'
 import Link from 'next/link'
 
+import { NavLink } from '@/components/global/nav-link'
+
 export function MessageActions() {
   const items = [
-    { href: '/messages', label: 'Inbox' },
+    { href: '/messages', label: 'Threads' },
     { href: '/messages/new', label: 'New' },
-    { href: '/messages/sent', label: 'Sent' },
   ]
 
   return (
     <div role="menubar" className="rounded-tab-group flex text-sm">
       {items.map(({ href, label }) => (
-        <Link key={href} href={href} className="text-center hover:bg-keyline/20">
+        <NavLink
+          key={href}
+          href={href}
+          className="text-center hover:bg-keyline/40 [&.active]:bg-keyline/25"
+          exact
+          visualOnly>
           {label}
-        </Link>
+        </NavLink>
       ))}
     </div>
   )

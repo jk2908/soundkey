@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { getProfile } from '@/actions/profile'
+import { getProfile } from '@/actions/profile/handlers'
 
 import { auth } from '@/lib/auth'
 

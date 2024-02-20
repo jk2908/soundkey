@@ -9,15 +9,17 @@ export function NavLink({
   children,
   href,
   className,
+  exact,
   visualOnly,
 }: {
   children: React.ReactNode
   href: string
   className?: string
+  exact?: boolean
   visualOnly?: boolean
 }) {
   const pathname = usePathname()
-  const isMatching = pathname === href || (pathname.startsWith(href) && href !== '/')
+  const isMatching = pathname === href || (!exact && (pathname.startsWith(href) && href !== '/'))
 
   return (
     <Link

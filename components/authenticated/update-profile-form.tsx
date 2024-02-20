@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useId, useRef } from 'react'
-import { updateProfile } from '@/actions/profile'
+import { update } from '@/actions/profile/form'
 import { useFormState } from 'react-dom'
 
 import { ServerResponse } from '@/lib/types'
@@ -33,7 +33,7 @@ export function UpdateProfileForm({
   const usernameId = useId()
   const bioId = useId()
 
-  const [state, dispatch] = useFormState(updateProfile.bind(null, userId), initialState)
+  const [state, dispatch] = useFormState(update.bind(null, userId), initialState)
   const { toast } = useToast()
 
   useEffect(() => {

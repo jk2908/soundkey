@@ -1,11 +1,10 @@
 import Link from 'next/link'
-import { getMessagesByUser } from '@/actions/message'
+import { redirect } from 'next/navigation'
+import { getMessagesByUser } from '@/actions/message/handlers'
 
 import { auth } from '@/lib/auth'
 
 import { Heading } from '@/components/global/heading'
-import { KeylineBox } from '@/components/global/keyline-box'
-import { redirect } from 'next/navigation'
 
 export default async function Page() {
   const user = await auth()

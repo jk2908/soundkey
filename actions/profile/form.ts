@@ -1,6 +1,6 @@
 'use server'
 
-import { revalidateTag, unstable_cache } from 'next/cache'
+import { revalidateTag } from 'next/cache'
 import { and, eq, ne, or } from 'drizzle-orm'
 
 import { db } from '@/lib/db'
@@ -9,41 +9,7 @@ import { ServerResponse } from '@/lib/types'
 import { capitalise } from '@/utils/capitalise'
 import { generateId } from '@/utils/generate-id'
 
-export const createProfile = async (userId: string) => {
-  try {
-    await db.insert(profileTable).values({
-      userId,
-      username: '',
-      bio: '',
-    })
-  } catch (err) {
-    console.log(err)
-    throw err
-  }
-}
-
-export const getProfile = unstable_cache(
-  async (userId: string) => {
-    try {
-      const [profile] = await db
-        .select()
-        .from(profileTable)
-        .where(eq(profileTable.userId, userId))
-        .limit(1)
-
-      const { id, ...rest } = profile
-
-      return rest
-    } catch (err) {
-      console.log(err)
-      throw err
-    }
-  },
-  ['profile'],
-  { tags: ['profile'] }
-)
-
-export async function updateProfile(
+export async function update(
   userId: string,
   prevState: ServerResponse,
   formData: FormData
@@ -71,7 +37,8 @@ export async function updateProfile(
     await db
       .update(profileTable)
       .set({
-        username, bio
+        username,
+        bio,
       })
       .where(
         and(

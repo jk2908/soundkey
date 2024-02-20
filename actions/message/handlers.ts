@@ -60,7 +60,7 @@ export async function resolveThread(
   }
 }
 
-export async function sendMessage(payload: NewMessage): Promise<ServerResponse> {
+export async function createMessage(payload: NewMessage): Promise<ServerResponse> {
   try {
     const { id: messageId = generateId(), recipientIds, threadId } = payload
 
@@ -93,7 +93,7 @@ export async function sendMessage(payload: NewMessage): Promise<ServerResponse> 
   }
 }
 
-export async function editMessage(
+export async function updateMessage(
   payload: EditMessage & { messageId: string }
 ): Promise<ServerResponse> {
   try {
@@ -130,7 +130,7 @@ export async function getThreads(userId: string) {
       .from(threadToUserTable)
       .leftJoin(threadTable, eq(threadTable.id, threadToUserTable.threadId))
       .where(eq(threadToUserTable.userId, userId))
-    
+
     if (!threads.length) return []
 
     return threads
