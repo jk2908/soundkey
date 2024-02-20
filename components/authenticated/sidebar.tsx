@@ -17,6 +17,7 @@ import { Icon } from '@/components/global/icon'
 import { LoadingSpinner } from '@/components/global/loading-spinner'
 import { Logo } from '@/components/global/logo'
 import { Section } from '@/components/global/section'
+import { YSpace } from '@/components/global/y-space'
 
 export function Sidebar({ children }: { children: React.ReactNode }) {
   const [isOpen, setOpen] = useState(false)
@@ -39,41 +40,45 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
           Toggle
         </button>
       )}
-      
+
       <Section
         ref={ref}
         size="lg"
         className={cn(
-          'flex h-screen w-56 shrink-0 flex-col rounded-e-3xl border border-keyline bg-app-bg aria-current:bg-app-bg-inverted',
+          'h-screen w-56 shrink-0 rounded-e-3xl border border-keyline bg-app-bg aria-current:bg-app-bg-inverted',
           'fixed inset-0 z-40 transition-transform',
           !isOpen && '-translate-x-full',
           'md:static md:translate-x-0'
         )}>
-        <div className="mb-8 px-4">
-          <Logo />
-        </div>
-
-        {children}
-
-        <div className="mt-auto flex flex-col gap-6 px-4">
-          <HorizontalRule />
-
-          <div className="flex gap-4">
-            <Suspense fallback={<LoadingSpinner />}>
-              <LogoutButton iconOnly>
-                <Icon name="logout" size={18} title="Logout" />
-                <span className="sr-only">Log out</span>
-              </LogoutButton>
-            </Suspense>
-
-            <Suspense fallback={<LoadingSpinner />}>
-              <Button as={Link} href="/profile" iconOnly>
-                <Icon name="user" size={18} title="Profile" />
-                <span className="sr-only">Profile</span>
-              </Button>
-            </Suspense>
+        <YSpace className="flex h-full flex-col">
+          <div className="px-4">
+            <Logo />
           </div>
-        </div>
+
+          <div className="grow flex flex-col">
+            {children}
+
+            <div className="mt-auto flex flex-col gap-6 px-4">
+              <HorizontalRule />
+
+              <div className="flex gap-4">
+                <Suspense fallback={<LoadingSpinner />}>
+                  <LogoutButton iconOnly>
+                    <Icon name="logout" size={18} title="Logout" />
+                    <span className="sr-only">Log out</span>
+                  </LogoutButton>
+                </Suspense>
+
+                <Suspense fallback={<LoadingSpinner />}>
+                  <Button as={Link} href="/profile" iconOnly>
+                    <Icon name="user" size={18} title="Profile" />
+                    <span className="sr-only">Profile</span>
+                  </Button>
+                </Suspense>
+              </div>
+            </div>
+          </div>
+        </YSpace>
       </Section>
     </>
   )

@@ -16,7 +16,8 @@ export async function Nav() {
             <li>
               <NavLink
                 href={href}
-                className="block w-full rounded-e-full px-4 py-3 font-mono lowercase transition-bg hover:bg-keyline/40 aria-current:bg-keyline/25">
+                className="block w-full rounded-e-full px-4 py-3 font-mono lowercase transition-bg hover:bg-keyline/40 [&.active]:bg-keyline/25"
+                visualOnly>
                 {label}
               </NavLink>
             </li>

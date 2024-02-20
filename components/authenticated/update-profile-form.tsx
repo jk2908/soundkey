@@ -51,13 +51,20 @@ export function UpdateProfileForm({
           id={usernameId}
           name="username"
           type="text"
-          placeholder={username ? username : 'No username set'}
+          defaultValue={username ? username : undefined}
+          placeholder={!username ? 'No username set' : undefined}
         />
       </FormGroup>
 
       <FormGroup>
         <Label htmlFor={bioId}>Bio</Label>
-        <Input id={bioId} name="bio" type="text" placeholder={bio ? bio : 'No bio set'} />
+        <Input
+          id={bioId}
+          name="bio"
+          type="text"
+          defaultValue={bio ? bio : undefined}
+          placeholder={!bio ? 'No bio set' : undefined}
+        />
       </FormGroup>
 
       <FormGroup>

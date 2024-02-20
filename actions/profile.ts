@@ -71,8 +71,7 @@ export async function updateProfile(
     await db
       .update(profileTable)
       .set({
-        username,
-        bio,
+        username, bio
       })
       .where(
         and(

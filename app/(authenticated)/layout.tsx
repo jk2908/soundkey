@@ -25,7 +25,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
         </Sidebar>
 
         <Wrapper className="mx-0">
-          <Section size="lg">{children}</Section>
+          <Section size="lg" className="h-full">{children}</Section>
         </Wrapper>
       </div>
     </Suspense>

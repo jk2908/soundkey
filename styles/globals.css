@@ -51,7 +51,7 @@
     .rounded-tab-group {
       @apply flex rounded-full border border-keyline;
 
-      > button {
+      > :is(button, a) {
         @apply grow rounded-full px-6 py-2 outline-1 aria-selected:bg-keyline/25;
       }
     }

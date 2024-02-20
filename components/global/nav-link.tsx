@@ -9,19 +9,25 @@ export function NavLink({
   children,
   href,
   className,
+  visualOnly,
 }: {
   children: React.ReactNode
   href: string
-  isNew?: boolean
   className?: string
+  visualOnly?: boolean
 }) {
   const pathname = usePathname()
+  const isMatching = pathname === href || (pathname.startsWith(href) && href !== '/')
 
   return (
     <Link
       href={href}
-      aria-current={pathname === href ? 'page' : false}
-      className={cn('relative', className)}>
+      aria-current={!visualOnly ? (isMatching ? 'page' : false) : undefined}
+      className={cn(
+        'relative',
+        visualOnly ? (isMatching ? 'active' : 'inactive') : undefined,
+        className
+      )}>
       {children}
     </Link>
   )
