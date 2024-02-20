@@ -1,4 +1,4 @@
-export function getTimeMessage(t: number) {
+export function getTimedMessage(t: number) {
   const d = new Date(t)
   const h = d.getHours()
 
