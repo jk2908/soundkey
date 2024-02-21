@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { send } from '@/actions/message/form'
+import { send } from '@/actions/message/api'
 import { useFormState } from 'react-dom'
 
 import type { ServerResponse } from '@/lib/types'
