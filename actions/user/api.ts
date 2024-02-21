@@ -3,7 +3,7 @@
 import { cookies } from 'next/headers'
 import { sendPasswordResetEmail, sendVerificationEmail } from '@/actions/email/handlers'
 import { createMessage } from '@/actions/message/handlers'
-import { createEmailVerificationToken, createPasswordResetToken } from '@/actions/token'
+import { createEmailVerificationToken, createPasswordResetToken } from '@/actions/token/handlers'
 import { createUser, getSystemUser } from '@/actions/user/handlers'
 import { eq } from 'drizzle-orm'
 import { Argon2id } from 'oslo/password'

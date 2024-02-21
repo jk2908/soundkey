@@ -1,6 +1,6 @@
 'use client'
 
-import { logout } from '@/actions/user/form'
+import { logout } from '@/actions/user/api'
 
 import { LoadingSpinner } from '@/components/global/loading-spinner'
 import { SubmitButton } from '@/components/global/submit-button'

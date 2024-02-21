@@ -2,7 +2,7 @@
 
 import { cache } from 'react'
 import { createProfile } from '@/actions/profile/handlers'
-import { createEmailVerificationToken } from '@/actions/token'
+import { createEmailVerificationToken } from '@/actions/token/handlers'
 import { sendVerificationEmail } from '@/actions/email/handlers'
 import { eq, inArray } from 'drizzle-orm'
 import { Argon2id } from 'oslo/password'
