@@ -3,19 +3,17 @@
 import { useTransition } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
-import { debounce } from '@/utils/debounce'
-
 import { Icon } from '@/components/global/icon'
 import { Input, Props as InputProps } from '@/components/global/input'
 import { LoadingSpinner } from '@/components/global/loading-spinner'
 
 export type Props = {
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
+  value?: string
+  setValue?: React.Dispatch<React.SetStateAction<string>>
   param?: string
-  ms?: number
 } & InputProps
 
-export function SearchBox({ onChange, param = 'q', ms = 150, ...rest }: Props) {
+export function SearchBox({ value, setValue, param = 'q', ...rest }: Props) {
   const { replace } = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -24,28 +22,27 @@ export function SearchBox({ onChange, param = 'q', ms = 150, ...rest }: Props) {
 
   const shouldSyncUrl = !!param
 
-  const handleChange = debounce((e: React.ChangeEvent<HTMLInputElement>) => {
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const t = e.target.value
     const params = new URLSearchParams(searchParams)
 
+    setValue?.(t)
+
     if (shouldSyncUrl) {
       t ? params.set(param, t) : params.delete(param)
-    }
 
-    startTransition(() => {
-      onChange?.(e)
-
-      if (shouldSyncUrl) {
+      startTransition(() => {
         replace(`${pathname}?${params.toString()}`)
-      }
-    })
-  }, ms)
+      })
+    }
+  }
 
   return (
     <div className="group relative">
       <Input
         type="search"
         onChange={handleChange}
+        value={value}
         className="w-full overflow-x-auto pr-8 [&::-webkit-search-cancel-button]:hidden"
         {...rest}
       />

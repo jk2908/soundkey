@@ -54,6 +54,8 @@ export function SendMessageForm({
     [to]
   )
 
+  console.log(to)
+
   return (
     <form action={dispatch}>
       <FormGroup>
@@ -62,24 +64,27 @@ export function SendMessageForm({
         </Label>
 
         <Search.Root>
-          {({ setValue: setSearchBox }) => (
+          {({ setValue }) => (
             <>
               <Search.Box placeholder="To" name="to" />
 
               <Search.Results>
                 <Listbox.Root
                   onChange={(value: string) => {
-                    handleSearchChange(value)
-                    setSearchBox('')
-                  }}>
-                  {[to, ...users].map(
-                    user =>
-                      user && (
-                        <Listbox.Option key={user} value={user}>
-                          {user}
-                        </Listbox.Option>
-                      )
-                  )}
+                    //handleSearchChange(value)
+                    //setValue('')
+                  }}
+                  persist>
+                  <Listbox.Options className="flex">
+                    {[to, ...users].map(
+                      user =>
+                        user && (
+                          <Listbox.Option key={user} value={user}>
+                            {user}
+                          </Listbox.Option>
+                        )
+                    )}
+                  </Listbox.Options>
                 </Listbox.Root>
               </Search.Results>
             </>
