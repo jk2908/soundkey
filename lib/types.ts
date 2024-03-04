@@ -20,7 +20,8 @@ export interface DatabaseUserAttributes {
   id: string
   email: string
   email_verified: boolean
-  created_at: string
+  created_at: number
+  updated_at: number | null
   role: 'user' | 'admin' | 'system'
 }
 
@@ -38,7 +39,7 @@ export type Toast = {
 
 export type Theme = 'light' | 'dark' | undefined
 
-export type Icon = 'moon' | 'sun' | 'spinner' | 'x' | 'logout' | 'user'
+export type Icon = 'moon' | 'sun' | 'spinner' | 'x' | 'logout' | 'user' | 'search'
 
 export type ServerResponse =
   | {

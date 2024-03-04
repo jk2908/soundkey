@@ -17,15 +17,19 @@ export default async function Layout({ children }: { children: React.ReactNode }
 
   return (
     <Suspense fallback={<FullscreenLoadingSpinner />}>
-      <div className="flex grow">
-        <Sidebar>
-          <Suspense fallback={<LoadingSpinner />}>
-            <Nav />
-          </Suspense>
-        </Sidebar>
+      <div className="flex grow flex-col bg-app-bg-inverted bg-[url('/assets/dashboard-bg.jpg')] bg-cover">
+        <Wrapper size="xxl" className="flex grow bg-app-bg sm:px-0 md:px-0">
+          <Sidebar>
+            <Suspense fallback={<LoadingSpinner />}>
+              <Nav />
+            </Suspense>
+          </Sidebar>
 
-        <Wrapper className="mx-0">
-          <Section size="lg" className="h-full">{children}</Section>
+          <Wrapper size={0} className="grow">
+            <Section size="lg" className="h-full">
+              {children}
+            </Section>
+          </Wrapper>
         </Wrapper>
       </div>
     </Suspense>

@@ -3,8 +3,8 @@
 import {
   createContext,
   startTransition,
+  use,
   useCallback,
-  useContext,
   useEffect,
   useId,
   useMemo,
@@ -18,8 +18,6 @@ import { isVisible } from '@/utils/is-visible'
 
 type Activation = 'manual' | 'auto'
 type Orientation = 'horizontal' | 'vertical'
-
-const loopInitial = false
 
 const TabsContext = createContext<{
   isSelected: string
@@ -37,12 +35,9 @@ const TabsContext = createContext<{
   selectTab: () => null,
   tabNodes: { current: [] },
   values: { current: [] },
-  initialValue: '',
   activation: 'auto',
   orientation: 'horizontal',
-  loop: loopInitial,
   id: '',
-  params: false,
 })
 
 export function Root({
@@ -50,7 +45,7 @@ export function Root({
   initialValue,
   activation = 'auto',
   orientation = 'horizontal',
-  loop = loopInitial,
+  loop = false,
   params = false,
 }: {
   children: React.ReactNode
@@ -118,7 +113,7 @@ export function List({
   children,
   className,
 }: { children: React.ReactNode } & React.HTMLProps<HTMLDivElement>) {
-  const { orientation } = useContext(TabsContext)
+  const { orientation } = use(TabsContext)
 
   return (
     <div role="tablist" aria-orientation={orientation} className={className}>
@@ -136,7 +131,7 @@ export function Button({
   value: string
 } & React.HTMLProps<HTMLButtonElement>) {
   const { isSelected, selectTab, tabNodes, values, activation, orientation, loop, id } =
-    useContext(TabsContext)
+    use(TabsContext)
   const ref = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
@@ -236,7 +231,7 @@ export function Panel({
   children: React.ReactNode
   value: string
 } & React.HTMLProps<HTMLDivElement>) {
-  const { isSelected, id } = useContext(TabsContext)
+  const { isSelected, id } = use(TabsContext)
 
   const ref = useRef<HTMLDivElement>(null)
   const [isFocusable, setFocusable] = useState(false)

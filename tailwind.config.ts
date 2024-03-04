@@ -53,6 +53,12 @@ const config: Config = {
         256: '64rem',
         272: '68rem',
         288: '72rem',
+        304: '76rem',
+        320: '80rem',
+        336: '84rem',
+        352: '88rem',
+        368: '92rem',
+        384: '96rem',
       },
       transitionProperty: {
         bg: 'background-color',

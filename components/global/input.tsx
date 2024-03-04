@@ -1,6 +1,6 @@
 import { cn } from '@/utils/cn'
 
-type Props = {
+export type Props = {
   className?: string
 } & React.InputHTMLAttributes<HTMLInputElement>
 

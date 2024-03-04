@@ -1,6 +1,6 @@
 'use server'
 
-import { createMessage } from '@/actions/message/handlers'
+import { createMessage } from '@/actions/message/db'
 
 import { ServerResponse } from '@/lib/types'
 import { capitalise } from '@/utils/capitalise'

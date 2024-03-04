@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import { useFormState } from 'react-dom'
 
-import { verify } from '@/actions/user/api'
+import { verify } from '@/actions/user/form'
 import type { ServerResponse } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
 

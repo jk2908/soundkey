@@ -1,14 +1,14 @@
 'use server'
 
 import { cookies } from 'next/headers'
-import { sendPasswordResetEmail, sendVerificationEmail } from '@/actions/email/handlers'
-import { createMessage } from '@/actions/message/handlers'
-import { createEmailVerificationToken, createPasswordResetToken } from '@/actions/token/handlers'
-import { createUser, getSystemUser } from '@/actions/user/handlers'
+import { sendPasswordResetEmail, sendVerificationEmail } from '@/actions/email/db'
+import { createMessage } from '@/actions/message/db'
+import { createEmailVerificationToken, createPasswordResetToken } from '@/actions/token/db'
+import { createUser, getSystemUser } from '@/actions/user/db'
 import { eq } from 'drizzle-orm'
 import { Argon2id } from 'oslo/password'
 
-import { lucia, transformDbUser } from '@/lib/auth'
+import { lucia, toSafeUser } from '@/lib/auth'
 import { APP_NAME } from '@/lib/config'
 import { db } from '@/lib/db'
 import { userTable } from '@/lib/schema'
@@ -40,11 +40,20 @@ export async function signup(
     const sessionCookie = lucia.createSessionCookie(session.id)
     cookies().set(sessionCookie)
 
-    const { id: systemUserId } = await getSystemUser()
+    const sysUser = await getSystemUser()
+
+    if (!sysUser) {
+      return {
+        type: 'error',
+        message: 'Error in welcome message creation. Please contact support.',
+        status: 500,
+      }
+    }
+
     await createMessage({
       body: `Welcome to ${APP_NAME}. Please check your email to verify your account. Certain features may be unavailable until your account is verified.`,
       createdAt: Date.now(),
-      senderId: systemUserId,
+      senderId: sysUser.userId,
       recipientIds: [user.userId],
       type: 'system_message',
     })
@@ -173,7 +182,7 @@ export async function reset(
       return { type: 'error', message: 'Invalid email', status: 400 }
     }
 
-    const { userId } = await transformDbUser(user)
+    const { userId } = toSafeUser(user)
     const token = await createPasswordResetToken(userId)
     await sendPasswordResetEmail(email, token)
 

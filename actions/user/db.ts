@@ -1,28 +1,47 @@
 'use server'
 
 import { cache } from 'react'
-import { createProfile } from '@/actions/profile/handlers'
-import { createEmailVerificationToken } from '@/actions/token/handlers'
-import { sendVerificationEmail } from '@/actions/email/handlers'
+import { sendVerificationEmail } from '@/actions/email/db'
+import { createProfile } from '@/actions/profile/db'
+import { createEmailVerificationToken } from '@/actions/token/db'
 import { eq, inArray } from 'drizzle-orm'
 import { Argon2id } from 'oslo/password'
 
+import { toSafeUser } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { NewUser, userTable } from '@/lib/schema'
 import { generateId } from '@/utils/generate-id'
 
-export const getUser = cache(
-  async (userId: string) =>
-    (await db.select().from(userTable).where(eq(userTable.id, userId)).limit(1))[0]
+export const getUserWithId = cache(async (userId: string) =>
+  toSafeUser((await db.select().from(userTable).where(eq(userTable.id, userId)).limit(1))[0])
 )
 
-export const getUsers = cache(
-  async (userIds: string[]) =>
-    await db.select().from(userTable).where(inArray(userTable.id, userIds))
+export const getUserWithEmail = cache(async (email: string) =>
+  toSafeUser(
+    (await db.select().from(userTable).where(eq(userTable.email, email.toLowerCase())).limit(1))[0]
+  )
 )
 
-export const getSystemUser = cache(
-  async () => (await db.select().from(userTable).where(eq(userTable.role, 'system')).limit(1))[0]
+export const getUsersWithId = cache(async (userIds: string[]) =>
+  (await db.select().from(userTable).where(inArray(userTable.id, userIds))).map(toSafeUser)
+)
+
+export const getUsersWithEmail = cache(async (emails: string[]) =>
+  (
+    await db
+      .select()
+      .from(userTable)
+      .where(
+        inArray(
+          userTable.email,
+          emails.map(e => e.toLowerCase())
+        )
+      )
+  ).map(toSafeUser)
+)
+
+export const getSystemUser = cache(async () =>
+  toSafeUser((await db.select().from(userTable).where(eq(userTable.role, 'system')).limit(1))[0])
 )
 
 export async function createUser({

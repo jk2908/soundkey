@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { getProfile } from '@/actions/profile/handlers'
+import { getProfile } from '@/actions/profile/db'
 
 import { auth, is$User } from '@/lib/auth'
 import { getTimedMessage } from '@/utils/get-timed-message'

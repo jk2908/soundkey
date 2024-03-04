@@ -2,12 +2,14 @@ import type { Metadata } from 'next'
 
 import '@/styles/globals.css'
 
+import { Suspense } from 'react'
 import localFont from 'next/font/local'
 import { GeistSans } from 'geist/font/sans'
 
 import { APP_DESCRIPTION, APP_NAME } from '@/lib/config'
 import { cn } from '@/utils/cn'
 
+import { FullscreenLoadingSpinner } from '@/components/global/fullscreen-loading-spinner'
 import { Providers } from '@/components/global/providers'
 import { Toaster } from '@/components/global/toaster'
 
@@ -33,11 +35,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning>
       <body className="flex min-h-full flex-col bg-app-bg text-app-fg">
         <Providers>
-          {children}
+          <Suspense fallback={<FullscreenLoadingSpinner />}>
+            {children}
 
-          <div id="portal">
-            <Toaster />
-          </div>
+            <div id="portal">
+              <Toaster />
+            </div>
+          </Suspense>
         </Providers>
       </body>
     </html>

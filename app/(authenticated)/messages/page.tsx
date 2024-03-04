@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { getMessagesByUser } from '@/actions/message/handlers'
+import { getMessagesByUser } from '@/actions/message/db'
 
 import { auth } from '@/lib/auth'
 

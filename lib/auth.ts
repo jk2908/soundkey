@@ -9,15 +9,13 @@ import { sessionTable, userTable, type User, type UserRole } from '@/lib/schema'
 const adapter = new DrizzleSQLiteAdapter(db, sessionTable, userTable)
 
 export const lucia = new Lucia(adapter, {
-  getUserAttributes: ({ id, email, email_verified, created_at, role }) => {
-    return {
-      userId: id,
-      email,
-      emailVerified: Boolean(email_verified),
-      createdAt: created_at,
-      role,
-    }
-  },
+  getUserAttributes: ({ id, email, email_verified, created_at, role }) => ({
+    userId: id,
+    email,
+    emailVerified: !!email_verified,
+    createdAt: created_at,
+    role,
+  }),
   sessionExpiresIn: new TimeSpan(30, 'd'),
   sessionCookie: {
     name: 'session',
@@ -46,11 +44,14 @@ export const auth = cache(async () => {
     cookies().set(sessionCookie)
   } catch {}
 
-  return transformDbUser(user)
+  return { ...user, userId: user.id }
 })
 
-export function transformDbUser(user: User | LuciaUser) {
-  const { id, ...rest } = user
+export function toSafeUser(user: User) {
+  if (!user) return null
+
+  const { id, hashedPassword, ...rest } = user
+  
   return { ...rest, userId: id }
 }
 

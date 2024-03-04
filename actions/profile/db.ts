@@ -10,8 +10,6 @@ export const createProfile = async (userId: string) => {
   try {
     await db.insert(profileTable).values({
       userId,
-      username: '',
-      bio: '',
     })
   } catch (err) {
     console.log(err)

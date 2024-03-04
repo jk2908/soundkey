@@ -1,4 +1,4 @@
-import { getMessage, getMessagesByThread, } from '@/actions/message'
+import { getMessage, getMessagesByThread, } from '@/actions/message/db'
 
 import { auth } from '@/lib/auth'
 

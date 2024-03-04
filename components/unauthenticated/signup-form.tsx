@@ -3,13 +3,13 @@
 import { useEffect, useId } from 'react'
 import { useFormState } from 'react-dom'
 
-import { signup } from '@/actions/user/api'
+import { signup } from '@/actions/user/form'
 import { ServerResponse } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
 
 import { FormGroup } from '@/components/global/form-group'
 import { Input } from '@/components/global/input'
-import { Label } from '@/components/global/label'
+import { Label } from '@/components/authenticated/label'
 import { LoadingSpinner } from '@/components/global/loading-spinner'
 import { SubmitButton } from '@/components/global/submit-button'
 
