@@ -2,8 +2,8 @@
 
 import { createMessage } from '@/actions/message/db'
 
+import { error, success } from '@/lib/db'
 import { ServerResponse } from '@/lib/types'
-import { capitalise } from '@/utils/capitalise'
 
 export async function send(
   senderId: string,
@@ -24,16 +24,8 @@ export async function send(
       type: 'message',
     })
 
-    return {
-      type: 'success',
-      message: 'Message sent',
-      status: 201,
-    }
+    return success({ message: 'Message sent', status: 201 })
   } catch (err) {
-    return {
-      type: 'error',
-      message: err instanceof Error ? capitalise(err?.message) : 'An unknown error occurred',
-      status: 500,
-    }
+    return error(err as Error)
   }
 }

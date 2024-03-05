@@ -17,7 +17,6 @@ export function SearchBox({ value, setValue, param = 'q', ...rest }: Props) {
   const { replace } = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-
   const [isPending, startTransition] = useTransition()
 
   const shouldSyncUrl = !!param

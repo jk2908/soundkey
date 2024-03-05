@@ -1,7 +1,12 @@
+import { cookies } from 'next/headers'
 import type { NextRequest } from 'next/server'
+import { validateEmailVerificationToken } from '@/actions/token/db'
+import { getUserWithId } from '@/actions/user/db'
+import { eq } from 'drizzle-orm'
 
-import { _auth } from '@/lib/auth'
-import { validateEmailVerificationToken } from '@/actions/token'
+import { lucia } from '@/lib/auth'
+import { db } from '@/lib/db'
+import { userTable } from '@/lib/schema'
 
 export async function GET(
   _: NextRequest,
@@ -17,19 +22,20 @@ export async function GET(
 
   try {
     const id = await validateEmailVerificationToken(token)
-    const { userId } = await _auth.getUser(id)
+    const user = await getUserWithId(id)
 
-    await _auth.invalidateAllUserSessions(userId)
-    await _auth.updateUserAttributes(userId, {
-      email_verified: true,
-    })
+    if (!user) {
+      return new Response('User not found', {
+        status: 400,
+      })
+    }
 
-    const session = await _auth.createSession({
-      userId,
-      attributes: {},
-    })
+    await lucia.invalidateUserSessions(user?.userId)
+    await db.update(userTable).set({ emailVerified: true }).where(eq(userTable.id, user?.userId))
 
-    const sessionCookie = _auth.createSessionCookie(session)
+    const session = await lucia.createSession(user.userId, {})
+    const sessionCookie = lucia.createSessionCookie(session.id)
+    cookies().set(sessionCookie)
 
     return new Response(null, {
       status: 302,

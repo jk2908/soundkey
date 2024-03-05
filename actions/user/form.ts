@@ -8,9 +8,9 @@ import { createUser, getSystemUser } from '@/actions/user/db'
 import { eq } from 'drizzle-orm'
 import { Argon2id } from 'oslo/password'
 
-import { lucia, toSafeUser } from '@/lib/auth'
+import { lucia } from '@/lib/auth'
 import { APP_NAME } from '@/lib/config'
-import { db } from '@/lib/db'
+import { db, error, success } from '@/lib/db'
 import { userTable } from '@/lib/schema'
 import type { ServerResponse } from '@/lib/types'
 import { capitalise } from '@/utils/capitalise'
@@ -23,14 +23,10 @@ export async function signup(
   const email = formData.get('email') as string
   const password = formData.get('password') as string
 
-  if (!isValidEmail(email)) return { type: 'error', message: 'Invalid email', status: 400 }
+  if (!isValidEmail(email)) return error({ message: 'Invalid email', status: 400 })
 
   if (typeof password !== 'string' || password.length < 8 || password.length > 255) {
-    return {
-      type: 'error',
-      message: 'Invalid password',
-      status: 400,
-    }
+    return error({ message: 'Invalid password', status: 400 })
   }
 
   try {
@@ -43,11 +39,7 @@ export async function signup(
     const sysUser = await getSystemUser()
 
     if (!sysUser) {
-      return {
-        type: 'error',
-        message: 'Error in welcome message creation. Please contact support.',
-        status: 500,
-      }
+      return error({ message: 'System user not found', status: 500 })
     }
 
     await createMessage({
@@ -58,17 +50,9 @@ export async function signup(
       type: 'system_message',
     })
 
-    return {
-      type: 'success',
-      message: 'Account created',
-      status: 201,
-    }
+    return success({ message: 'Account created', status: 201 })
   } catch (err) {
-    return {
-      type: 'error',
-      message: err instanceof Error ? capitalise(err?.message) : 'An unknown error occurred',
-      status: 500,
-    }
+    return error(err as Error)
   }
 }
 
@@ -79,10 +63,10 @@ export async function login(
   const email = formData.get('email') as string
   const password = formData.get('password') as string
 
-  if (!isValidEmail(email)) return { type: 'error', message: 'Invalid email', status: 400 }
+  if (!isValidEmail(email)) return error({ message: 'Invalid email', status: 400 })
 
   if (typeof password !== 'string' || password.length < 8 || password.length > 255) {
-    return { type: 'error', message: 'Invalid password', status: 400 }
+    return error({ message: 'Invalid password', status: 400 })
   }
 
   try {
@@ -91,73 +75,53 @@ export async function login(
       .from(userTable)
       .where(eq(userTable.email, email.toLowerCase()))
 
-    if (!user) return { type: 'error', message: 'Invalid email', status: 400 }
+    if (!user) return error({ message: 'Invalid email', status: 400 })
 
     const validPassword = await new Argon2id().verify(user.hashedPassword, password)
 
-    if (!validPassword) return { type: 'error', message: 'Invalid password', status: 400 }
+    if (!validPassword) return error({ message: 'Invalid password', status: 400 })
 
     const session = await lucia.createSession(user.userId, {})
     const sessionCookie = lucia.createSessionCookie(session.id)
     cookies().set(sessionCookie)
 
-    return { type: 'success', message: 'Logged in', status: 200 }
+    return success({ message: 'Logged in', status: 200 })
   } catch (err) {
-    return {
-      type: 'error',
-      message: err instanceof Error ? capitalise(err?.message) : 'An unknown error occurred',
-      status: 500,
-    }
+    return error(err as Error)
   }
 }
 
 export async function logout() {
   const sessionId = cookies().get(lucia.sessionCookieName)?.value
 
-  if (!sessionId) return { type: 'error', message: 'No session', status: 401 }
+  if (!sessionId) return error({ message: 'No session', status: 401 })
 
   await lucia.invalidateSession(sessionId)
 
   const sessionCookie = lucia.createBlankSessionCookie()
   cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes)
 
-  return { type: 'success', message: 'Logged out', status: 200 }
+  return success({ message: 'Logged out', status: 200 })
 }
 
 export async function verify(prevState: ServerResponse): Promise<ServerResponse> {
   const sessionId = lucia.readSessionCookie('auth_session=abc')
 
-  if (!sessionId) return { type: 'error', message: 'No session', status: 401 }
+  if (!sessionId) return error({ message: 'Session not found', status: 401 })
 
   const { user } = await lucia.validateSession(sessionId)
 
-  if (!user) {
-    return { type: 'error', message: 'No user', status: 401 }
-  }
+  if (!user) return error({ message: 'User not found', status: 401 })
 
-  if (user.emailVerified) {
-    return {
-      type: 'error',
-      message: 'Email already verified',
-      status: 400,
-    }
-  }
+  if (user.emailVerified) error({ message: 'Email already verified', status: 400 })
 
   try {
     const token = await createEmailVerificationToken(user.userId)
     await sendVerificationEmail(user.email, token)
 
-    return {
-      type: 'success',
-      message: 'Verification email sent',
-      status: 200,
-    }
+    return success({ message: 'Verification email sent', status: 200 })
   } catch (err) {
-    return {
-      type: 'error',
-      message: err instanceof Error ? capitalise(err?.message) : 'An unknown error occurred',
-      status: 500,
-    }
+    return error(err as Error)
   }
 }
 
@@ -168,7 +132,7 @@ export async function reset(
   const email = formData.get('email') as string
 
   if (!isValidEmail(email)) {
-    return { type: 'error', message: 'Invalid email', status: 400 }
+    return error({ message: 'Invalid email', status: 400 })
   }
 
   try {
@@ -178,24 +142,13 @@ export async function reset(
       .where(eq(userTable.email, email.toLowerCase()))
       .limit(1)
 
-    if (!user) {
-      return { type: 'error', message: 'Invalid email', status: 400 }
-    }
+    if (!user) error({ message: 'User not found', status: 400 })
 
-    const { userId } = toSafeUser(user)
-    const token = await createPasswordResetToken(userId)
+    const token = await createPasswordResetToken(user?.id)
     await sendPasswordResetEmail(email, token)
 
-    return {
-      type: 'success',
-      message: 'Password reset email sent',
-      status: 200,
-    }
+    return success({ message: 'Password reset email sent', status: 200 })
   } catch (err) {
-    return {
-      type: 'error',
-      message: err instanceof Error ? capitalise(err?.message) : 'An unknown error occurred',
-      status: 500,
-    }
+    return error(err as Error)
   }
 }

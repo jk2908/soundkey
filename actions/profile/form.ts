@@ -3,10 +3,9 @@
 import { revalidateTag } from 'next/cache'
 import { and, eq, ne, or } from 'drizzle-orm'
 
-import { db } from '@/lib/db'
+import { db, error, success } from '@/lib/db'
 import { profileTable } from '@/lib/schema'
 import { ServerResponse } from '@/lib/types'
-import { capitalise } from '@/utils/capitalise'
 import { generateId } from '@/utils/generate-id'
 
 export async function update(
@@ -19,19 +18,11 @@ export async function update(
     const bio = formData.get('bio') as string
 
     if (typeof username !== 'string' || username.length < 3 || username.length > 255) {
-      return {
-        type: 'error',
-        message: 'Invalid username',
-        status: 400,
-      }
+      return error({ message: 'Invalid username', status: 400 })
     }
 
     if (typeof bio !== 'string' || bio.length > 255) {
-      return {
-        type: 'error',
-        message: 'Bio must be less than 255 characters',
-        status: 400,
-      }
+      return error({ message: 'Bio must be less than 255 characters', status: 400 })
     }
 
     await db
@@ -49,17 +40,8 @@ export async function update(
 
     revalidateTag('profile')
 
-    return {
-      type: 'success',
-      message: 'Profile updated',
-      status: 200,
-      key: generateId(),
-    }
+    return success({ message: 'Profile updated', status: 200, key: generateId() })
   } catch (err) {
-    return {
-      type: 'error',
-      message: err instanceof Error ? capitalise(err?.message) : 'An unknown error occurred',
-      status: 500,
-    }
+    return error(err as Error)
   }
 }
