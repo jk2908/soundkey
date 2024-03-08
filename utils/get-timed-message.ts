@@ -1,4 +1,4 @@
-export function getTimedMessage(t: number) {
+export function getTimedMessage(t: number, str?: string) {
   const d = new Date(t)
   const h = d.getHours()
 
@@ -10,6 +10,6 @@ export function getTimedMessage(t: number) {
     case h < 20:
       return 'Good evening'
     default:
-      return 'Working late?'
+      return `Working late${str ? ', ' + str : ''}?`
   }
 }

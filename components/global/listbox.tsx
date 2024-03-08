@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, use, useCallback, useEffect, useId, useState } from 'react'
+import { createContext, forwardRef, use, useCallback, useEffect, useId, useState } from 'react'
 
 import { cn } from '@/utils/cn'
 
@@ -32,7 +32,6 @@ export function Root({
   )
   const [isOpen, setOpen] = useState(persist)
   const id = useId()
-
 
   const selectOption = useCallback(
     (value: string) => {
@@ -84,25 +83,23 @@ export function Options({
   )
 }
 
-export function Option({
-  children,
-  value,
-  className,
-}: {
-  children: React.ReactNode
-  value: string
-  className?: string
-}) {
+export const Option = forwardRef<
+  HTMLButtonElement,
+  { children: React.ReactNode; value: string; className?: string }
+>(({ children, value, className }, ref) => {
   const { selectedOptions, selectOption } = use(ListBoxContext)
   const isSelected = selectedOptions.includes(value)
 
   return (
-    <div
+    <button
       role="option"
       aria-selected={isSelected}
       onClick={() => selectOption(value)}
-      className={cn(className)}>
+      className={cn(className)}
+      ref={ref}>
       {children}
-    </div>
+    </button>
   )
-}
+})
+
+Option.displayName = 'Option'

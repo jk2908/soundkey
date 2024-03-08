@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useId, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { send } from '@/actions/message/form'
-import { useFormState } from 'react-dom'
+import { flushSync, useFormState } from 'react-dom'
 
 import type { ServerResponse } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
@@ -11,6 +11,7 @@ import { generateId } from '@/utils/generate-id'
 
 import { Label } from '@/components/authenticated/label'
 import { FormGroup } from '@/components/global/form-group'
+import { Icon } from '@/components/global/icon'
 import * as Listbox from '@/components/global/listbox'
 import { LoadingSpinner } from '@/components/global/loading-spinner'
 import * as Search from '@/components/global/search'
@@ -39,6 +40,7 @@ export function SendMessageForm({
   const [state, dispatch] = useFormState(send.bind(null, userId, threadId), initialState)
   const { replace } = useRouter()
   const { toast } = useToast()
+  const searchRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (!state.type) return
@@ -54,28 +56,46 @@ export function SendMessageForm({
           To
         </Label>
 
-        <Search.Root>
+        <Search.Root className="flex flex-col gap-2">
           {({ value, setValue }) => (
             <>
-              <Search.Box placeholder="To" name="to" id={recipientId} />
+              <Search.Box
+                ref={searchRef}
+                placeholder="To"
+                name="to"
+                id={recipientId}
+                results={to ? [to] : undefined}
+                onConfirm={() => {
+                  flushSync(() => {
+                    setUsers(prev => [...new Set([...prev, value])])
+                    replace('/messages/new')
+                    setValue('')
+                  })
+
+                  searchRef.current?.focus()
+                }}
+              />
 
               <Search.Results>
                 <Listbox.Root
-                  onChange={() => {
-                    setUsers(prev =>
-                      value === to ? [...new Set([...prev, value])] : prev.filter(t => t !== value)
-                    )
+                  onChange={value => {
+                    flushSync(() => {
+                      setUsers(prev => prev.filter(user => user !== value))
+                    })
 
-                    replace('/messages/new')
-                    setValue('')
+                    searchRef.current?.focus()
                   }}
                   persist>
                   <Listbox.Options className="flex">
-                    {[to, ...users].map(
+                    {users.map(
                       user =>
                         user && (
-                          <Listbox.Option key={generateId()} value={user}>
+                          <Listbox.Option
+                            key={generateId()}
+                            value={user}
+                            className="flex gap-1 font-mono rounded-full py-1.5 px-2.5 bg-keyline/80 text-sm">
                             {user}
+                            <Icon name="x" size={10} />
                           </Listbox.Option>
                         )
                     )}

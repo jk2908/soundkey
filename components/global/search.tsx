@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, use, useState } from 'react'
+import { createContext, forwardRef, use, useRef, useState } from 'react'
 
 import { cn } from '@/utils/cn'
 
@@ -15,27 +15,32 @@ const SearchContext = createContext<SearchContextProps>({ value: '', setValue: (
 
 export function Root({
   children,
+  role = 'search',
   className,
 }: {
   children: React.ReactNode | (({ value, setValue }: SearchContextProps) => React.ReactNode)
+  role?: string
   className?: string
 }) {
   const [value, setValue] = useState<string>('')
 
   return (
     <SearchContext.Provider value={{ value, setValue }}>
-      <section className={cn(className)} role="search">
+      <section className={cn(className)} role={role}>
         {typeof children === 'function' ? children({ value, setValue }) : children}
       </section>
     </SearchContext.Provider>
   )
 }
 
-export function Box(props: SearchBoxProps) {
+export const Box = forwardRef<HTMLInputElement, SearchBoxProps>(({ ...props }, ref) => {
   const { value, setValue } = use(SearchContext)
+  const inputRef = useRef<HTMLInputElement>(null)
 
-  return <SearchBox value={value} setValue={setValue} {...props} />
-}
+  return <SearchBox ref={ref || inputRef} value={value} setValue={setValue} {...props} />
+})
+
+Box.displayName = 'Box'
 
 export function Results({ children }: { children: React.ReactNode }) {
   return <>{children}</>
