@@ -9,6 +9,7 @@ import { FullscreenLoadingSpinner } from '@/components/global/fullscreen-loading
 import { LoadingSpinner } from '@/components/global/loading-spinner'
 import { Section } from '@/components/global/section'
 import { Wrapper } from '@/components/global/wrapper'
+import { NavSkeletonLoader } from '@/components/authenticated/nav-skeleton-loader'
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
   const user = await auth()
@@ -20,7 +21,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
       <div className="flex grow flex-col bg-app-bg-inverted bg-[url('/assets/dashboard-bg.jpg')] bg-cover">
         <Wrapper size="xxl" className="flex grow bg-app-bg sm:px-0 md:px-0">
           <Sidebar>
-            <Suspense fallback={<LoadingSpinner />}>
+            <Suspense fallback={<NavSkeletonLoader />}>
               <Nav />
             </Suspense>
           </Sidebar>

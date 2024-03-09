@@ -8,11 +8,11 @@ import { ServerResponse } from '@/lib/types'
 export async function send(
   senderId: string,
   threadId: string | undefined,
+  recipients: string[],
   prevState: ServerResponse,
   formData: FormData
 ): Promise<ServerResponse> {
   try {
-    const recipients = formData.get('recipients') as string
     const body = formData.get('body') as string
 
     await createMessage({
@@ -24,8 +24,8 @@ export async function send(
       type: 'message',
     })
 
-    return success({ message: 'Message sent', status: 201 })
+    return success(201, 'Message sent')
   } catch (err) {
-    return error(err as Error)
+    return error(500, err instanceof Error ? err.message : 'An unknown error occurred')
   }
 }

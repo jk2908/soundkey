@@ -39,7 +39,7 @@ export type Toast = {
 
 export type Theme = 'light' | 'dark' | undefined
 
-export type Icon = 'moon' | 'sun' | 'spinner' | 'x' | 'logout' | 'user' | 'search'
+export type Icon = 'moon' | 'sun' | 'spinner' | 'x' | 'logout' | 'user' | 'search' | 'mails' | 'mail' | 'send' | 'mail+'
 
 export type ServerResponse =
   | {

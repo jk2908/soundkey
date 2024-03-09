@@ -1,5 +1,3 @@
-'use server'
-
 import { cache } from 'react'
 import { sendVerificationEmail } from '@/actions/email/db'
 import { createProfile } from '@/actions/profile/db'

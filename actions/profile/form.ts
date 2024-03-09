@@ -18,11 +18,11 @@ export async function update(
     const bio = formData.get('bio') as string
 
     if (typeof username !== 'string' || username.length < 3 || username.length > 255) {
-      return error({ message: 'Invalid username', status: 400 })
+      return error(400, 'Invalid username')
     }
 
     if (typeof bio !== 'string' || bio.length > 255) {
-      return error({ message: 'Bio must be less than 255 characters', status: 400 })
+      return error(400, 'Bio must be less than 255 characters')
     }
 
     await db
@@ -40,8 +40,8 @@ export async function update(
 
     revalidateTag('profile')
 
-    return success({ message: 'Profile updated', status: 200, key: generateId() })
+    return success(200, 'Profile updated', { key: generateId() })
   } catch (err) {
-    return error(err as Error)
+    return error(500, err instanceof Error ? err.message : 'An unknown error occurred')
   }
 }

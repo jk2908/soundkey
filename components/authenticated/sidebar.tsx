@@ -55,27 +55,25 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
             <Logo />
           </div>
 
-          <div className="grow flex flex-col">
+          <div className="flex grow flex-col">
             {children}
 
             <div className="mt-auto flex flex-col gap-6 px-4">
               <HorizontalRule />
 
-              <div className="flex gap-4">
-                <Suspense fallback={<LoadingSpinner />}>
+              <Suspense fallback={<LoadingSpinner />}>
+                <div className="flex gap-4">
                   <LogoutButton iconOnly>
                     <Icon name="logout" size={18} title="Logout" />
                     <span className="sr-only">Log out</span>
                   </LogoutButton>
-                </Suspense>
 
-                <Suspense fallback={<LoadingSpinner />}>
                   <Button as={Link} href="/profile" iconOnly>
                     <Icon name="user" size={18} title="Profile" />
                     <span className="sr-only">Profile</span>
                   </Button>
-                </Suspense>
-              </div>
+                </div>
+              </Suspense>
             </div>
           </div>
         </YSpace>

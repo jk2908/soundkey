@@ -13,7 +13,6 @@ import { APP_NAME } from '@/lib/config'
 import { db, error, success } from '@/lib/db'
 import { userTable } from '@/lib/schema'
 import type { ServerResponse } from '@/lib/types'
-import { capitalise } from '@/utils/capitalise'
 import { isValidEmail } from '@/utils/is-valid-email'
 
 export async function signup(
@@ -23,10 +22,10 @@ export async function signup(
   const email = formData.get('email') as string
   const password = formData.get('password') as string
 
-  if (!isValidEmail(email)) return error({ message: 'Invalid email', status: 400 })
+  if (!isValidEmail(email)) return error(400, 'Invalid email')
 
   if (typeof password !== 'string' || password.length < 8 || password.length > 255) {
-    return error({ message: 'Invalid password', status: 400 })
+    return error(400, 'Invalid password')
   }
 
   try {
@@ -39,7 +38,7 @@ export async function signup(
     const sysUser = await getSystemUser()
 
     if (!sysUser) {
-      return error({ message: 'System user not found', status: 500 })
+      return error(500, 'System user not found')
     }
 
     await createMessage({
@@ -50,9 +49,9 @@ export async function signup(
       type: 'system_message',
     })
 
-    return success({ message: 'Account created', status: 201 })
+    return success(201, 'Account created')
   } catch (err) {
-    return error(err as Error)
+    return error(500, err instanceof Error ? err.message : 'An unknown error occurred')
   }
 }
 
@@ -63,10 +62,10 @@ export async function login(
   const email = formData.get('email') as string
   const password = formData.get('password') as string
 
-  if (!isValidEmail(email)) return error({ message: 'Invalid email', status: 400 })
+  if (!isValidEmail(email)) return error(400, 'Invalid email')
 
   if (typeof password !== 'string' || password.length < 8 || password.length > 255) {
-    return error({ message: 'Invalid password', status: 400 })
+    return error(400, 'Invalid password')
   }
 
   try {
@@ -75,53 +74,53 @@ export async function login(
       .from(userTable)
       .where(eq(userTable.email, email.toLowerCase()))
 
-    if (!user) return error({ message: 'Invalid email', status: 400 })
+    if (!user) return error(400, 'Invalid email')
 
     const validPassword = await new Argon2id().verify(user.hashedPassword, password)
 
-    if (!validPassword) return error({ message: 'Invalid password', status: 400 })
+    if (!validPassword) return error(400, 'Invalid password')
 
     const session = await lucia.createSession(user.userId, {})
     const sessionCookie = lucia.createSessionCookie(session.id)
     cookies().set(sessionCookie)
 
-    return success({ message: 'Logged in', status: 200 })
+    return success(200, 'Logged in')
   } catch (err) {
-    return error(err as Error)
+    return error(500, err instanceof Error ? err.message : 'An unknown error occurred')
   }
 }
 
 export async function logout() {
   const sessionId = cookies().get(lucia.sessionCookieName)?.value
 
-  if (!sessionId) return error({ message: 'No session', status: 401 })
+  if (!sessionId) return error(401, 'No session')
 
   await lucia.invalidateSession(sessionId)
 
   const sessionCookie = lucia.createBlankSessionCookie()
   cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes)
 
-  return success({ message: 'Logged out', status: 200 })
+  return success(200, 'Logged out')
 }
 
 export async function verify(prevState: ServerResponse): Promise<ServerResponse> {
   const sessionId = lucia.readSessionCookie('auth_session=abc')
 
-  if (!sessionId) return error({ message: 'Session not found', status: 401 })
+  if (!sessionId) return error(401, 'Session not found')
 
   const { user } = await lucia.validateSession(sessionId)
 
-  if (!user) return error({ message: 'User not found', status: 401 })
+  if (!user) return error(401, 'User not found')
 
-  if (user.emailVerified) error({ message: 'Email already verified', status: 400 })
+  if (user.emailVerified) error(400, 'Email already verified')
 
   try {
     const token = await createEmailVerificationToken(user.userId)
     await sendVerificationEmail(user.email, token)
 
-    return success({ message: 'Verification email sent', status: 200 })
+    return success(200, 'Verification email sent')
   } catch (err) {
-    return error(err as Error)
+    return error(500, err instanceof Error ? err.message : 'An unknown error occurred')
   }
 }
 
@@ -132,7 +131,7 @@ export async function reset(
   const email = formData.get('email') as string
 
   if (!isValidEmail(email)) {
-    return error({ message: 'Invalid email', status: 400 })
+    return error(400, 'Invalid email')
   }
 
   try {
@@ -142,13 +141,13 @@ export async function reset(
       .where(eq(userTable.email, email.toLowerCase()))
       .limit(1)
 
-    if (!user) error({ message: 'User not found', status: 400 })
+    if (!user) error(400, 'User not found')
 
     const token = await createPasswordResetToken(user?.id)
     await sendPasswordResetEmail(email, token)
 
-    return success({ message: 'Password reset email sent', status: 200 })
+    return success(200, 'Password reset email sent')
   } catch (err) {
-    return error(err as Error)
+    return error(500, err instanceof Error ? err.message : 'An unknown error occurred')
   }
 }

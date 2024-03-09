@@ -9,10 +9,10 @@ export default async function Page() {
       <Tabs.Root initialValue="signup" loop>
         <div className="space-y-8">
           <Tabs.List className="rounded-tab-group mx-auto max-w-72">
-            <Tabs.Button value="signup" className="text-sm font-medium tracking-wide">
+            <Tabs.Button value="signup">
               Signup
             </Tabs.Button>
-            <Tabs.Button value="login" className="text-sm font-medium tracking-wide">
+            <Tabs.Button value="login">
               Login
             </Tabs.Button>
           </Tabs.List>

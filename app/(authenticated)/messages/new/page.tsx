@@ -17,10 +17,11 @@ export default async function Page({
 
   const params = searchParams.q && isValidEmail(searchParams.q) ? searchParams.q : undefined
   const toUser = params ? await getUserWithEmail(params) : undefined
+  const result = toUser ? { userId: toUser.userId, email: toUser.email } : undefined
 
   return (
     <div className="flex h-full flex-col">
-      <SendMessageForm userId={user.userId} to={toUser?.email} />
+      <SendMessageForm userId={user.userId} to={result} />
     </div>
   )
 }

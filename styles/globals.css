@@ -56,6 +56,9 @@
       > :is(button, a) {
         border-radius: 9999px;
         flex-grow: 1;
+        font-family: theme('fontFamily.mono');
+        font-size: theme('fontSize.sm');
+        letter-spacing: theme('letterSpacing.wider');  
         padding: theme('spacing.2') theme('spacing.6');
         outline: 1px solid transparent;
 

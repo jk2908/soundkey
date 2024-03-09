@@ -31,13 +31,16 @@ export function SendMessageForm({
 }: {
   userId: string
   threadId?: string
-  to?: string
+  to?: { userId: string; email: string }
 }) {
   const recipientId = useId()
   const bodyId = useId()
 
-  const [users, setUsers] = useState<string[]>([])
-  const [state, dispatch] = useFormState(send.bind(null, userId, threadId), initialState)
+  const [recipients, setRecipients] = useState<string[]>([])
+  const [state, dispatch] = useFormState(
+    send.bind(null, userId, threadId, recipients),
+    initialState
+  )
   const { replace } = useRouter()
   const { toast } = useToast()
   const searchRef = useRef<HTMLInputElement>(null)
@@ -50,7 +53,7 @@ export function SendMessageForm({
   }, [state])
 
   return (
-    <form action={dispatch}>
+    <form action={dispatch} className="flex h-full flex-col">
       <FormGroup>
         <Label htmlFor={recipientId} className="sr-only">
           To
@@ -64,10 +67,10 @@ export function SendMessageForm({
                 placeholder="To"
                 name="to"
                 id={recipientId}
-                results={to ? [to] : undefined}
+                results={to ? [to.email] : undefined}
                 onConfirm={() => {
                   flushSync(() => {
-                    setUsers(prev => [...new Set([...prev, value])])
+                    setRecipients(prev => [...new Set([...prev, value])])
                     replace('/messages/new')
                     setValue('')
                   })
@@ -80,25 +83,22 @@ export function SendMessageForm({
                 <Listbox.Root
                   onChange={value => {
                     flushSync(() => {
-                      setUsers(prev => prev.filter(user => user !== value))
+                      setRecipients(prev => prev.filter(user => user !== value))
                     })
 
                     searchRef.current?.focus()
                   }}
                   persist>
                   <Listbox.Options className="flex">
-                    {users.map(
-                      user =>
-                        user && (
-                          <Listbox.Option
-                            key={generateId()}
-                            value={user}
-                            className="flex gap-1 font-mono rounded-full py-1.5 px-2.5 bg-keyline/80 text-sm">
-                            {user}
-                            <Icon name="x" size={10} />
-                          </Listbox.Option>
-                        )
-                    )}
+                    {recipients.map(r => (
+                      <Listbox.Option
+                        key={generateId()}
+                        value={r}
+                        className="flex gap-1 rounded-full bg-keyline/80 px-2.5 py-1.5 font-mono text-sm">
+                        {r}
+                        <Icon name="x" size={10} />
+                      </Listbox.Option>
+                    ))}
                   </Listbox.Options>
                 </Listbox.Root>
               </Search.Results>
@@ -107,21 +107,21 @@ export function SendMessageForm({
         </Search.Root>
       </FormGroup>
 
-      <FormGroup>
-        <Label htmlFor={bodyId}>Message</Label>
-        <Textarea id={bodyId} name="body" required className="h-20" />
-      </FormGroup>
+        <FormGroup className="grow flex flex-col">
+          <Label htmlFor={bodyId}>Message</Label>
+          <Textarea id={bodyId} name="body" required className="min-h-[200px] grow" />
+        </FormGroup>
 
-      <FormGroup>
-        <SubmitButton>
-          {({ pending }) => (
-            <>
-              {pending && <LoadingSpinner />}
-              Send
-            </>
-          )}
-        </SubmitButton>
-      </FormGroup>
+        <FormGroup>
+          <SubmitButton>
+            {({ pending }) => (
+              <>
+                {pending && <LoadingSpinner />}
+                Send
+              </>
+            )}
+          </SubmitButton>
+        </FormGroup>
     </form>
   )
 }
