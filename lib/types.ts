@@ -39,18 +39,15 @@ export type Toast = {
 
 export type Theme = 'light' | 'dark' | undefined
 
-export type Icon = 'moon' | 'sun' | 'spinner' | 'x' | 'logout' | 'user' | 'search' | 'mails' | 'mail' | 'send' | 'mail+'
-
 export type ServerResponse =
   | {
       type: 'success' | 'error'
       message: string
       status: number
       key?: string
+      payload?: unknown
     }
-  | { type: undefined; message: null; status: undefined; key?: string }
-
-export type ServerResponseWithPayload<T> = ServerResponse & { payload: T }
+  | { type: undefined; message: null; status: undefined; key?: string, payload?: unknown }
 
 export type Route = {
   label: string

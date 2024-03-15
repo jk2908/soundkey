@@ -1,5 +1,6 @@
 'use server'
 
+import { revalidateTag, unstable_cache } from 'next/cache'
 import { desc, eq, sql } from 'drizzle-orm'
 
 import { db } from '@/lib/db'
@@ -24,6 +25,8 @@ export async function createThread(userIds: string[], messageId: string) {
         userId,
       }))
     )
+
+    revalidateTag('threads')
 
     return newThread.id
   } catch (err) {
@@ -60,42 +63,35 @@ export async function resolveThread(
   }
 }
 
-export async function createMessage(payload: NewMessage): Promise<ServerResponse> {
+export async function createMessage(payload: NewMessage) {
   try {
     const { id: messageId = generateId(), recipientIds, threadId } = payload
 
-    if (!recipientIds) return { type: 'error', message: 'No recipient specified', status: 400 }
+    if (!recipientIds) throw new Error('No recipients provided')
 
     const resolvedThreadId = await resolveThread(threadId, recipientIds, messageId)
 
-    if (!resolvedThreadId) {
-      return { type: 'error', message: 'Could not resolve thread', status: 500 }
-    }
+    if (!resolvedThreadId) throw new Error('Could not resolve thread')
 
-    await db.insert(messageTable).values({
-      ...(payload as NewMessage),
-      threadId: resolvedThreadId,
-      recipientIds: recipientIds.join(','),
-    })
+    const [createdMessage] = await db
+      .insert(messageTable)
+      .values({
+        ...(payload as NewMessage),
+        threadId: resolvedThreadId,
+        recipientIds: recipientIds.join(','),
+      })
+      .returning({ messageId: messageTable.id, threadId: messageTable.threadId })
 
-    return {
-      type: 'success',
-      message: 'Message sent',
-      status: 201,
-    }
+    revalidateTag('messages')
+
+    return createdMessage
   } catch (err) {
-    console.log(err)
-    return {
-      type: 'error',
-      message: err instanceof Error ? capitalise(err?.message) : 'An unknown error occurred',
-      status: 500,
-    }
+    console.error(err)
+    throw err
   }
 }
 
-export async function updateMessage(
-  payload: EditMessage & { messageId: string }
-): Promise<ServerResponse> {
+export async function updateMessage(payload: EditMessage & { messageId: string }) {
   try {
     const { messageId, body } = payload
 
@@ -104,40 +100,35 @@ export async function updateMessage(
       .set({ body, updatedAt: Date.now() })
       .where(eq(messageTable.id, messageId))
 
-    return {
-      type: 'success',
-      message: 'Message edited',
-      status: 200,
-    }
+    return messageId
   } catch (err) {
-    console.log(err)
-    return {
-      type: 'error',
-      message: err instanceof Error ? capitalise(err?.message) : 'An unknown error occurred',
-      status: 500,
-    }
+    console.error(err)
   }
 }
 
-export async function getThreads(userId: string) {
-  try {
-    const threads = await db
-      .select({
-        threadId: threadToUserTable.threadId,
-        createdAt: threadTable.createdAt,
-        updatedAt: threadTable.updatedAt,
-      })
-      .from(threadToUserTable)
-      .leftJoin(threadTable, eq(threadTable.id, threadToUserTable.threadId))
-      .where(eq(threadToUserTable.userId, userId))
+export const getThreads = unstable_cache(
+  async (userId: string) => {
+    try {
+      const threads = await db
+        .select({
+          threadId: threadToUserTable.threadId,
+          createdAt: threadTable.createdAt,
+          updatedAt: threadTable.updatedAt,
+        })
+        .from(threadToUserTable)
+        .leftJoin(threadTable, eq(threadTable.id, threadToUserTable.threadId))
+        .where(eq(threadToUserTable.userId, userId))
 
-    if (!threads.length) return []
+      if (!threads.length) return []
 
-    return threads
-  } catch (err) {
-    return []
-  }
-}
+      return threads
+    } catch (err) {
+      return []
+    }
+  },
+  ['threads'],
+  { tags: ['threads'] }
+)
 
 export async function getThread(threadId: string) {
   try {
@@ -147,61 +138,70 @@ export async function getThread(threadId: string) {
 
     return t
   } catch (err) {
+    console.error(err)
     return null
   }
 }
 
-export async function getMessagesByUser(userId: string) {
-  try {
-    const threads = await getThreads(userId)
+export const getMessagesWithUser = unstable_cache(
+  async (userId: string) => {
+    try {
+      const threads = await getThreads(userId)
 
-    if (!threads.length) return []
+      if (!threads.length) return []
 
-    const messages = await db
-      .select({
-        messageId: messageTable.id,
-        threadId: messageTable.threadId,
-        senderId: messageTable.senderId,
-        recipientIds: messageTable.recipientIds,
-        body: messageTable.body,
-        createdAt: messageTable.createdAt,
-        updatedAt: messageTable.updatedAt,
-        read: messageTable.read,
-        type: messageTable.type,
-      })
-      .from(messageTable)
-      .where(sql`thread_id IN (${threads.map(thread => thread.threadId)})`)
-      .orderBy(desc(messageTable.createdAt))
+      const messages = await db
+        .select({
+          messageId: messageTable.id,
+          threadId: messageTable.threadId,
+          senderId: messageTable.senderId,
+          recipientIds: messageTable.recipientIds,
+          body: messageTable.body,
+          createdAt: messageTable.createdAt,
+          updatedAt: messageTable.updatedAt,
+          read: messageTable.read,
+          type: messageTable.type,
+        })
+        .from(messageTable)
+        .where(sql`thread_id IN (${threads.map(thread => thread.threadId)})`)
+        .orderBy(desc(messageTable.createdAt))
 
-    return messages
-  } catch (err) {
-    return []
-  }
-}
+      return messages
+    } catch (err) {
+      return []
+    }
+  },
+  ['messages'],
+  { tags: ['messages'] }
+)
 
-export async function getMessagesByThread(threadId: string) {
-  try {
-    const messages = await db
-      .select({
-        messageId: messageTable.id,
-        threadId: messageTable.threadId,
-        senderId: messageTable.senderId,
-        recipientIds: messageTable.recipientIds,
-        body: messageTable.body,
-        createdAt: messageTable.createdAt,
-        updatedAt: messageTable.updatedAt,
-        read: messageTable.read,
-        type: messageTable.type,
-      })
-      .from(messageTable)
-      .where(eq(messageTable.threadId, threadId))
-      .orderBy(desc(messageTable.createdAt))
+export const getMessagesWithThread = unstable_cache(
+  async (threadId: string) => {
+    try {
+      const messages = await db
+        .select({
+          messageId: messageTable.id,
+          threadId: messageTable.threadId,
+          senderId: messageTable.senderId,
+          recipientIds: messageTable.recipientIds,
+          body: messageTable.body,
+          createdAt: messageTable.createdAt,
+          updatedAt: messageTable.updatedAt,
+          read: messageTable.read,
+          type: messageTable.type,
+        })
+        .from(messageTable)
+        .where(eq(messageTable.threadId, threadId))
+        .orderBy(desc(messageTable.createdAt))
 
-    return messages
-  } catch (err) {
-    return []
-  }
-}
+      return messages
+    } catch (err) {
+      return []
+    }
+  },
+  ['messages'],
+  { tags: ['messages'] }
+)
 
 export async function getMessage(messageId: string) {
   try {

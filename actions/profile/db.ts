@@ -1,8 +1,8 @@
 import { unstable_cache } from 'next/cache'
-import { eq } from 'drizzle-orm'
+import { and, eq, ne, or } from 'drizzle-orm'
 
 import { db } from '@/lib/db'
-import { profileTable } from '@/lib/schema'
+import { profileTable, type EditProfile } from '@/lib/schema'
 
 export const createProfile = async (userId: string) => {
   try {
@@ -35,3 +35,30 @@ export const getProfile = unstable_cache(
   ['profile'],
   { tags: ['profile'] }
 )
+
+export async function updateProfile(payload: EditProfile) {
+  try {
+    const { userId, username, bio } = payload
+
+    if (typeof username !== 'string' || username.length < 3 || username.length > 255) {
+      throw new Error('Invalid username')
+    }
+
+    if (typeof bio !== 'string' || bio.length > 255) {
+      throw new Error('Bio must be less than 255 characters')
+    }
+
+    await db
+      .update(profileTable)
+      .set({ username, bio })
+      .where(
+        and(
+          eq(profileTable.userId, userId),
+          or(ne(profileTable.username, username), ne(profileTable.bio, bio))
+        )
+      )
+  } catch (err) {
+    console.log(err)
+    throw err
+  }
+}

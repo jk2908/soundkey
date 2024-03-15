@@ -61,8 +61,12 @@
         letter-spacing: theme('letterSpacing.wider');  
         padding: theme('spacing.2') theme('spacing.6');
         outline: 1px solid transparent;
+        
+        &:hover {
+          background-color: rgb(var(--keyline) / 40%);
+        }
 
-        &[aria-selected='true'] {
+        &:is([aria-selected='true'], .active) {
           background-color: rgb(var(--keyline) / 25%);
         }
       }

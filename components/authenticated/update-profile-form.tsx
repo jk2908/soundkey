@@ -7,9 +7,9 @@ import { useFormState } from 'react-dom'
 import { ServerResponse } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
 
+import { Label } from '@/components/authenticated/label'
 import { FormGroup } from '@/components/global/form-group'
 import { Input } from '@/components/global/input'
-import { Label } from '@/components/authenticated/label'
 import { LoadingSpinner } from '@/components/global/loading-spinner'
 import { SubmitButton } from '@/components/global/submit-button'
 
@@ -71,8 +71,8 @@ export function UpdateProfileForm({
         <SubmitButton>
           {({ pending }) => (
             <>
-              {pending && <LoadingSpinner />}
               Update
+              {pending && <LoadingSpinner />}
             </>
           )}
         </SubmitButton>

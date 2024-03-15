@@ -5,45 +5,31 @@ import { createContext, forwardRef, use, useCallback, useEffect, useId, useState
 import { cn } from '@/utils/cn'
 
 export const ListBoxContext = createContext<{
-  selectedOptions: string[]
-  selectOption: (value: string) => void
+  selected: string[]
   isOpen: boolean
   setOpen: React.Dispatch<React.SetStateAction<boolean>>
-  onChange?: (value: string) => void
-  initialValue?: string
+  onSelect?: (value: string) => void
   persist?: boolean
-}>({ selectedOptions: [], selectOption: () => {}, isOpen: false, setOpen: () => {} })
+}>({ selected: [], isOpen: false, setOpen: () => {} })
 
 export function Root({
   children,
-  onChange,
-  initialValue,
+  selected,
+  onSelect,
   persist = false,
   className,
 }: {
   children: React.ReactNode
-  onChange?: (value: string) => void
-  initialValue?: string
+  selected: string[]
+  onSelect?: (value: string) => void
   persist?: boolean
   className?: string
 }) {
-  const [selectedOptions, setSelectedOptions] = useState<string[]>(
-    initialValue ? [initialValue] : []
-  )
   const [isOpen, setOpen] = useState(persist)
   const id = useId()
 
-  const selectOption = useCallback(
-    (value: string) => {
-      setSelectedOptions(prev => [...prev, value])
-      onChange?.(value)
-    },
-    [onChange]
-  )
-
   return (
-    <ListBoxContext.Provider
-      value={{ selectedOptions, selectOption, isOpen, setOpen, onChange, initialValue, persist }}>
+    <ListBoxContext.Provider value={{ selected, isOpen, setOpen, onSelect, persist }}>
       <div id={id} role="listbox" className={cn(className)}>
         {children}
       </div>
@@ -87,16 +73,16 @@ export const Option = forwardRef<
   HTMLButtonElement,
   { children: React.ReactNode; value: string; className?: string }
 >(({ children, value, className }, ref) => {
-  const { selectedOptions, selectOption } = use(ListBoxContext)
-  const isSelected = selectedOptions.includes(value)
+  const { selected, onSelect } = use(ListBoxContext)
+  const isSelected = selected.some(o => o === value)
 
   return (
     <button
+      ref={ref}
       role="option"
       aria-selected={isSelected}
-      onClick={() => selectOption(value)}
-      className={cn(className)}
-      ref={ref}>
+      onClick={() => onSelect?.(value)}
+      className={cn(className)}>
       {children}
     </button>
   )

@@ -14,9 +14,9 @@ type OwnProps<E extends React.ElementType = React.ElementType> = {
 export type Props<E extends React.ElementType> = OwnProps<E> &
   Omit<React.ComponentProps<E>, keyof OwnProps>
 
-const __DEFAULT_ELEMENT__ = 'button'
+const DEFAULT_ELEMENT = 'button'
 
-export function Button<E extends React.ElementType = typeof __DEFAULT_ELEMENT__>({
+export function Button<E extends React.ElementType = typeof DEFAULT_ELEMENT>({
   children,
   as,
   variant = 'primary',
@@ -24,7 +24,7 @@ export function Button<E extends React.ElementType = typeof __DEFAULT_ELEMENT__>
   iconOnly,
   ...rest
 }: Props<E>) {
-  const Cmp = as ?? __DEFAULT_ELEMENT__
+  const Cmp = as ?? DEFAULT_ELEMENT
 
   const styleMap: { [key in StateVariant | IntentVariant]: string } = {
     primary: 'bg-app-bg-inverted text-app-fg-inverted',

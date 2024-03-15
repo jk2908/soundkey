@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useId, useRef, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { send } from '@/actions/message/form'
 import { flushSync, useFormState } from 'react-dom'
 
@@ -31,26 +31,36 @@ export function SendMessageForm({
 }: {
   userId: string
   threadId?: string
-  to?: { userId: string; email: string }
+  to?: string
 }) {
   const recipientId = useId()
   const bodyId = useId()
 
   const [recipients, setRecipients] = useState<string[]>([])
+
   const [state, dispatch] = useFormState(
     send.bind(null, userId, threadId, recipients),
     initialState
   )
-  const { replace } = useRouter()
+
+  const { replace, push } = useRouter()
   const { toast } = useToast()
   const searchRef = useRef<HTMLInputElement>(null)
+  const pathname = usePathname()
 
   useEffect(() => {
-    if (!state.type) return
+    const { type, payload } = state
+
+    if (!type) return
 
     toast({ ...state })
+
+    if (type === 'success' && payload) {
+      push(pathname.replace('new', payload.toString()))
+    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state])
+  }, [state, push])
 
   return (
     <form action={dispatch} className="flex h-full flex-col">
@@ -67,11 +77,11 @@ export function SendMessageForm({
                 placeholder="To"
                 name="to"
                 id={recipientId}
-                results={to ? [to.email] : undefined}
+                results={to ? [to] : undefined}
                 onConfirm={() => {
                   flushSync(() => {
                     setRecipients(prev => [...new Set([...prev, value])])
-                    replace('/messages/new')
+                    replace(pathname)
                     setValue('')
                   })
 
@@ -81,7 +91,8 @@ export function SendMessageForm({
 
               <Search.Results>
                 <Listbox.Root
-                  onChange={value => {
+                  selected={recipients}
+                  onSelect={value => {
                     flushSync(() => {
                       setRecipients(prev => prev.filter(user => user !== value))
                     })
@@ -107,21 +118,21 @@ export function SendMessageForm({
         </Search.Root>
       </FormGroup>
 
-        <FormGroup className="grow flex flex-col">
-          <Label htmlFor={bodyId}>Message</Label>
-          <Textarea id={bodyId} name="body" required className="min-h-[200px] grow" />
-        </FormGroup>
+      <FormGroup className="flex grow flex-col">
+        <Label htmlFor={bodyId}>Message</Label>
+        <Textarea id={bodyId} name="body" required className="min-h-[200px] grow" />
+      </FormGroup>
 
-        <FormGroup>
-          <SubmitButton>
-            {({ pending }) => (
-              <>
-                {pending && <LoadingSpinner />}
-                Send
-              </>
-            )}
-          </SubmitButton>
-        </FormGroup>
+      <FormGroup>
+        <SubmitButton>
+          {({ pending }) => (
+            <>
+              Send
+              {pending && <LoadingSpinner />}
+            </>
+          )}
+        </SubmitButton>
+      </FormGroup>
     </form>
   )
 }

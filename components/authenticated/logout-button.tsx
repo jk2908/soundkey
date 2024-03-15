@@ -15,8 +15,8 @@ export function LogoutButton({
       <SubmitButton {...rest}>
         {({ pending }) => (
           <>
-            {pending && <LoadingSpinner size={16} />}
             {children}
+            {pending && <LoadingSpinner size={16} />}
           </>
         )}
       </SubmitButton>

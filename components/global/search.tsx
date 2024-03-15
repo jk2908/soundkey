@@ -35,9 +35,8 @@ export function Root({
 
 export const Box = forwardRef<HTMLInputElement, SearchBoxProps>(({ ...props }, ref) => {
   const { value, setValue } = use(SearchContext)
-  const inputRef = useRef<HTMLInputElement>(null)
 
-  return <SearchBox ref={ref || inputRef} value={value} setValue={setValue} {...props} />
+  return <SearchBox ref={ref} value={value} setValue={setValue} {...props} />
 })
 
 Box.displayName = 'Box'

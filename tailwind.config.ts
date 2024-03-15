@@ -1,5 +1,6 @@
 import type { Config } from 'tailwindcss'
 import { fontFamily, screens } from 'tailwindcss/defaultTheme'
+import cq from '@tailwindcss/container-queries'
 
 const config: Config = {
   content: [
@@ -11,7 +12,7 @@ const config: Config = {
     screens: {
       '3xs': '375px',
       '2xs': '410px',
-      'xs': '475px',
+      xs: '475px',
       ...screens,
     },
     extend: {
@@ -75,10 +76,13 @@ const config: Config = {
           '50%': { opacity: '1' },
         },
       },
+      scale: {
+        '-100': '-1',
+      },
     },
   },
   darkMode: ['class', '[data-theme=dark]'],
-  plugins: [],
+  plugins: [cq],
 }
 
 export default config

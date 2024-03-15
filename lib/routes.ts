@@ -21,8 +21,8 @@ export const authRoutes: Route[] = [
     href: '/dashboard',
   },
   {
-    label: 'Messages',
-    href: '/messages',
+    label: 'Threads',
+    href: '/threads',
   },
   {
     label: 'Profile',

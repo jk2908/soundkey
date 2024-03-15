@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect } from 'react'
+import { verify } from '@/actions/user/form'
 import { useFormState } from 'react-dom'
 
-import { verify } from '@/actions/user/form'
 import type { ServerResponse } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
 
@@ -33,8 +33,8 @@ export function SendVerificationEmailForm() {
       <SubmitButton>
         {({ pending }) => (
           <>
-            {pending && <LoadingSpinner />}
             Resend email
+            {pending && <LoadingSpinner />}
           </>
         )}
       </SubmitButton>

@@ -1,17 +1,17 @@
 'use client'
 
 import { useEffect, useId } from 'react'
+import { login } from '@/actions/user/form'
 import { useFormState } from 'react-dom'
 
-import { login } from '@/actions/user/form'
 import { ServerResponse } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
 
+import { Label } from '@/components/authenticated/label'
 import { FormGroup } from '@/components/global/form-group'
 import { Input } from '@/components/global/input'
-import { Label } from '@/components/authenticated/label'
-import { SubmitButton } from '@/components/global/submit-button'
 import { LoadingSpinner } from '@/components/global/loading-spinner'
+import { SubmitButton } from '@/components/global/submit-button'
 
 const initialState: ServerResponse = {
   type: undefined,
@@ -22,7 +22,7 @@ const initialState: ServerResponse = {
 export function LoginForm() {
   const emailId = useId()
   const passwordId = useId()
-  
+
   const [state, dispatch] = useFormState(login, initialState)
   const { toast } = useToast()
 
@@ -49,8 +49,8 @@ export function LoginForm() {
         <SubmitButton>
           {({ pending }) => (
             <>
-              {pending && <LoadingSpinner />}
               Login
+              {pending && <LoadingSpinner />}
             </>
           )}
         </SubmitButton>

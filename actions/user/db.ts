@@ -24,18 +24,21 @@ export const getUsersWithId = cache(async (userIds: string[]) =>
   (await db.select().from(userTable).where(inArray(userTable.id, userIds))).map(toSafeUser)
 )
 
-export const getUsersWithEmail = cache(async (emails: string[]) =>
-  (
-    await db
-      .select()
-      .from(userTable)
-      .where(
-        inArray(
-          userTable.email,
-          emails.map(e => e.toLowerCase())
+export const getUsersWithEmail = cache(
+  async (emails: string[]) =>
+    (
+      await db
+        .select()
+        .from(userTable)
+        .where(
+          inArray(
+            userTable.email,
+            emails.map(e => e.toLowerCase())
+          )
         )
-      )
-  ).map(toSafeUser)
+    )
+      .filter(u => u !== null)
+      .map(toSafeUser) as NonNullable<ReturnType<typeof toSafeUser>>[]
 )
 
 export const getSystemUser = cache(async () =>

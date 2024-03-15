@@ -3,6 +3,7 @@
 import { forwardRef, useEffect, useRef, useTransition } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
+import { Chip } from '@/components/global/chip'
 import { Icon } from '@/components/global/icon'
 import { Input, Props as InputProps } from '@/components/global/input'
 import { LoadingSpinner } from '@/components/global/loading-spinner'
@@ -21,7 +22,7 @@ export const SearchBox = forwardRef<HTMLInputElement, Props>(
     const pathname = usePathname()
     const searchParams = useSearchParams()
     const [isPending, startTransition] = useTransition()
-    const resultRef = useRef<HTMLButtonElement>(null)
+    const chipRef = useRef<HTMLButtonElement>(null)
 
     const shouldSyncUrl = !!param
 
@@ -41,23 +42,17 @@ export const SearchBox = forwardRef<HTMLInputElement, Props>(
     }
 
     useEffect(() => {
-      if (results?.length && resultRef.current) {
-        resultRef.current.focus()
-      }
+      if (!results?.length || !chipRef.current) return
+      chipRef.current.focus()
     }, [results])
 
     return (
       <div className="group relative">
         <div className="flex w-full items-center gap-1 overflow-x-auto rounded-full border border-keyline bg-white has-[input:focus]:outline-1 has-[input:focus]:outline-highlight">
           {results?.map(r => (
-            <button
-              key={r}
-              ref={resultRef}
-              type="button"
-              onClick={() => onConfirm?.(r)}
-              className="ml-1 flex h-full items-center gap-2 rounded-full bg-keyline/30 px-4 py-2 font-mono text-xs">
-              <span>{r}?</span>
-            </button>
+            <Chip key={r} ref={chipRef} onClick={onConfirm} className="ml-1">
+              {r}?
+            </Chip>
           ))}
 
           <Input

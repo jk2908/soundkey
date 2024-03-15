@@ -1,7 +1,19 @@
-import type { Icon as $Icon } from '@/lib/types'
+export type Icon =
+  | 'moon'
+  | 'sun'
+  | 'spinner'
+  | 'x'
+  | 'logout'
+  | 'user'
+  | 'search'
+  | 'mails'
+  | 'mail'
+  | 'send'
+  | 'mail+'
+  | 'inbox'
 
 export type Props = {
-  name: $Icon
+  name: Icon
   size?: number
   width?: number
   height?: number
