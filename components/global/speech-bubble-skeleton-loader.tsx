@@ -1,9 +1,12 @@
-import { SpeechBubble } from '@/components/global/speech-bubble'
+import { cn } from '@/utils/cn'
 
-export function SpeechBubbleSkeletonLoader({ avatar }: { avatar?: React.ReactNode }) {
+import { SkeletonText } from '@/components/global/skeleton-text'
+import { SpeechBubble, type Props } from '@/components/global/speech-bubble'
+
+export function SpeechBubbleSkeletonLoader({ className, ...rest }: Omit<Props, 'children'>) {
   return (
-    <SpeechBubble className="bg-keyline/70 text-gr33n-100" avatar={avatar}>
-      Loading...
+    <SpeechBubble className={cn('bg-keyline/30 text-gr33n-100', className)} {...rest}>
+      <SkeletonText lines={5} />
     </SpeechBubble>
   )
 }

@@ -2,7 +2,7 @@ import { cache } from 'react'
 import { sendVerificationEmail } from '@/actions/email/db'
 import { createProfile } from '@/actions/profile/db'
 import { createEmailVerificationToken } from '@/actions/token/db'
-import { eq, inArray } from 'drizzle-orm'
+import { eq, inArray, or } from 'drizzle-orm'
 import { Argon2id } from 'oslo/password'
 
 import { toSafeUser } from '@/lib/auth'
@@ -10,30 +10,32 @@ import { db } from '@/lib/db'
 import { NewUser, userTable } from '@/lib/schema'
 import { generateId } from '@/utils/generate-id'
 
-export const getUserWithId = cache(async (userId: string) =>
-  toSafeUser((await db.select().from(userTable).where(eq(userTable.id, userId)).limit(1))[0])
-)
-
-export const getUserWithEmail = cache(async (email: string) =>
+export const getUser = cache(async (str: string) =>
   toSafeUser(
-    (await db.select().from(userTable).where(eq(userTable.email, email.toLowerCase())).limit(1))[0]
+    (
+      await db
+        .select()
+        .from(userTable)
+        .where(or(eq(userTable.id, str), eq(userTable.email, str), eq(userTable.username, str)))
+        .limit(1)
+    )[0]
   )
 )
 
-export const getUsersWithId = cache(async (userIds: string[]) =>
-  (await db.select().from(userTable).where(inArray(userTable.id, userIds))).map(toSafeUser)
-)
-
-export const getUsersWithEmail = cache(
-  async (emails: string[]) =>
+export const getUsers = cache(
+  async (arr: string[]) =>
     (
       await db
         .select()
         .from(userTable)
         .where(
-          inArray(
-            userTable.email,
-            emails.map(e => e.toLowerCase())
+          or(
+            inArray(userTable.id, arr),
+            inArray(
+              userTable.email,
+              arr.map(e => e.toLowerCase())
+            ),
+            inArray(userTable.username, arr)
           )
         )
     )
@@ -50,6 +52,7 @@ export async function createUser({
   password,
   emailVerified = false,
   role = 'user',
+  username,
   token = true,
 }: NewUser & { token?: boolean }) {
   try {
@@ -57,9 +60,9 @@ export async function createUser({
     const [existingUser] = await db
       .select()
       .from(userTable)
-      .where(eq(userTable.email, email.toLowerCase()))
+      .where(or(eq(userTable.email, email.toLowerCase()), eq(userTable.username, username)))
 
-    if (existingUser) throw new Error('Email already in use')
+    if (existingUser) throw new Error('Email or username already in use')
 
     const hashedPassword = await new Argon2id().hash(password)
 
@@ -72,6 +75,7 @@ export async function createUser({
         emailVerified,
         role,
         createdAt: Date.now(),
+        username,
       })
       .returning({ userId: userTable.id })
 

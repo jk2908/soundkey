@@ -1,8 +1,8 @@
 import { APP_EMAIL, APP_NAME } from '@/lib/config'
 import { resend } from '@/lib/resend'
 
+import { AccountVerificationTemplate } from '@/components/email-templates/account-verification-template'
 import { ResetPasswordTemplate } from '@/components/email-templates/reset-password-template'
-import { VerifyAccountTemplate } from '@/components/email-templates/verify-account-template'
 
 export async function sendVerificationEmail(email: string, token: string) {
   try {
@@ -10,7 +10,7 @@ export async function sendVerificationEmail(email: string, token: string) {
       from: `${APP_NAME} <${APP_EMAIL}>`,
       to: [email],
       subject: `Verify your ${APP_NAME} email address`,
-      react: VerifyAccountTemplate({ token }),
+      react: AccountVerificationTemplate({ token }),
     })
 
     return Response.json(data)

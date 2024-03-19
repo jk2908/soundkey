@@ -12,7 +12,7 @@ export function SubmitButton({ children, ...rest }: Props) {
   const { pending } = useFormStatus()
 
   return (
-    <Button type="submit" aria-disabled={pending} {...rest}>
+    <Button className="flex items-center gap-4" type="submit" aria-disabled={pending} {...rest}>
       {typeof children === 'function' ? children({ pending }) : children}
     </Button>
   )

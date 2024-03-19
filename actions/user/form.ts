@@ -21,6 +21,7 @@ export async function signup(
 ): Promise<ServerResponse> {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
+  const username = formData.get('username') as string
 
   if (!isValidEmail(email)) return error(400, 'Invalid email')
 
@@ -28,8 +29,12 @@ export async function signup(
     return error(400, 'Invalid password')
   }
 
+  if (typeof username !== 'string' || username.length < 3 || username.length > 255) {
+    throw new Error('Invalid username')
+  }
+
   try {
-    const user = await createUser({ email, password })
+    const user = await createUser({ email, password, username })
     const session = await lucia.createSession(user.userId, {})
 
     const sessionCookie = lucia.createSessionCookie(session.id)

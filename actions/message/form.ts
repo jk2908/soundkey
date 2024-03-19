@@ -5,27 +5,24 @@ import { createMessage } from '@/actions/message/db'
 import { error, success } from '@/lib/db'
 import { ServerResponse } from '@/lib/types'
 
-import { getUsersWithEmail } from '../user/db'
-
 export async function send(
   senderId: string,
   threadId: string | undefined,
-  recipients: string[],
+  recipientIds: string[],
   prevState: ServerResponse,
   formData: FormData
 ): Promise<ServerResponse> {
   try {
     const body = formData.get('body') as string
-    const users = await getUsersWithEmail(recipients)
 
-    if (!users || !users.length) return error(400, 'No recipients found')
+    if (!recipientIds.length) throw new Error('Please provide at least one recipient')
 
     const { threadId: resolvedThreadId } = await createMessage({
       threadId,
       body,
       createdAt: Date.now(),
       senderId,
-      recipientIds: users.map(u => u.userId),
+      recipientIds,
       type: 'message',
     })
 

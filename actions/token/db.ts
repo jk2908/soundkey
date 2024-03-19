@@ -110,6 +110,6 @@ export async function isValidPasswordResetToken(token: string) {
   if (!tokens || !isWithinExpirationDate(d)) {
     return false
   }
-
+  
   return true
 }

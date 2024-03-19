@@ -12,8 +12,7 @@
     "db:migrate": "tsx ./lib/migrate.ts",
     "db:studio": "drizzle-kit studio",
     "db:push": "drizzle-kit push:sqlite",
-    "create:user": "tsx ./cli/create-user.ts",
-    "create:profile": "tsx ./cli/create-profile.ts"
+    "create:user": "tsx ./cli/create-user.ts"
   },
   "dependencies": {
     "@lucia-auth/adapter-drizzle": "^1.0.3",

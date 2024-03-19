@@ -21,6 +21,7 @@ export const userTable = sqliteTable('user', {
     .default(sql`CURRENT_TIMESTAMP`),
   updatedAt: integer('updated_at'),
   role: userRole.default('user').notNull(),
+  username: text('username').unique().notNull(),
 })
 
 export const sessionTable = sqliteTable('session', {
@@ -53,6 +54,7 @@ export const passwordResetTokenTable = sqliteTable('password_reset_token', {
 export const threadToUserTable = sqliteTable(
   'thread_to_user',
   {
+    id: text('id').primaryKey().$defaultFn(() => generateId()),
     threadId: text('thread_id')
       .notNull()
       .references(() => threadTable.id),
@@ -60,9 +62,6 @@ export const threadToUserTable = sqliteTable(
       .notNull()
       .references(() => userTable.id, { onUpdate: 'cascade', onDelete: 'cascade' }),
   },
-  t => ({
-    pk: primaryKey({ columns: [t.userId, t.threadId] }),
-  })
 )
 
 export const threadTable = sqliteTable('thread', {
@@ -70,6 +69,7 @@ export const threadTable = sqliteTable('thread', {
     .primaryKey()
     .notNull()
     .$defaultFn(() => generateId()),
+  userIds: text('user_ids').notNull(),
   createdAt: integer('created_at')
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
@@ -106,7 +106,6 @@ export const profileTable = sqliteTable('profile', {
     onUpdate: 'cascade',
     onDelete: 'cascade',
   }),
-  username: text('username').unique(),
   bio: text('bio'),
   avatar: text('avatar'),
 })
@@ -177,6 +176,7 @@ export const profileRelations = relations(profileTable, ({ one }) => ({
 }))
 
 export type User = InferSelectModel<typeof userTable>
+export type SafeUser = Omit<User, 'id' | 'hashedPassword' | 'emailVerified' | 'role'> & { userId: string }
 export type NewUser = Omit<InferInsertModel<typeof userTable>, 'id' | 'hashedPassword'> & {
   password: string
 }
@@ -185,15 +185,15 @@ export type Message = Omit<InferSelectModel<typeof messageTable>, 'id'> & { mess
 export type NewMessage = Omit<
   InferInsertModel<typeof messageTable>,
   'threadId' | 'recipientIds' | 'type'
-> & { threadId?: string; recipientIds: string[]; type: MessageType }
+> & { threadId?: string; recipientIds?: string[]; type: MessageType }
 export type EditMessage = Omit<
   InferInsertModel<typeof messageTable>,
   'threadId' | 'createdAt' | 'type'
 >
 
-export type Thread = InferSelectModel<typeof threadTable>
+export type Thread = Omit<InferSelectModel<typeof threadTable>, 'id'> & { threadId: string }
 
-export type Profile = Omit<InferSelectModel<typeof profileTable>, 'id' | 'userId'>
+export type Profile = InferSelectModel<typeof profileTable>
 export type NewProfile = InferInsertModel<typeof profileTable>
 export type EditProfile = InferInsertModel<typeof profileTable> & { userId: string }
 

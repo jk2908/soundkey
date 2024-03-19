@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers'
 import type { NextRequest } from 'next/server'
 import { validateEmailVerificationToken } from '@/actions/token/db'
-import { getUserWithId } from '@/actions/user/db'
+import { getUser } from '@/actions/user/db'
 import { eq } from 'drizzle-orm'
 
 import { lucia } from '@/lib/auth'
@@ -22,7 +22,7 @@ export async function GET(
 
   try {
     const id = await validateEmailVerificationToken(token)
-    const user = await getUserWithId(id)
+    const user = await getUser(id)
 
     if (!user) {
       return new Response('User not found', {

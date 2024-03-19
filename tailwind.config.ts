@@ -1,6 +1,6 @@
+import cq from '@tailwindcss/container-queries'
 import type { Config } from 'tailwindcss'
 import { fontFamily, screens } from 'tailwindcss/defaultTheme'
-import cq from '@tailwindcss/container-queries'
 
 const config: Config = {
   content: [

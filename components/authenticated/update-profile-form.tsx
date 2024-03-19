@@ -25,8 +25,8 @@ export function UpdateProfileForm({
   bio,
 }: {
   userId: string
-  username: string
-  bio: string
+  username: string | null
+  bio: string | null
 }) {
   const ref = useRef<HTMLFormElement>(null)
 

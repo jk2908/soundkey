@@ -1,8 +1,7 @@
 import { redirect } from 'next/navigation'
-import { getUserWithEmail } from '@/actions/user/db'
+import { resolveMessageRecipient } from '@/actions/message/db'
 
 import { auth } from '@/lib/auth'
-import { isValidEmail } from '@/utils/is-valid-email'
 
 import { SendMessageForm } from '@/components/authenticated/send-message-form'
 
@@ -15,14 +14,22 @@ export default async function Page({
 
   if (!user) return redirect('/login')
 
-  const params = searchParams.q && isValidEmail(searchParams.q) ? searchParams.q : undefined
-  const toUser = params ? await getUserWithEmail(params) : undefined
+  const toUser = searchParams.q ? await resolveMessageRecipient(searchParams.q) : null
 
   return (
     <div className="flex h-full flex-col">
       <SendMessageForm
-        userId={user.userId}
-        to={toUser?.email}
+        senderId={user.userId}
+        resolvedRecipients={
+          toUser
+            ? [
+                {
+                  userId: toUser.userId,
+                  label: toUser.username,
+                },
+              ]
+            : []
+        }
       />
     </div>
   )

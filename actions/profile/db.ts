@@ -38,11 +38,7 @@ export const getProfile = unstable_cache(
 
 export async function updateProfile(payload: EditProfile) {
   try {
-    const { userId, username, bio } = payload
-
-    if (typeof username !== 'string' || username.length < 3 || username.length > 255) {
-      throw new Error('Invalid username')
-    }
+    const { userId, bio } = payload
 
     if (typeof bio !== 'string' || bio.length > 255) {
       throw new Error('Bio must be less than 255 characters')
@@ -50,11 +46,11 @@ export async function updateProfile(payload: EditProfile) {
 
     await db
       .update(profileTable)
-      .set({ username, bio })
+      .set({ bio })
       .where(
         and(
           eq(profileTable.userId, userId),
-          or(ne(profileTable.username, username), ne(profileTable.bio, bio))
+          or(ne(profileTable.bio, bio))
         )
       )
   } catch (err) {

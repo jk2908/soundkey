@@ -7,6 +7,7 @@ import { flushSync, useFormState } from 'react-dom'
 
 import type { ServerResponse } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
+import { cn } from '@/utils/cn'
 import { generateId } from '@/utils/generate-id'
 
 import { Label } from '@/components/authenticated/label'
@@ -24,22 +25,31 @@ const initialState: ServerResponse = {
   status: undefined,
 }
 
-export function SendMessageForm({
-  userId,
-  threadId,
-  to,
-}: {
+type ResolvedRecipient = {
   userId: string
+  label: string
+}
+
+export function SendMessageForm({
+  senderId,
+  threadId,
+  resolvedRecipients = [],
+}: {
+  senderId: string
   threadId?: string
-  to?: string
+  resolvedRecipients: ResolvedRecipient[] | []
 }) {
   const recipientId = useId()
   const bodyId = useId()
-
-  const [recipients, setRecipients] = useState<string[]>([])
+  const [recipients, setRecipients] = useState<ResolvedRecipient[] | []>(resolvedRecipients)
 
   const [state, dispatch] = useFormState(
-    send.bind(null, userId, threadId, recipients),
+    send.bind(
+      null,
+      senderId,
+      threadId,
+      recipients.map(r => r.userId)
+    ),
     initialState
   )
 
@@ -55,7 +65,7 @@ export function SendMessageForm({
 
     toast({ ...state })
 
-    if (type === 'success' && payload) {
+    if (type === 'success' && payload && !threadId) {
       push(pathname.replace('new', payload.toString()))
     }
 
@@ -64,63 +74,71 @@ export function SendMessageForm({
 
   return (
     <form action={dispatch} className="flex h-full flex-col">
-      <FormGroup>
-        <Label htmlFor={recipientId} className="sr-only">
-          To
-        </Label>
+      {!threadId && (
+        <FormGroup>
+          <Label htmlFor={recipientId} className="sr-only">
+            To
+          </Label>
 
-        <Search.Root className="flex flex-col gap-2">
-          {({ value, setValue }) => (
-            <>
-              <Search.Box
-                ref={searchRef}
-                placeholder="To"
-                name="to"
-                id={recipientId}
-                results={to ? [to] : undefined}
-                onConfirm={() => {
-                  flushSync(() => {
-                    setRecipients(prev => [...new Set([...prev, value])])
-                    replace(pathname)
-                    setValue('')
-                  })
+          <Search.Root className="flex flex-col gap-2">
+            {({ setValue }) => (
+              <>
+                <Search.Box
+                  ref={searchRef}
+                  placeholder="To"
+                  name="to"
+                  id={recipientId}
+                  results={
+                    resolvedRecipients?.length ? resolvedRecipients.map(r => r.label) : undefined
+                  }
+                  onConfirm={() => {
+                    if (!resolvedRecipients || !resolvedRecipients.length) return
 
-                  searchRef.current?.focus()
-                }}
-              />
-
-              <Search.Results>
-                <Listbox.Root
-                  selected={recipients}
-                  onSelect={value => {
                     flushSync(() => {
-                      setRecipients(prev => prev.filter(user => user !== value))
+                      setRecipients(prev => [...new Set([...prev, ...resolvedRecipients])])
+                      replace(pathname)
+                      setValue('')
                     })
 
                     searchRef.current?.focus()
                   }}
-                  persist>
-                  <Listbox.Options className="flex">
-                    {recipients.map(r => (
-                      <Listbox.Option
-                        key={generateId()}
-                        value={r}
-                        className="flex gap-1 rounded-full bg-keyline/80 px-2.5 py-1.5 font-mono text-sm">
-                        {r}
-                        <Icon name="x" size={10} />
-                      </Listbox.Option>
-                    ))}
-                  </Listbox.Options>
-                </Listbox.Root>
-              </Search.Results>
-            </>
-          )}
-        </Search.Root>
-      </FormGroup>
+                />
+
+                <Search.Results>
+                  <Listbox.Root
+                    selected={recipients.map(r => r.label)}
+                    onSelect={value => {
+                      flushSync(() => {
+                        setRecipients(prev => prev.filter(u => u.label !== value))
+                      })
+
+                      searchRef.current?.focus()
+                    }}
+                    persist>
+                    <Listbox.Options className="flex items-center gap-2">
+                      {recipients.map(u => (
+                        <Listbox.Option
+                          key={generateId()}
+                          value={u.label}
+                          className="flex gap-1 rounded-full bg-keyline/80 px-2.5 py-1.5 font-mono text-sm">
+                          {u.label}
+                          <Icon name="x" size={10} />
+                        </Listbox.Option>
+                      ))}
+                    </Listbox.Options>
+                  </Listbox.Root>
+                </Search.Results>
+              </>
+            )}
+          </Search.Root>
+        </FormGroup>
+      )}
 
       <FormGroup className="flex grow flex-col">
-        <Label htmlFor={bodyId}>Message</Label>
-        <Textarea id={bodyId} name="body" required className="min-h-[200px] grow" />
+        <Label htmlFor={bodyId} className={cn(threadId && 'sr-only')}>
+          Message
+        </Label>
+        <Textarea id={bodyId} name="body" required className="grow" />
       </FormGroup>
 
       <FormGroup>

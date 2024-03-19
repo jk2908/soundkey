@@ -13,10 +13,9 @@ export async function update(
   formData: FormData
 ): Promise<ServerResponse> {
   try {
-    const username = formData.get('username') as string
     const bio = formData.get('bio') as string
 
-    await updateProfile({ userId, username, bio })
+    await updateProfile({ userId, bio })
     revalidateTag('profile')
 
     return success(200, 'Profile updated', { key: generateId() })

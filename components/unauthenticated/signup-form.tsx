@@ -22,6 +22,7 @@ const initialState: ServerResponse = {
 export function SignupForm() {
   const emailId = useId()
   const passwordId = useId()
+  const usernameId = useId()
 
   const [state, dispatch] = useFormState(signup, initialState)
   const { toast } = useToast()
@@ -36,8 +37,6 @@ export function SignupForm() {
 
   return (
     <form action={dispatch} autoComplete="off">
-      <input type="hidden" name="foo" />
-
       <FormGroup>
         <Label htmlFor={emailId}>Email</Label>
         <Input id={emailId} type="email" name="email" required />
@@ -52,6 +51,11 @@ export function SignupForm() {
           autoComplete="new-password"
           required
         />
+      </FormGroup>
+
+      <FormGroup>
+        <Label htmlFor={usernameId}>Username</Label>
+        <Input id={usernameId} type="text" name="username" required />
       </FormGroup>
 
       <FormGroup>

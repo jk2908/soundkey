@@ -10,6 +10,7 @@ export function LoadingSpinner(props: Omit<Props, 'name'>) {
       name="spinner"
       className={cn('animate-spin', className)}
       style={{ transformOrigin: 'center center' }}
+      size={18}
       {...rest}
     />
   )

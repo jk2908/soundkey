@@ -8,16 +8,16 @@ import { Icon } from '@/components/global/icon'
 function Default({ size = 20, className }: { size?: number; className?: string }) {
   return (
     <div
-      className={cn('overflow-hidden bg-highlight relative', className)}
+      className={cn('overflow-hidden bg-app-bg-inverted relative', className)}
       style={{ width: `${size}px`, height: `${size}px`, borderRadius: '50%' }}>
-      <Icon name="user" size={size - 3} colour="#fff" className="absolute left-1/2 -translate-x-1/2 bottom-0" />
+      <Icon name="user" size={size - 5} colour="rgb(var(--app-fg-inverted)" className="absolute left-1/2 -translate-x-1/2 bottom-0" />
     </div>
   )
 }
 
 export async function Avatar({
   userId,
-  size = 22,
+  size = 24,
   className,
 }: {
   userId: string | null

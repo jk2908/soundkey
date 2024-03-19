@@ -23,6 +23,7 @@ export interface DatabaseUserAttributes {
   created_at: number
   updated_at: number | null
   role: 'user' | 'admin' | 'system'
+  username: string
 }
 
 export type StateVariant = 'success' | 'error' | 'danger' | 'warning' | 'info'
