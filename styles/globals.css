@@ -85,21 +85,27 @@
       width: 100%;
 
       th {
-        background-color: rgb(var(--keyline) / 25%);
         font-family: theme('fontFamily.mono');
         font-size: theme('fontSize.xs');
         font-weight: 400;
         letter-spacing: theme('letterSpacing.wider');
         padding: theme('spacing.2') theme('spacing.6');
         text-align: start;
+      }  
+
+      tbody > tr {
+
+        &:hover {
+          background-color: rgb(var(--keyline) / 25%);
+        }
       }
 
-      th:first-child {
+      td:first-child {
         border-top-left-radius: theme('borderRadius.full');
         border-bottom-left-radius: theme('borderRadius.full');
       }
 
-      th:last-child {
+      td:last-child {
         border-top-right-radius: theme('borderRadius.full');
         border-bottom-right-radius: theme('borderRadius.full');
       }

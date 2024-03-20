@@ -24,9 +24,9 @@ export default async function Page() {
       </Heading>
 
       {threads.length ? (
-        <table className="sk-table">
+        <table className="sk-table" role="treegrid" aria-label="List of threads">
           <thead>
-            <tr>
+            <tr role="row">
               <th>With</th>
               <th>Created</th>
               <th>Updated</th>
@@ -38,7 +38,7 @@ export default async function Page() {
           <tbody>
             {threads.map(thread => (
               <Suspense key={thread.threadId} fallback={<SKTableRowLoader cells={4} />}>
-                <ThreadPreview thread={thread} />
+                <ThreadPreview userId={user.userId} thread={thread} />
               </Suspense>
             ))}
           </tbody>
