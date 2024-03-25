@@ -26,7 +26,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
             </Suspense>
           </Sidebar>
 
-          <Wrapper size={0} className="grow">
+          <Wrapper size={0} className="grow px-0 md:px-[--wrapper-px]">
             <Section size="lg" className="h-full">
               {children}
             </Section>

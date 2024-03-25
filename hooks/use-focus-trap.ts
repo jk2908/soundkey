@@ -6,59 +6,59 @@ type Config = {
 }
 
 export function useFocusTrap(
+  onState: boolean,
   node: HTMLElement | null,
-  on: boolean,
   { allowArrowKeys = false }: Config = {}
 ) {
   useEffect(() => {
-    if (!on) return
+    if (!onState) return
 
     const focusableNodes = node?.querySelectorAll(selectors.join(','))
 
     if (!focusableNodes) return
 
-    const firstNode = focusableNodes[0] as HTMLElement
-    const lastNode = focusableNodes[focusableNodes.length - 1] as HTMLElement
+    const first = focusableNodes[0] as HTMLElement
+    const last = focusableNodes[focusableNodes.length - 1] as HTMLElement
 
     function handler(e: KeyboardEvent) {
       const keys = ['Tab', 'ArrowUp', 'ArrowDown']
-      const activeNode = document.activeElement as HTMLElement
-      const previousNode = activeNode.previousElementSibling as HTMLElement
-      const nextNode = activeNode.nextElementSibling as HTMLElement
+      const active = document.activeElement as HTMLElement
+      const previous = active.previousElementSibling as HTMLElement
+      const next = active.nextElementSibling as HTMLElement
 
       if (!keys.includes(e.key)) return
 
-      if ((activeNode === firstNode && e.shiftKey) || (activeNode === lastNode && !e.shiftKey)) {
+      if ((active === first && e.shiftKey) || (active === last && !e.shiftKey)) {
         e.preventDefault()
       }
 
       switch (e.key) {
         case 'Tab':
           if (e.shiftKey) {
-            if (document.activeElement === firstNode) {
-              lastNode.focus()
+            if (document.activeElement === first) {
+              last.focus()
             }
           } else {
-            if (document.activeElement === lastNode) {
-              firstNode.focus()
+            if (document.activeElement === last) {
+              first.focus()
             }
           }
           break
         case 'ArrowUp':
           if (allowArrowKeys) {
-            if (document.activeElement === firstNode) {
-              lastNode.focus()
+            if (document.activeElement === first) {
+              last.focus()
             } else {
-              previousNode.focus()
+              previous.focus()
             }
           }
           break
         case 'ArrowDown':
           if (allowArrowKeys) {
-            if (document.activeElement === lastNode) {
-              firstNode.focus()
+            if (document.activeElement === last) {
+              first.focus()
             } else {
-              nextNode.focus()
+              next.focus()
             }
           }
           break
@@ -70,5 +70,5 @@ export function useFocusTrap(
     return () => {
       node?.removeEventListener('keydown', handler)
     }
-  }, [node, on, allowArrowKeys])
+  }, [node, onState, allowArrowKeys])
 }

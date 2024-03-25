@@ -11,6 +11,8 @@ export type Icon =
   | 'send'
   | 'mail+'
   | 'inbox'
+  | 'dots'
+  | 'dots-vertical'
 
 export type Props = {
   name: Icon

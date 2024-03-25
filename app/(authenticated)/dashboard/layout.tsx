@@ -16,8 +16,7 @@ export default async function Layout({
   if (!u) throw redirect('/login')
 
   const $User = is$User(u.role)
-  const { username } = await getProfile(u.userId)
-  const greeting = getTimedMessage(Date.now(), username)
+  const greeting = getTimedMessage(Date.now(), u.username)
 
   return (
     <>

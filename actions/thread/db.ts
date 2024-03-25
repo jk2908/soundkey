@@ -2,7 +2,7 @@ import { revalidateTag, unstable_cache } from 'next/cache'
 import { desc, eq } from 'drizzle-orm'
 
 import { db } from '@/lib/db'
-import { threadTable, threadToUserTable } from '@/lib/schema'
+import { messageTable, threadTable, threadToUserTable } from '@/lib/schema'
 import type { Thread } from '@/lib/schema'
 
 export async function createThread({

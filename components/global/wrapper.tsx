@@ -19,6 +19,6 @@ export function Wrapper({
   }
 
   return (
-    <div className={cn('mx-auto w-full px-4 sm:px-8', styleMap[size], className)}>{children}</div>
+    <div className={cn('mx-auto w-full px-[--wrapper-px]', styleMap[size], className)}>{children}</div>
   )
 }

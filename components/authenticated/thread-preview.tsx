@@ -1,11 +1,15 @@
 'use client'
 
-import { use } from 'react'
+import { use, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
 
 import { APP_URL } from '@/lib/config'
 import type { SafeUser, Thread } from '@/lib/schema'
 import { cn } from '@/utils/cn'
+
+import * as ContextMenu from '@/components/global/context-menu'
+import { Icon } from '@/components/global/icon'
 
 async function resolveThreadUsers(threadId: string) {
   const res = await fetch(`${APP_URL}/api/thread/users/${threadId}`)
@@ -17,7 +21,51 @@ async function resolveThreadUsers(threadId: string) {
   return res.json()
 }
 
-export function ThreadPreview({ userId, thread, className }: { userId: string; thread: Thread, className?: string }) {
+type Props = {
+  userId: string
+  thread: Thread
+  onDelete: () => void
+  onArchive?: () => void
+  className?: string
+}
+
+function ThreadPreviewActions({ userId, thread, onDelete, onArchive }: Omit<Props, 'className'>) {
+  const [isActionsOpen, setActionsOpen] = useState(false)
+
+  const items = [
+    {
+      label: 'Delete',
+      onClick: onDelete,
+    },
+    {
+      label: 'Archive',
+      onClick: () => {},
+    },
+  ]
+
+  return (
+    <ContextMenu.Root>
+      <ContextMenu.Toggle
+        className="flex flex-col items-center justify-center gap-2 text-sm"
+        style={{ width: '40px', height: '40px' }}>
+        <Icon name="dots" size={18} />
+        <span className="sr-only">Actions</span>
+      </ContextMenu.Toggle>
+
+      <ContextMenu.Content position="left" offset={10}>
+        {items.map(({ label, onClick }) => (
+          <ContextMenu.Item key={label} onClick={onClick}>
+            {label}
+          </ContextMenu.Item>
+        ))}
+      </ContextMenu.Content>
+    </ContextMenu.Root>
+  )
+}
+
+export function ThreadPreview({ className, ...rest }: Props) {
+  const { userId, thread } = rest
+
   const users = use<SafeUser[]>(resolveThreadUsers(thread.threadId))
   const { push } = useRouter()
 
@@ -33,7 +81,14 @@ export function ThreadPreview({ userId, thread, className }: { userId: string; t
   })
 
   return (
-    <tr onClick={() => push(`/threads/${thread.threadId}`)} role="row" className={cn('cursor-pointer', className)}>
+    <motion.tr
+      key={thread.threadId}
+      onClick={() => push(`/threads/${thread.threadId}`)}
+      role="row"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className={cn('cursor-pointer', className)}>
       <td role="gridcell">
         {usersDisplay.map((u, idx) => (
           <span
@@ -43,8 +98,12 @@ export function ThreadPreview({ userId, thread, className }: { userId: string; t
             )}>{`${u.username}${idx < usersDisplay.length - 1 ? ', ' : ''}`}</span>
         ))}
       </td>
+
       <td className="font-mono text-sm">{createdAt}</td>
       <td className="font-mono text-sm">{updatedAt}</td>
-    </tr>
+      <td>
+        <ThreadPreviewActions {...rest} />
+      </td>
+    </motion.tr>
   )
 }

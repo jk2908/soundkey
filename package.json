@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@lucia-auth/adapter-drizzle": "^1.0.3",
+    "@million/lint": "^0.0.73",
     "@tailwindcss/container-queries": "^0.1.1",
     "better-sqlite3": "^9.4.3",
     "dotenv": "^16.4.5",

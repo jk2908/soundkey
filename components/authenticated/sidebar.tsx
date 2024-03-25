@@ -28,7 +28,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
     setOpen(mq ? true : false)
   }, [mq])
 
-  useFocusTrap(ref.current, isOpen)
+  useFocusTrap(isOpen, ref.current)
   useEscKey(() => !mq && setOpen(false), isOpen)
 
   return (

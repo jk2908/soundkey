@@ -71,11 +71,11 @@ export default async function Page({
                 fallback={
                   <SpeechBubbleSkeletonLoader
                     placement={placement}
-                    avatar={<Avatar userId={user.userId} />}
+                    avatar={<Avatar userId={user.userId} username={user.username} />}
                   />
                 }>
                 <SpeechBubble
-                  avatar={<Avatar userId={user.userId} />}
+                  avatar={<Avatar userId={user.userId} username={user.username} />}
                   placement={placement}
                   className={cn(
                     fromMe ? 'fg-app-fg-inverted bg-app-bg-inverted' : 'bg-keyline/80 text-app-fg'
