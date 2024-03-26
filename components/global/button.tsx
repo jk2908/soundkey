@@ -27,7 +27,7 @@ export function Button<E extends React.ElementType = typeof DEFAULT_ELEMENT>({
   const Cmp = as ?? DEFAULT_ELEMENT
 
   const styleMap: { [key in StateVariant | IntentVariant]: string } = {
-    primary: 'bg-app-bg-inverted text-app-fg-inverted',
+    primary: 'bg-app-bg-inverted/90 text-app-fg-inverted',
     secondary: 'bg-neutral-200 hover:bg-neutral-300 text-neutral-900',
     tertiary: 'bg-transparent hover:bg-neutral-100 text-neutral-900',
     danger: 'bg-danger-500 hover:bg-danger-600 text-white',

@@ -61,7 +61,7 @@ export function Item({
       onClick={onClick}
       role="menuitem"
       className={cn(
-        'font-mono text-sm group-aria-[orientation=horizontal]:px-4 group-aria-[orientation=horizontal]:py-4 group-aria-[orientation=vertical]:px-4 group-aria-[orientation=vertical]:py-2',
+        'font-mono text-sm group-aria-[orientation=horizontal]:px-4 group-aria-[orientation=horizontal]:py-4 group-aria-[orientation=vertical]:px-4 group-aria-[orientation=vertical]:py-2 hover:bg-keyline/10 cursor-default',
         className
       )}
       {...rest}>

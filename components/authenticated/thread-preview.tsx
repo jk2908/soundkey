@@ -29,43 +29,7 @@ type Props = {
   className?: string
 }
 
-function ThreadPreviewActions({ userId, thread, onDelete, onArchive }: Omit<Props, 'className'>) {
-  const [isActionsOpen, setActionsOpen] = useState(false)
-
-  const items = [
-    {
-      label: 'Delete',
-      onClick: onDelete,
-    },
-    {
-      label: 'Archive',
-      onClick: () => {},
-    },
-  ]
-
-  return (
-    <ContextMenu.Root>
-      <ContextMenu.Toggle
-        className="flex flex-col items-center justify-center gap-2 text-sm"
-        style={{ width: '40px', height: '40px' }}>
-        <Icon name="dots" size={18} />
-        <span className="sr-only">Actions</span>
-      </ContextMenu.Toggle>
-
-      <ContextMenu.Content position="left" offset={10}>
-        {items.map(({ label, onClick }) => (
-          <ContextMenu.Item key={label} onClick={onClick}>
-            {label}
-          </ContextMenu.Item>
-        ))}
-      </ContextMenu.Content>
-    </ContextMenu.Root>
-  )
-}
-
-export function ThreadPreview({ className, ...rest }: Props) {
-  const { userId, thread } = rest
-
+export function ThreadPreview({ userId, thread, onDelete, onArchive, className }: Props) {
   const users = use<SafeUser[]>(resolveThreadUsers(thread.threadId))
   const { push } = useRouter()
 
@@ -79,6 +43,17 @@ export function ThreadPreview({ className, ...rest }: Props) {
 
     return u.userId !== userId
   })
+
+  const actions = [
+    {
+      label: 'Delete',
+      onClick: onDelete,
+    },
+    {
+      label: 'Archive',
+      onClick: () => {},
+    },
+  ]
 
   return (
     <motion.tr
@@ -102,7 +77,22 @@ export function ThreadPreview({ className, ...rest }: Props) {
       <td className="font-mono text-sm">{createdAt}</td>
       <td className="font-mono text-sm">{updatedAt}</td>
       <td>
-        <ThreadPreviewActions {...rest} />
+        <ContextMenu.Root>
+          <ContextMenu.Toggle
+            className="flex flex-col items-center justify-center gap-2 text-sm"
+            style={{ width: '40px', height: '40px' }}>
+            <Icon name="dots" size={18} />
+            <span className="sr-only">Actions</span>
+          </ContextMenu.Toggle>
+
+          <ContextMenu.Content position="left" offset={10}>
+            {actions.map(({ label, onClick }) => (
+              <ContextMenu.Item key={label} onClick={() => onClick()}>
+                {label}
+              </ContextMenu.Item>
+            ))}
+          </ContextMenu.Content>
+        </ContextMenu.Root>{' '}
       </td>
     </motion.tr>
   )
