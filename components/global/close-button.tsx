@@ -5,12 +5,13 @@ import { Icon, type Props } from '@/components/global/icon'
 export function CloseButton({
   onClick,
   srText,
-  colour = 'currentColor'
+  colour = 'currentColor',
+  size = 20,
 }: { onClick: () => void; srText?: string } & Omit<Props, 'name'>) {
   return (
     <button onClick={onClick}>
       <span className="sr-only">{srText ? srText : 'Close'}</span>
-      <Icon name="x" width={20} height={20} title="Close" colour={colour} />
+      <Icon name="x" title="Close" size={size} />
     </button>
   )
 }

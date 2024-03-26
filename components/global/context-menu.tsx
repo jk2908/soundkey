@@ -32,7 +32,7 @@ export function Content({
   return (
     <Popover.Content
       className={cn(
-        'overflow-hidden bg-app-bg-inverted/90 p-0 backdrop-blur-md',
+        'overflow-hidden bg-app-bg-inverted p-0',
         orientation === 'vertical' ? 'rounded-lg' : 'rounded-full',
         className
       )}

@@ -31,14 +31,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="en"
       dir="ltr"
-      className={cn('h-full font-sans overflow-x-hidden', GeistSans.variable, MinorPraxis.variable)}
+      className={cn('h-full overflow-x-hidden font-sans', GeistSans.variable, MinorPraxis.variable)}
       suppressHydrationWarning>
-      <body className="flex min-h-full flex-col bg-app-bg text-app-fg sk-scrollbar">
+      <body className="sk-scrollbar flex min-h-full flex-col bg-app-bg text-app-fg">
         <Providers>
           <Suspense fallback={<FullscreenLoadingSpinner />}>
             {children}
 
-            <div id="portal">
+            <div id="portal" style={{ zIndex: 100 }}>
               <Toaster />
             </div>
           </Suspense>
