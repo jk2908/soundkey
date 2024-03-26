@@ -86,7 +86,6 @@ export const messageTable = sqliteTable('message', {
     .notNull()
     .references(() => userTable.id),
   recipientIds: text('recipient_ids')
-    .references(() => userTable.id)
     .notNull(),
   body: text('body').notNull(),
   createdAt: integer('created_at')

@@ -34,10 +34,12 @@ export function SendMessageForm({
   senderId,
   threadId,
   resolvedRecipients = [],
+  className,
 }: {
   senderId: string
   threadId?: string
   resolvedRecipients: ResolvedRecipient[] | []
+  className?: string
 }) {
   const recipientId = useId()
   const bodyId = useId()
@@ -73,7 +75,7 @@ export function SendMessageForm({
   }, [state, push])
 
   return (
-    <form action={dispatch} className="flex h-full flex-col">
+    <form action={dispatch} className={cn('flex flex-col', className)}>
       {!threadId && (
         <FormGroup>
           <Label htmlFor={recipientId} className="sr-only">
@@ -134,11 +136,11 @@ export function SendMessageForm({
         </FormGroup>
       )}
 
-      <FormGroup className="flex grow flex-col">
+      <FormGroup className="mt-auto">
         <Label htmlFor={bodyId} className={cn(threadId && 'sr-only')}>
           Message
         </Label>
-        <Textarea id={bodyId} name="body" required className="grow" />
+        <Textarea id={bodyId} name="body" required style={{ minHeight: '200px' }} />
       </FormGroup>
 
       <FormGroup>

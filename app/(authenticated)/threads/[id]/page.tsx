@@ -53,11 +53,16 @@ export default async function Page({
 
   const recipientIds = thread.userIds
     .split(',')
-    .filter(userId => userId !== user.userId)
+    //.filter(userId => userId !== user.userId)
     .map(userId => ({ userId, label: userId }))
 
+  const avatarProps = {
+    userId: user.userId,
+    username: user.username,
+  }
+
   return (
-    <YSpace>
+    <YSpace className="flex flex-col grow">
       <ul className="flex flex-col gap-8">
         {messages.map(message => {
           const fromMe = message.senderId === user.userId
@@ -71,11 +76,11 @@ export default async function Page({
                 fallback={
                   <SpeechBubbleSkeletonLoader
                     placement={placement}
-                    avatar={<Avatar userId={user.userId} username={user.username} />}
+                    avatar={<Avatar {...avatarProps} />}
                   />
                 }>
                 <SpeechBubble
-                  avatar={<Avatar userId={user.userId} username={user.username} />}
+                  avatar={<Avatar {...avatarProps} />}
                   placement={placement}
                   className={cn(
                     fromMe ? 'fg-app-fg-inverted bg-app-bg-inverted' : 'bg-keyline/80 text-app-fg'
@@ -92,6 +97,7 @@ export default async function Page({
         senderId={user.userId}
         threadId={params.id}
         resolvedRecipients={recipientIds}
+        className="grow"
       />
     </YSpace>
   )

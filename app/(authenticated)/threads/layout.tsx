@@ -3,7 +3,7 @@ import { YSpace } from '@/components/global/y-space'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <YSpace className="flex h-full flex-col">
+    <YSpace className="flex grow flex-col">
       <MessageActions />
 
       {children}

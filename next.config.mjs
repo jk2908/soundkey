@@ -1,6 +1,6 @@
 import MillionLint from '@million/lint'
 
-const nextConfig = {
+const config = {
   reactStrictMode: true,
   experimental: {
     //ppr: true,
@@ -11,8 +11,8 @@ const nextConfig = {
   },
 }
 
-export default nextConfig
+export default config
 /*
 export default MillionLint.next({
   rsc: true
-})(nextConfig);*/
+})(config);*/

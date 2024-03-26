@@ -30,7 +30,7 @@ export async function signup(
   }
 
   if (typeof username !== 'string' || username.length < 3 || username.length > 255) {
-    throw new Error('Invalid username')
+    return error(400, 'Invalid username')
   }
 
   try {
@@ -42,9 +42,7 @@ export async function signup(
 
     const sysUser = await getSystemUser()
 
-    if (!sysUser) {
-      return error(500, 'System user not found')
-    }
+    if (!sysUser) return error(500, 'System user not found')
 
     await createMessage({
       body: `Welcome to ${APP_NAME}. Please check your email to verify your account. Certain features may be unavailable until your account is verified.`,

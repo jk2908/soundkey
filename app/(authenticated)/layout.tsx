@@ -4,12 +4,12 @@ import { redirect } from 'next/navigation'
 import { auth } from '@/lib/auth'
 
 import { Nav } from '@/components/authenticated/nav'
+import { NavSkeletonLoader } from '@/components/authenticated/nav-skeleton-loader'
 import { Sidebar } from '@/components/authenticated/sidebar'
 import { FullscreenLoadingSpinner } from '@/components/global/fullscreen-loading-spinner'
 import { LoadingSpinner } from '@/components/global/loading-spinner'
 import { Section } from '@/components/global/section'
 import { Wrapper } from '@/components/global/wrapper'
-import { NavSkeletonLoader } from '@/components/authenticated/nav-skeleton-loader'
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
   const user = await auth()
@@ -18,21 +18,19 @@ export default async function Layout({ children }: { children: React.ReactNode }
 
   return (
     <Suspense fallback={<FullscreenLoadingSpinner />}>
-      <div className="flex grow flex-col bg-app-bg-inverted bg-[url('/assets/dashboard-bg.jpg')] bg-cover">
-        <Wrapper size="xxl" className="flex grow bg-app-bg sm:px-0 md:px-0">
-          <Sidebar>
-            <Suspense fallback={<NavSkeletonLoader />}>
-              <Nav />
-            </Suspense>
-          </Sidebar>
+      <Wrapper size="xxl" className="flex grow bg-app-bg md:px-0 ml-0">
+        <Sidebar>
+          <Suspense fallback={<NavSkeletonLoader />}>
+            <Nav />
+          </Suspense>
+        </Sidebar>
 
-          <Wrapper size={0} className="grow px-0 md:px-[--wrapper-px]">
-            <Section size="lg" className="h-full">
-              {children}
-            </Section>
-          </Wrapper>
+        <Wrapper size={0} className="flex grow flex-col px-0 md:px-[--wrapper-px]">
+          <Section size="lg" className="grow flex flex-col">
+            {children}
+          </Section>
         </Wrapper>
-      </div>
+      </Wrapper>
     </Suspense>
   )
 }

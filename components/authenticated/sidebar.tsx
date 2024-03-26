@@ -48,7 +48,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
           'h-screen w-56 shrink-0 rounded-e-3xl border border-keyline bg-app-bg aria-current:bg-app-bg-inverted',
           'fixed inset-0 z-40 transition-transform',
           !isOpen && '-translate-x-full',
-          'md:static md:translate-x-0'
+          'md:sticky md:top-0 md:translate-x-0'
         )}>
         <YSpace className="flex h-full flex-col">
           <div className="px-4">
