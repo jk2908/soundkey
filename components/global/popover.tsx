@@ -1,10 +1,13 @@
 'use client'
 
+import { on } from 'events'
 import { createContext, use, useCallback, useEffect, useId, useRef, useState } from 'react'
 import { AnimatePresence, motion, type MotionProps } from 'framer-motion'
+import { flushSync } from 'react-dom'
 
 import { useClickOutside } from '@/hooks/use-click-outside'
-import { useFocusTrap } from '@/hooks/use-focus-trap'
+import { useEscKey } from '@/hooks/use-esc-key'
+import { useFocusScope } from '@/hooks/use-focus-scope'
 import { cn } from '@/utils/cn'
 
 import { Portal } from '@/components/global/portal'
@@ -66,17 +69,30 @@ export function Root({ children, onBeforeOpen, onAfterClose, duration }: RootPro
 
       setOpen(newState)
     },
-    [isOpen, onBeforeOpen, onAfterClose]
+    [onBeforeOpen, onAfterClose, duration]
   )
 
-  const onClickOutside = useCallback(() => {
+  const onClickOutsideOrEsc = useCallback(() => {
     if (isOpen) handleToggle(isOpen)
   }, [isOpen, handleToggle])
 
-  const toggleRef = useRef<HTMLButtonElement>(null)
-  const contentRef = useClickOutside<HTMLDivElement>(onClickOutside)
+  function onClickOutsideOrEscWithFocus() {
+    flushSync(() => {
+      onClickOutsideOrEsc()
+    })
 
-  useFocusTrap(isOpen, contentRef.current)
+    toggleRef.current?.focus()
+  }
+
+  const toggleRef = useRef<HTMLButtonElement>(null)
+  const contentRef = useClickOutside<HTMLDivElement>(onClickOutsideOrEsc)
+
+  useFocusScope(contentRef, {
+    state: isOpen,
+    roving: true,
+    onTabFocusOut: onClickOutsideOrEscWithFocus,
+  })
+  useEscKey(onClickOutsideOrEscWithFocus)
 
   return (
     <PopoverContext.Provider value={{ id, isOpen, handleToggle, toggleRef, contentRef }}>

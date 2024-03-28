@@ -37,7 +37,7 @@ export function Content({
         className
       )}
       {...rest}>
-      <ul
+      <div
         role="menu"
         aria-orientation={orientation}
         className={cn(
@@ -45,7 +45,7 @@ export function Content({
           orientation === 'vertical' ? 'flex-col py-2' : 'flex-row px-1'
         )}>
         {children}
-      </ul>
+      </div>
     </Popover.Content>
   )
 }
@@ -55,17 +55,17 @@ export function Item({
   children,
   className,
   ...rest
-}: { onClick: () => void } & React.HTMLAttributes<HTMLLIElement>) {
+}: { onClick: () => void } & React.HTMLAttributes<HTMLButtonElement>) {
   return (
-    <li
+    <button
       onClick={onClick}
       role="menuitem"
       className={cn(
-        'font-mono text-sm group-aria-[orientation=horizontal]:px-4 group-aria-[orientation=horizontal]:py-4 group-aria-[orientation=vertical]:px-4 group-aria-[orientation=vertical]:py-2 hover:bg-keyline/10 cursor-default',
+        'font-mono text-sm text-app-fg-inverted group-aria-[orientation=horizontal]:px-4 group-aria-[orientation=horizontal]:py-4 group-aria-[orientation=vertical]:px-4 group-aria-[orientation=vertical]:py-2 hover:bg-keyline/10 focus-visible:bg-highlight focus-visible:outline-none focus-visible:text-white cursor-default',
         className
       )}
       {...rest}>
       {children}
-    </li>
+    </button>
   )
 }

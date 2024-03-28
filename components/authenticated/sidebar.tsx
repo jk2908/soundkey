@@ -1,11 +1,12 @@
 'use client'
 
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import { flushSync } from 'react-dom'
 
 import { useClickOutside } from '@/hooks/use-click-outside'
 import { useEscKey } from '@/hooks/use-esc-key'
-import { useFocusTrap } from '@/hooks/use-focus-trap'
+import { useFocusScope } from '@/hooks/use-focus-scope'
 import { useMediaQuery } from '@/hooks/use-media-query'
 import { breakpoints } from '@/utils/breakpoints'
 import { cn } from '@/utils/cn'
@@ -22,19 +23,27 @@ import { YSpace } from '@/components/global/y-space'
 export function Sidebar({ children }: { children: React.ReactNode }) {
   const [isOpen, setOpen] = useState(false)
   const mq = useMediaQuery(`(min-width: ${breakpoints.md})`)
-  const ref = useClickOutside<HTMLDivElement>(() => !mq && setOpen(false))
+  const toggleRef = useRef<HTMLButtonElement>(null)
+  const sidebarRef = useClickOutside<HTMLDivElement>(() => !mq && setOpen(false))
 
   useEffect(() => {
     setOpen(mq ? true : false)
   }, [mq])
 
-  useFocusTrap(isOpen, ref.current)
-  useEscKey(() => !mq && setOpen(false), isOpen)
+  useFocusScope(sidebarRef, { state: isOpen && !mq })
+  useEscKey(() => {
+    flushSync(() => {
+      setOpen(false)
+    })
+
+    toggleRef.current?.focus()
+  }, isOpen)
 
   return (
     <>
       {!mq && (
         <button
+          ref={toggleRef}
           onClick={() => setOpen(prev => !prev)}
           className="fixed bottom-8 right-8 z-50 md:hidden">
           Toggle
@@ -42,7 +51,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
       )}
 
       <Section
-        ref={ref}
+        ref={sidebarRef}
         size="lg"
         className={cn(
           'h-screen w-56 shrink-0 rounded-e-3xl border border-keyline bg-app-bg aria-current:bg-app-bg-inverted',
@@ -51,8 +60,25 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
           'md:sticky md:top-0 md:translate-x-0'
         )}>
         <YSpace className="flex h-full flex-col">
-          <div className="px-4">
-            <Logo />
+          <div className="flex items-center justify-between">
+            <span className="pl-4">
+              <Logo />
+            </span>
+
+            {!mq && (
+              <button
+                onClick={() => setOpen(false)}
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: '50%',
+                  marginRight: 'calc(var(--wrapper-px) - 6px)',
+                }}
+                className="flex flex-col items-center justify-center">
+                <Icon name="x" size={20} />
+                <span className="sr-only">Close</span>
+              </button>
+            )}
           </div>
 
           <div className="flex grow flex-col">

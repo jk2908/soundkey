@@ -80,7 +80,7 @@ export function ThreadPreview({ userId, thread, onDelete, onArchive, className }
         <ContextMenu.Root>
           <ContextMenu.Toggle
             className="flex flex-col items-center justify-center gap-2 text-sm"
-            style={{ width: '40px', height: '40px' }}>
+            style={{ width: '32px', height: '32px', borderRadius: '50%' }}>
             <Icon name="dots" size={18} />
             <span className="sr-only">Actions</span>
           </ContextMenu.Toggle>

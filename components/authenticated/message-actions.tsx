@@ -20,6 +20,7 @@ export function MessageActions() {
         <NavLink
           key={href}
           href={href}
+          role="menuitem"
           className="flex items-center justify-center gap-4 text-center"
           exact
           visualOnly>

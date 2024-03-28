@@ -34,13 +34,16 @@ export function SendMessageForm({
   senderId,
   threadId,
   resolvedRecipients = [],
+  forceScroll = true,
   className,
 }: {
   senderId: string
   threadId?: string
   resolvedRecipients: ResolvedRecipient[] | []
+  forceScroll?: boolean
   className?: string
 }) {
+  const ref = useRef<HTMLFormElement>(null)
   const recipientId = useId()
   const bodyId = useId()
   const [recipients, setRecipients] = useState<ResolvedRecipient[] | []>(resolvedRecipients)
@@ -74,8 +77,17 @@ export function SendMessageForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state, push])
 
+  useEffect(() => {
+    if (!forceScroll) return
+
+    scrollTo({
+      top: ref.current?.scrollHeight,
+      behavior: 'smooth',
+    })
+  }, [forceScroll])
+
   return (
-    <form action={dispatch} className={cn('flex flex-col', className)}>
+    <form ref={ref} action={dispatch} className={cn('flex flex-col', className)}>
       {!threadId && (
         <FormGroup>
           <Label htmlFor={recipientId} className="sr-only">

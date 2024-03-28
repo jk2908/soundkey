@@ -1,9 +1,11 @@
 import { useEffect, useRef } from 'react'
 
-export function useClickOutside<T extends HTMLElement>(onClick: () => void) {
+export function useClickOutside<T extends HTMLElement>(onClick: () => void, state?: boolean ) {
   const ref = useRef<T>(null)
 
   useEffect(() => {
+    if (state === false) return
+
     function handler(e: Event) {
       const target = e.target as HTMLElement
 
@@ -17,7 +19,7 @@ export function useClickOutside<T extends HTMLElement>(onClick: () => void) {
     return () => {
       document.removeEventListener('click', handler)
     }
-  }, [onClick])
+  }, [onClick, state])
 
   return ref
 }

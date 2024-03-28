@@ -17,7 +17,7 @@ export function NavLink({
   className?: string
   exact?: boolean
   visualOnly?: boolean
-}) {
+} & React.AnchorHTMLAttributes<HTMLAnchorElement>) {
   const pathname = usePathname()
   const isMatching = pathname === href || (!exact && (pathname.startsWith(href) && href !== '/'))
 

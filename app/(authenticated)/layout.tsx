@@ -18,7 +18,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
 
   return (
     <Suspense fallback={<FullscreenLoadingSpinner />}>
-      <Wrapper size="xxl" className="flex grow bg-app-bg md:px-0 ml-0">
+      <Wrapper size="xxl" className="ml-0 flex grow bg-app-bg md:px-0">
         <Sidebar>
           <Suspense fallback={<NavSkeletonLoader />}>
             <Nav />
@@ -26,7 +26,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
         </Sidebar>
 
         <Wrapper size={0} className="flex grow flex-col px-0 md:px-[--wrapper-px]">
-          <Section size="lg" className="grow flex flex-col">
+          <Section size="lg" className="flex grow flex-col">
             {children}
           </Section>
         </Wrapper>

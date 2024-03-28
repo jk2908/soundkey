@@ -14,6 +14,7 @@ import {
 import { useRouter, useSearchParams } from 'next/navigation'
 import selectors from 'focusable-selectors'
 
+import { useFocusScope } from '@/hooks/use-focus-scope'
 import { isVisible } from '@/utils/is-visible'
 
 type Activation = 'manual' | 'auto'
@@ -114,9 +115,12 @@ export function List({
   className,
 }: { children: React.ReactNode } & React.HTMLProps<HTMLDivElement>) {
   const { orientation } = use(TabsContext)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useFocusScope(ref, { roving: true, orientation: 'horizontal' })
 
   return (
-    <div role="tablist" aria-orientation={orientation} className={className}>
+    <div ref={ref} role="tablist" aria-orientation={orientation} className={className}>
       {children}
     </div>
   )
@@ -154,57 +158,6 @@ export function Button({
     }
   }, [values, value])
 
-  function handleKeyDown(e: React.KeyboardEvent<HTMLButtonElement>) {
-    const pos = tabNodes.current.indexOf(e.currentTarget)
-
-    const handlePrev = () => {
-      if (loop && pos === 0) {
-        tabNodes.current[tabNodes.current.length - 1].focus()
-      } else {
-        tabNodes.current[pos - 1]?.focus()
-      }
-    }
-
-    const handleNext = () => {
-      if (loop && pos === tabNodes.current.length - 1) {
-        tabNodes.current[0].focus()
-      } else {
-        tabNodes.current[pos + 1]?.focus()
-      }
-    }
-
-    switch (e.key) {
-      case 'ArrowLeft':
-        if (orientation === 'vertical') return
-        e.preventDefault()
-        handlePrev()
-        break
-      case 'ArrowRight':
-        if (orientation === 'vertical') return
-        e.preventDefault()
-        handleNext()
-        break
-      case 'ArrowUp':
-        if (orientation === 'horizontal') return
-        e.preventDefault()
-        handlePrev()
-        break
-      case 'ArrowDown':
-        if (orientation === 'horizontal') return
-        e.preventDefault()
-        handleNext()
-        break
-      case 'Home':
-        e.preventDefault()
-        tabNodes.current[0]?.focus()
-        break
-      case 'End':
-        e.preventDefault()
-        tabNodes.current[tabNodes.current.length - 1]?.focus()
-        break
-    }
-  }
-
   return (
     <button
       ref={ref}
@@ -213,11 +166,9 @@ export function Button({
       aria-controls={`${id}-${value}-p`}
       role="tab"
       type="button"
-      tabIndex={isSelected === value ? 0 : -1}
       className={className}
       onClick={() => selectTab(value)}
-      onFocus={() => (activation === 'auto' ? selectTab(value) : null)}
-      onKeyDown={handleKeyDown}>
+      onFocus={() => (activation === 'auto' ? selectTab(value) : null)}>
       {children}
     </button>
   )
