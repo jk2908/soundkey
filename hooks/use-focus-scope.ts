@@ -60,6 +60,8 @@ export function useFocusScope(ref: React.RefObject<HTMLElement>, config?: FocusS
 
       if (!allKeys.includes(e.key)) return
 
+      e.stopPropagation()
+
       const active = document.activeElement as HTMLElement
       const prev =
         nodes.indexOf(active) - 1 >= 0

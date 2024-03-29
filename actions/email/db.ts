@@ -1,3 +1,5 @@
+import 'server-only'
+
 import { APP_EMAIL, APP_NAME } from '@/lib/config'
 import { resend } from '@/lib/resend'
 

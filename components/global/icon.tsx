@@ -13,6 +13,7 @@ export type Icon =
   | 'inbox'
   | 'dots'
   | 'dots-vertical'
+  | 'trash'
 
 export type Props = {
   name: Icon

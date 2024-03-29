@@ -1,6 +1,6 @@
 'use server'
 
-import { createMessage } from '@/actions/message/db'
+import { createMessage, removeMessage } from '@/actions/message/db'
 
 import { error, success } from '@/lib/db'
 import { ServerResponse } from '@/lib/types'
@@ -27,6 +27,19 @@ export async function send(
     })
 
     return success(201, 'Message sent', { payload: resolvedThreadId })
+  } catch (err) {
+    return error(500, err instanceof Error ? err.message : 'An unknown error occurred')
+  }
+}
+
+export async function remove(
+  messageId: string,
+  prevState: ServerResponse
+): Promise<ServerResponse> {
+  try {
+    await removeMessage(messageId)
+    
+    return success(204, 'Message deleted')
   } catch (err) {
     return error(500, err instanceof Error ? err.message : 'An unknown error occurred')
   }

@@ -2,14 +2,14 @@ import type { Icon as IconType } from '@/components/global/icon'
 import { Icon } from '@/components/global/icon'
 import { NavLink } from '@/components/global/nav-link'
 
-type MessageAction = {
+type ThreadAction = {
   href: string
   label: string
   icon?: IconType
 }
 
-export function MessageActions() {
-  const items: MessageAction[] = [
+export function ThreadActionsMenu() {
+  const items: ThreadAction[] = [
     { href: '/threads', label: 'Threads', icon: 'mails' },
     { href: '/threads/new', label: 'New', icon: 'mail+' },
   ]

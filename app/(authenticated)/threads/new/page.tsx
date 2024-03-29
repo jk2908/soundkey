@@ -5,6 +5,10 @@ import { auth } from '@/lib/auth'
 
 import { SendMessageForm } from '@/components/authenticated/send-message-form'
 
+export const metadata = {
+  title: 'New thread',
+}
+
 export default async function Page({
   searchParams,
 }: {

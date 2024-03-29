@@ -1,4 +1,6 @@
-import { revalidateTag, unstable_cache } from 'next/cache'
+import 'server-only'
+
+import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
 import { desc, eq } from 'drizzle-orm'
 
 import { db } from '@/lib/db'
@@ -47,7 +49,6 @@ export async function resolveThread({
   recipientIds: string[]
 }) {
   try {
-    console.log(senderId, recipientIds)
     if (!threadId) return await createThread({ senderId, recipientIds })
 
     const [existingThread] = await db.select().from(threadTable).where(eq(threadTable.id, threadId))
@@ -94,13 +95,24 @@ export const getThreads = unstable_cache(
 
 export async function getThread(threadId: string) {
   try {
-    const [t] = await db.select().from(threadTable).where(eq(threadTable.id, threadId))
+    const [thread] = await db.select().from(threadTable).where(eq(threadTable.id, threadId))
 
-    if (!t) return null
+    if (!thread) return null
 
-    return t
+    return thread
   } catch (err) {
     console.error(err)
     return null
+  }
+}
+
+export async function removeThread(threadId: string) {
+  try {
+    await db.delete(threadToUserTable).where(eq(threadToUserTable.threadId, threadId))
+    await db.delete(threadTable).where(eq(threadTable.id, threadId))
+
+    revalidateTag('threads')
+  } catch (err) {
+    console.error(err)
   }
 }

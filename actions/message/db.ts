@@ -1,6 +1,8 @@
+import 'server-only'
+
 import { revalidateTag, unstable_cache } from 'next/cache'
-import { resolveThread } from '@/actions/thread/db'
-import { asc, eq, or } from 'drizzle-orm'
+import { removeThread, resolveThread } from '@/actions/thread/db'
+import { asc, eq, inArray, or } from 'drizzle-orm'
 
 import { db } from '@/lib/db'
 import { messageTable, userTable } from '@/lib/schema'
@@ -34,7 +36,7 @@ export async function createMessage(payload: NewMessage) {
   }
 }
 
-export async function updateMessage(payload: EditMessage & { messageId: string }) {
+export async function editMessage(payload: EditMessage & { messageId: string }) {
   try {
     const { messageId, body } = payload
 
@@ -44,6 +46,28 @@ export async function updateMessage(payload: EditMessage & { messageId: string }
       .where(eq(messageTable.id, messageId))
 
     return messageId
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+export async function removeMessage(messageId: string) {
+  try {
+    const [message] = await db.select().from(messageTable).where(eq(messageTable.id, messageId))
+
+    if (!message) throw new Error('Message not found')
+
+    const messages = await db
+      .select()
+      .from(messageTable)
+      .where(eq(messageTable.threadId, message.threadId))
+    await db.delete(messageTable).where(eq(messageTable.id, messageId))
+
+    if (messages.length === 1) {
+      await removeThread(message.threadId)
+    }
+
+    revalidateTag('messages')
   } catch (err) {
     console.error(err)
   }
@@ -99,5 +123,18 @@ export async function resolveMessageRecipient(str: string) {
     return recipient
   } catch (err) {
     return null
+  }
+}
+
+export async function resolveMessageRecipients(recipientIds: string[]) {
+  try {
+    const recipients = await db
+      .select({ userId: userTable.id, email: userTable.email, username: userTable.username })
+      .from(userTable)
+      .where(inArray(userTable.id, recipientIds))
+
+    return recipients
+  } catch (err) {
+    return []
   }
 }

@@ -9,9 +9,9 @@ export function CloseButton({
   size = 20,
 }: { onClick: () => void; srText?: string } & Omit<Props, 'name'>) {
   return (
-    <button onClick={onClick}>
+    <button onClick={onClick} style={{ borderRadius: '50%' }}>
       <span className="sr-only">{srText ? srText : 'Close'}</span>
-      <Icon name="x" title="Close" size={size} />
+      <Icon name="x" title="Close" colour={colour} size={size} />
     </button>
   )
 }

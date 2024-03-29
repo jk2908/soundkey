@@ -46,6 +46,7 @@ export function SendMessageForm({
   const ref = useRef<HTMLFormElement>(null)
   const recipientId = useId()
   const bodyId = useId()
+  const bodyRef = useRef<HTMLTextAreaElement>(null)
   const [recipients, setRecipients] = useState<ResolvedRecipient[] | []>(resolvedRecipients)
 
   const [state, dispatch] = useFormState(
@@ -70,8 +71,15 @@ export function SendMessageForm({
 
     toast({ ...state })
 
-    if (type === 'success' && payload && !threadId) {
-      push(pathname.replace('new', payload.toString()))
+    if (type === 'success') {
+      if (payload && !threadId) {
+        push(pathname.replace('new', payload.toString()))
+      }
+    } else {
+      if (bodyRef.current) {
+        bodyRef.current.value = ''
+        bodyRef.current.focus()
+      }
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -80,10 +88,12 @@ export function SendMessageForm({
   useEffect(() => {
     if (!forceScroll) return
 
-    scrollTo({
-      top: ref.current?.scrollHeight,
-      behavior: 'smooth',
-    })
+    setTimeout(() => {
+      scrollTo({
+        top: ref.current?.scrollHeight,
+        behavior: 'smooth',
+      })
+    }, 1000)
   }, [forceScroll])
 
   return (
@@ -152,7 +162,7 @@ export function SendMessageForm({
         <Label htmlFor={bodyId} className={cn(threadId && 'sr-only')}>
           Message
         </Label>
-        <Textarea id={bodyId} name="body" required style={{ minHeight: '200px' }} />
+        <Textarea ref={bodyRef} id={bodyId} name="body" required style={{ minHeight: '200px' }} />
       </FormGroup>
 
       <FormGroup>
