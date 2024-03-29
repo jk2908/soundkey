@@ -86,15 +86,17 @@ export function SendMessageForm({
   }, [state, push])
 
   useEffect(() => {
-    if (!forceScroll) return
+    if (!forceScroll || state.type !== 'success') return
 
     setTimeout(() => {
+      if (!ref.current) return
+
       scrollTo({
-        top: ref.current?.scrollHeight,
+        top: ref.current?.getBoundingClientRect().bottom,
         behavior: 'smooth',
       })
     }, 1000)
-  }, [forceScroll])
+  }, [forceScroll, state])
 
   return (
     <form ref={ref} action={dispatch} className={cn('flex flex-col', className)}>
@@ -162,7 +164,14 @@ export function SendMessageForm({
         <Label htmlFor={bodyId} className={cn(threadId && 'sr-only')}>
           Message
         </Label>
-        <Textarea ref={bodyRef} id={bodyId} name="body" required className="max-w-prose" style={{ minHeight: '200px' }} />
+        <Textarea
+          ref={bodyRef}
+          id={bodyId}
+          name="body"
+          required
+          className="max-w-prose"
+          style={{ minHeight: '200px' }}
+        />
       </FormGroup>
 
       <FormGroup>

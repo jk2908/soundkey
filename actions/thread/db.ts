@@ -109,7 +109,6 @@ export async function getThread(threadId: string) {
 export async function removeThread(threadId: string) {
   try {
     await db.delete(threadToUserTable).where(eq(threadToUserTable.threadId, threadId))
-    await db.delete(threadTable).where(eq(threadTable.id, threadId))
 
     revalidateTag('threads')
   } catch (err) {

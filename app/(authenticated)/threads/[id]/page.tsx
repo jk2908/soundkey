@@ -9,6 +9,8 @@ import { auth } from '@/lib/auth'
 import { cn } from '@/utils/cn'
 
 import { MessageActionsMenu } from '@/components/authenticated/message-actions-menu'
+import { MessageList } from '@/components/authenticated/message-list'
+import { MessageWrapper } from '@/components/authenticated/message-wrapper'
 import { SendMessageForm } from '@/components/authenticated/send-message-form'
 import type { Props as AvatarProps } from '@/components/global/avatar'
 import { Avatar } from '@/components/global/avatar'
@@ -16,8 +18,7 @@ import { Icon } from '@/components/global/icon'
 import { SpeechBubble } from '@/components/global/speech-bubble'
 import { SpeechBubbleSkeletonLoader } from '@/components/global/speech-bubble-skeleton-loader'
 import { YSpace } from '@/components/global/y-space'
-import { MessageList } from '@/components/authenticated/message-list'
-import { MessageWrapper } from '@/components/authenticated/message-wrapper'
+import { MessageMeta } from '@/components/authenticated/message-meta'
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const [message] = await getMessages(params.id)
@@ -100,6 +101,8 @@ export default async function Page({
                   {message.body}
                 </SpeechBubble>
               </Suspense>
+              
+              <MessageMeta message={message} />
             </MessageWrapper>
           )
         })}
