@@ -7,6 +7,7 @@ import { useFormState } from 'react-dom'
 
 import { ServerResponse } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
+import { Button } from '@/components/global/button'
 import { cn } from '@/utils/cn'
 
 import { Icon } from '@/components/global/icon'
@@ -35,14 +36,14 @@ export function RemoveMessageButton({
   }, [state])
 
   return (
-    <form action={dispatch} className={cn(className)}>
-      <button
-        type="submit"
-        style={{ width: '40px', height: '40px' }}
-        className="flex flex-col items-center justify-center gap-2">
-        <Icon name="trash" size={20} />
-        <span className="sr-only">Delete message</span>
-      </button>
-    </form>
+    <Button
+      onClick={() => dispatch()}
+      type="submit"
+      variant="secondary"
+      className={cn('flex flex-col items-center justify-center gap-2', className)}
+      iconOnly>
+      <Icon name="trash" size={14} />
+      <span className="sr-only">Delete message</span>
+    </Button>
   )
 }

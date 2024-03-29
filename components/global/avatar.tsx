@@ -5,7 +5,14 @@ import { cn } from '@/utils/cn'
 
 import { Icon } from '@/components/global/icon'
 
-function Default({ size = 20, className }: { size?: number; className?: string }) {
+export type Props = {
+  userId: string | null
+  username: string
+  size?: number
+  className?: string
+}
+
+function Default({ size = 20, className }: Pick<Props, 'size' | 'className'>) {
   return (
     <div
       className={cn('relative overflow-hidden bg-app-bg-inverted', className)}
@@ -20,17 +27,7 @@ function Default({ size = 20, className }: { size?: number; className?: string }
   )
 }
 
-export async function Avatar({
-  userId,
-  username,
-  size = 24,
-  className,
-}: {
-  userId: string | null
-  username: string
-  size?: number
-  className?: string
-}) {
+export async function Avatar({ userId, username, size = 24, className }: Props) {
   if (!userId) return <Default size={size} className={className} />
 
   const profile = await getProfile(userId)

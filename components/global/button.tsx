@@ -28,7 +28,7 @@ export function Button<E extends React.ElementType = typeof DEFAULT_ELEMENT>({
 
   const styleMap: { [key in StateVariant | IntentVariant]: string } = {
     primary: 'bg-app-bg-inverted text-app-fg-inverted',
-    secondary: 'bg-neutral-200 hover:bg-neutral-300 text-neutral-900',
+    secondary: 'bg-keyline/70 hover:bg-keyline text-app-fg',
     tertiary: 'bg-transparent hover:bg-neutral-100 text-neutral-900',
     danger: 'bg-danger-500 hover:bg-danger-600 text-white',
     success: 'bg-success-500 hover:bg-success-600 text-white',

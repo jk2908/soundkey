@@ -71,15 +71,15 @@ export function SendMessageForm({
 
     toast({ ...state })
 
-    if (type === 'success') {
-      if (payload && !threadId) {
-        push(pathname.replace('new', payload.toString()))
-      }
-    } else {
-      if (bodyRef.current) {
-        bodyRef.current.value = ''
-        bodyRef.current.focus()
-      }
+    if (type !== 'success') return
+
+    if (payload && !threadId) {
+      push(pathname.replace('new', payload.toString()))
+    }
+
+    if (bodyRef.current) {
+      bodyRef.current.value = ''
+      bodyRef.current.focus()
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -162,7 +162,7 @@ export function SendMessageForm({
         <Label htmlFor={bodyId} className={cn(threadId && 'sr-only')}>
           Message
         </Label>
-        <Textarea ref={bodyRef} id={bodyId} name="body" required style={{ minHeight: '200px' }} />
+        <Textarea ref={bodyRef} id={bodyId} name="body" required className="max-w-prose" style={{ minHeight: '200px' }} />
       </FormGroup>
 
       <FormGroup>

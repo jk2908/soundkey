@@ -74,7 +74,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
                   borderRadius: '50%',
                   marginRight: 'calc(var(--wrapper-px) - 6px)',
                 }}
-                className="flex flex-col items-center justify-center">
+                className="md:hidden flex flex-col items-center justify-center">
                 <Icon name="x" size={20} />
                 <span className="sr-only">Close</span>
               </button>

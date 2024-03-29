@@ -3,17 +3,21 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { getMessages, resolveMessageRecipients } from '@/actions/message/db'
 import { getThread } from '@/actions/thread/db'
+import { AnimatePresence, motion } from 'framer-motion'
 
 import { auth } from '@/lib/auth'
 import { cn } from '@/utils/cn'
 
 import { MessageActionsMenu } from '@/components/authenticated/message-actions-menu'
 import { SendMessageForm } from '@/components/authenticated/send-message-form'
+import type { Props as AvatarProps } from '@/components/global/avatar'
 import { Avatar } from '@/components/global/avatar'
 import { Icon } from '@/components/global/icon'
 import { SpeechBubble } from '@/components/global/speech-bubble'
 import { SpeechBubbleSkeletonLoader } from '@/components/global/speech-bubble-skeleton-loader'
 import { YSpace } from '@/components/global/y-space'
+import { MessageList } from '@/components/authenticated/message-list'
+import { MessageWrapper } from '@/components/authenticated/message-wrapper'
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const [message] = await getMessages(params.id)
@@ -61,19 +65,23 @@ export default async function Page({
   const avatarProps = {
     userId: user.userId,
     username: user.username,
-  }
+    size: 28,
+  } satisfies AvatarProps
 
   return (
     <YSpace className="flex grow flex-col">
-      <ul className="flex flex-col gap-8">
+      <MessageList>
         {messages.map(message => {
           const fromMe = message.senderId === user.userId
           const placement = fromMe ? 'right' : 'left'
 
           return (
-            <li
+            <MessageWrapper
               key={message.messageId}
-              className={cn('w-4/5 xs:w-3/4 sm:w-1/2', fromMe ? 'self-end' : 'self-start')}>
+              className={cn(
+                'flex w-4/5 flex-col gap-2 xs:w-3/4 sm:w-1/2',
+                fromMe ? 'self-end' : 'self-start'
+              )}>
               <MessageActionsMenu messageId={message.messageId} />
 
               <Suspense
@@ -92,10 +100,10 @@ export default async function Page({
                   {message.body}
                 </SpeechBubble>
               </Suspense>
-            </li>
+            </MessageWrapper>
           )
         })}
-      </ul>
+      </MessageList>
 
       <SendMessageForm
         senderId={user.userId}
