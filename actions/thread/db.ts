@@ -19,7 +19,7 @@ export async function createThread({
       .insert(threadTable)
       .values({
         createdAt: Date.now(),
-        userIds: [senderId, ...recipientIds].join(','),
+        userIds: [...new Set([senderId, ...recipientIds])].join(','),
       })
       .returning({ id: threadTable.id })
 
@@ -49,18 +49,37 @@ export async function resolveThread({
   recipientIds: string[]
 }) {
   try {
-    if (!threadId) return await createThread({ senderId, recipientIds })
+    if (threadId) {
+      const [existingThread] = await db
+        .select()
+        .from(threadTable)
+        .where(eq(threadTable.id, threadId))
 
-    const [existingThread] = await db.select().from(threadTable).where(eq(threadTable.id, threadId))
+      if (!existingThread) throw new Error('Could not find thread')
 
-    if (!existingThread) throw new Error('Could not find thread')
+      await db
+        .update(threadTable)
+        .set({ updatedAt: Date.now() })
+        .where(eq(threadTable.id, existingThread.id))
 
-    await db
-      .update(threadTable)
-      .set({ updatedAt: Date.now() })
-      .where(eq(threadTable.id, existingThread.id))
+      return existingThread.id
+    }
 
-    return existingThread.id
+    const [existingThread] = await db
+      .select()
+      .from(threadTable)
+      .where(eq(threadTable.userIds, [...new Set([senderId, ...recipientIds])].join(',')))
+
+    if (existingThread) {
+      await db
+        .update(threadTable)
+        .set({ updatedAt: Date.now() })
+        .where(eq(threadTable.id, existingThread.id))
+
+      return existingThread.id
+    }
+
+    return await createThread({ senderId, recipientIds })
   } catch (err) {
     console.log(err)
     throw err
@@ -106,11 +125,23 @@ export async function getThread(threadId: string) {
   }
 }
 
-export async function removeThread(threadId: string) {
+export async function deleteThread(userId: string) {
+  try {
+    await db.delete(threadToUserTable).where(eq(threadToUserTable.userId, userId))
+    revalidateTag('threads')
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+export async function cleanThread(threadId: string) {
   try {
     await db.delete(threadToUserTable).where(eq(threadToUserTable.threadId, threadId))
+    await db.delete(threadTable).where(eq(threadTable.id, threadId))
+    await db.delete(messageTable).where(eq(messageTable.threadId, threadId))
 
     revalidateTag('threads')
+    revalidateTag('messages')
   } catch (err) {
     console.error(err)
   }

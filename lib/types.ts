@@ -55,3 +55,8 @@ export type Route = {
   href: string
   isProtected?: boolean
 }
+
+export type ThreadAction = {
+  label: string
+  onClick: () => Promise<void>
+}

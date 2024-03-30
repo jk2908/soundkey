@@ -1,7 +1,7 @@
 import 'server-only'
 
 import { revalidateTag, unstable_cache } from 'next/cache'
-import { removeThread, resolveThread } from '@/actions/thread/db'
+import { deleteThread, resolveThread } from '@/actions/thread/db'
 import { asc, eq, inArray, or } from 'drizzle-orm'
 
 import { db } from '@/lib/db'
@@ -51,7 +51,7 @@ export async function editMessage(payload: EditMessage & { messageId: string }) 
   }
 }
 
-export async function removeMessage(messageId: string) {
+export async function deleteMessage(messageId: string) {
   try {
     const [message] = await db.select().from(messageTable).where(eq(messageTable.id, messageId))
 
@@ -64,7 +64,7 @@ export async function removeMessage(messageId: string) {
     await db.delete(messageTable).where(eq(messageTable.id, messageId))
 
     if (messages.length === 1) {
-      await removeThread(message.threadId)
+      await deleteThread(message.threadId)
     }
 
     revalidateTag('messages')

@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { send } from '@/actions/message/form'
+import { send } from '@/actions/message/state'
 import { flushSync, useFormState } from 'react-dom'
 
 import type { ServerResponse } from '@/lib/types'
@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/utils/cn'
 import { generateId } from '@/utils/generate-id'
 
-import { Label } from '@/components/authenticated/label'
+import { Label } from '@/components/global/label'
 import { FormGroup } from '@/components/global/form-group'
 import { Icon } from '@/components/global/icon'
 import * as Listbox from '@/components/global/listbox'

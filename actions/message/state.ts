@@ -1,6 +1,6 @@
 'use server'
 
-import { createMessage, removeMessage } from '@/actions/message/db'
+import { createMessage, deleteMessage } from '@/actions/message/db'
 
 import { error, success } from '@/lib/db'
 import { ServerResponse } from '@/lib/types'
@@ -32,12 +32,12 @@ export async function send(
   }
 }
 
-export async function remove(
+export async function destroy(
   messageId: string,
   prevState: ServerResponse
 ): Promise<ServerResponse> {
   try {
-    await removeMessage(messageId)
+    await deleteMessage(messageId)
     
     return success(204, 'Message deleted')
   } catch (err) {
