@@ -3,13 +3,13 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { getMessages, resolveMessageRecipients } from '@/actions/message/db'
 import { getThread } from '@/actions/thread/db'
-import { AnimatePresence, motion } from 'framer-motion'
 
 import { auth } from '@/lib/auth'
 import { cn } from '@/utils/cn'
 
 import { MessageActionsMenu } from '@/components/authenticated/message-actions-menu'
 import { MessageList } from '@/components/authenticated/message-list'
+import { MessageMeta } from '@/components/authenticated/message-meta'
 import { MessageWrapper } from '@/components/authenticated/message-wrapper'
 import { SendMessageForm } from '@/components/authenticated/send-message-form'
 import type { Props as AvatarProps } from '@/components/global/avatar'
@@ -18,7 +18,6 @@ import { Icon } from '@/components/global/icon'
 import { SpeechBubble } from '@/components/global/speech-bubble'
 import { SpeechBubbleSkeletonLoader } from '@/components/global/speech-bubble-skeleton-loader'
 import { YSpace } from '@/components/global/y-space'
-import { MessageMeta } from '@/components/authenticated/message-meta'
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const [message] = await getMessages(params.id)
@@ -83,7 +82,10 @@ export default async function Page({
                 'flex w-4/5 flex-col gap-2 xs:w-3/4 sm:w-1/2',
                 fromMe ? 'self-end' : 'self-start'
               )}>
-              <MessageActionsMenu messageId={message.messageId} />
+                
+              {message.senderId === user.userId && (
+                <MessageActionsMenu messageId={message.messageId} />
+              )}
 
               <Suspense
                 fallback={
@@ -101,7 +103,7 @@ export default async function Page({
                   {message.body}
                 </SpeechBubble>
               </Suspense>
-              
+
               <MessageMeta message={message} />
             </MessageWrapper>
           )

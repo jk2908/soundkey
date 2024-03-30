@@ -1,13 +1,13 @@
 'use client'
 
 import { useEffect, useId, useRef } from 'react'
-import { update } from '@/actions/profile/form'
+import { update } from '@/actions/profile/state'
 import { useFormState } from 'react-dom'
 
 import { ServerResponse } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
 
-import { Label } from '@/components/authenticated/label'
+import { Label } from '@/components/global/label'
 import { FormGroup } from '@/components/global/form-group'
 import { Input } from '@/components/global/input'
 import { LoadingSpinner } from '@/components/global/loading-spinner'

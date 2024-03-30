@@ -2,7 +2,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { remove } from '@/actions/message/form'
+import { destroy } from '@/actions/message/state'
 import { useFormState } from 'react-dom'
 
 import { ServerResponse } from '@/lib/types'
@@ -18,14 +18,14 @@ const initialState: ServerResponse = {
   status: undefined,
 }
 
-export function RemoveMessageButton({
+export function DeleteMessageButton({
   messageId,
   className,
 }: {
   messageId: string
   className?: string
 }) {
-  const [state, dispatch] = useFormState(remove.bind(null, messageId), initialState)
+  const [state, dispatch] = useFormState(destroy.bind(null, messageId), initialState)
   const { toast } = useToast()
 
   useEffect(() => {
@@ -42,8 +42,8 @@ export function RemoveMessageButton({
       variant="secondary"
       className={cn('flex flex-col items-center justify-center gap-2', className)}
       iconOnly>
-      <Icon name="trash" size={14} />
-      <span className="sr-only">Delete message</span>
+      <Icon name="trash" size={14} title="Remove message" />
+      <span className="sr-only">Remove message</span>
     </Button>
   )
 }

@@ -1,13 +1,9 @@
 import { Suspense } from 'react'
-import { revalidateTag } from 'next/cache'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { getThreads } from '@/actions/thread/db'
-import { eq } from 'drizzle-orm'
+import { getThreads, deleteThread } from '@/actions/thread/db'
 
 import { auth } from '@/lib/auth'
-import { db } from '@/lib/db'
-import { threadToUserTable } from '@/lib/schema'
 
 import { ThreadPreview } from '@/components/authenticated/thread-preview'
 import { Heading } from '@/components/global/heading'
@@ -48,11 +44,7 @@ export default async function Page() {
                   thread={t}
                   onDelete={async () => {
                     'use server'
-
-                    await db
-                      .delete(threadToUserTable)
-                      .where(eq(threadToUserTable.threadId, t.threadId))
-                    revalidateTag('threads')
+                    await deleteThread(user.userId)
                   }}
                 />
               </Suspense>
