@@ -7,16 +7,14 @@ import { getThread } from '@/actions/thread/db'
 import { auth } from '@/lib/auth'
 import { cn } from '@/utils/cn'
 
-import { MessageActionsMenu } from '@/components/authenticated/message-actions-menu'
-import { MessageList } from '@/components/authenticated/message-list'
-import { MessageMeta } from '@/components/authenticated/message-meta'
-import { MessageWrapper } from '@/components/authenticated/message-wrapper'
-import { SendMessageForm } from '@/components/authenticated/send-message-form'
-import type { Props as AvatarProps } from '@/components/global/avatar'
-import { Avatar } from '@/components/global/avatar'
+import * as EditableMessage from '@/components/authenticated/message/editable-message'
+import { MessageActionsMenu } from '@/components/authenticated/message/message-actions-menu'
+import { MessageList } from '@/components/authenticated/message/message-list'
+import { SendMessageForm } from '@/components/authenticated/message/send-message-form'
+import { Avatar, type Props as AvatarProps } from '@/components/global/avatar'
 import { Icon } from '@/components/global/icon'
+import { MotionDiv } from '@/components/global/motion-div'
 import { SpeechBubble } from '@/components/global/speech-bubble'
-import { SpeechBubbleSkeletonLoader } from '@/components/global/speech-bubble-skeleton-loader'
 import { YSpace } from '@/components/global/y-space'
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
@@ -29,13 +27,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
   return { title: `With ${recipients.map(r => r.username).join(', ')}` }
 }
 
-export default async function Page({
-  params,
-  searchParams,
-}: {
-  params: { id: string }
-  searchParams: { [key: string]: string | undefined }
-}) {
+export default async function Page({ params }: { params: { id: string } }) {
   const user = await auth()
   const thread = await getThread(params.id)
   const messages = await getMessages(params.id)
@@ -76,36 +68,44 @@ export default async function Page({
           const placement = fromMe ? 'right' : 'left'
 
           return (
-            <MessageWrapper
-              key={message.messageId}
-              className={cn(
-                'flex w-4/5 flex-col gap-2 xs:w-3/4 sm:w-1/2',
-                fromMe ? 'self-end' : 'self-start'
-              )}>
-                
-              {message.senderId === user.userId && (
-                <MessageActionsMenu messageId={message.messageId} />
-              )}
+            <Suspense key={message.messageId} fallback="Loading...">
+              <MotionDiv
+                layout
+                className={cn(
+                  'flex w-4/5 flex-col gap-2 xs:w-3/4 sm:w-1/2',
+                  fromMe ? 'self-end' : 'self-start'
+                )}>
+                <EditableMessage.Root messageId={message.messageId}>
+                  {fromMe && <MessageActionsMenu messageId={message.messageId} />}
 
-              <Suspense
-                fallback={
-                  <SpeechBubbleSkeletonLoader
-                    placement={placement}
+                  <SpeechBubble
                     avatar={<Avatar {...avatarProps} />}
-                  />
-                }>
-                <SpeechBubble
-                  avatar={<Avatar {...avatarProps} />}
-                  placement={placement}
-                  className={cn(
-                    fromMe ? 'fg-app-fg-inverted bg-app-bg-inverted' : 'bg-keyline/80 text-app-fg'
-                  )}>
-                  {message.body}
-                </SpeechBubble>
-              </Suspense>
+                    placement={placement}
+                    className={cn(
+                      fromMe ? 'fg-app-fg-inverted bg-app-bg-inverted' : 'bg-keyline/80 text-app-fg'
+                    )}>
+                    <EditableMessage.Text
+                      messageId={message.messageId}
+                      className="sk-focus"
+                      style={{ outlineOffset: '8px' }}>
+                      <>{message.body}</>
+                    </EditableMessage.Text>
+                  </SpeechBubble>
 
-              <MessageMeta message={message} />
-            </MessageWrapper>
+                  <div className="flex gap-2 font-mono">
+                    {message?.updatedAt ? (
+                      <span className="text-xs">
+                        Edited {new Date(message.updatedAt).toLocaleString()}
+                      </span>
+                    ) : (
+                      <span className="text-xs">
+                        Created {new Date(message.createdAt).toLocaleString()}
+                      </span>
+                    )}
+                  </div>
+                </EditableMessage.Root>
+              </MotionDiv>
+            </Suspense>
           )
         })}
       </MessageList>

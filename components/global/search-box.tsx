@@ -6,7 +6,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Chip } from '@/components/global/chip'
 import { Icon } from '@/components/global/icon'
 import { Input, Props as InputProps } from '@/components/global/input'
-import { LoadingSpinner } from '@/components/global/loading-spinner'
+import { Spinner } from '@/components/global/spinner'
 
 export type Props = {
   value?: string
@@ -67,7 +67,7 @@ export const SearchBox = forwardRef<HTMLInputElement, Props>(
 
         <span className="absolute right-4 top-1/2 flex -translate-y-1/2 transform gap-4">
           {isPending ? (
-            <LoadingSpinner size={16} />
+            <Spinner size={16} />
           ) : (
             <Icon name="search" size={16} className="opacity-50 group-focus-within:opacity-100" />
           )}

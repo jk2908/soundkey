@@ -69,6 +69,7 @@ export const threadTable = sqliteTable('thread', {
     .primaryKey()
     .notNull()
     .$defaultFn(() => generateId()),
+  ownerId: text('owner_id').notNull(),
   userIds: text('user_ids').notNull(),
   createdAt: integer('created_at')
     .notNull()

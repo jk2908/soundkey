@@ -23,7 +23,7 @@ type Orientation = 'horizontal' | 'vertical'
 const TabsContext = createContext<{
   isSelected: string
   selectTab: (value: string) => void
-  tabNodes: React.MutableRefObject<HTMLElement[]>
+  tabEls: React.MutableRefObject<HTMLElement[]>
   values: React.MutableRefObject<string[]>
   initialValue?: string
   activation?: Activation
@@ -34,7 +34,7 @@ const TabsContext = createContext<{
 }>({
   isSelected: '',
   selectTab: () => null,
-  tabNodes: { current: [] },
+  tabEls: { current: [] },
   values: { current: [] },
   activation: 'auto',
   orientation: 'horizontal',
@@ -59,7 +59,7 @@ export function Root({
   const searchParams = useSearchParams()
   const router = useRouter()
 
-  const tabNodes = useRef<HTMLElement[]>([])
+  const tabEls = useRef<HTMLElement[]>([])
   const values = useRef<string[]>([])
   const id = useId()
 
@@ -78,7 +78,7 @@ export function Root({
     () => ({
       isSelected,
       selectTab,
-      tabNodes,
+      tabEls,
       values,
       initialValue,
       activation,
@@ -90,7 +90,7 @@ export function Root({
     [
       isSelected,
       selectTab,
-      tabNodes,
+      tabEls,
       values,
       initialValue,
       activation,
@@ -134,21 +134,21 @@ export function Button({
   children: React.ReactNode
   value: string
 } & React.HTMLProps<HTMLButtonElement>) {
-  const { isSelected, selectTab, tabNodes, values, activation, orientation, loop, id } =
+  const { isSelected, selectTab, tabEls, values, activation, orientation, loop, id } =
     use(TabsContext)
   const ref = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
-    const node = ref.current
+    const el = ref.current
 
-    if (!node) return
+    if (!el) return
 
-    tabNodes.current.push(node)
+    tabEls.current.push(el)
 
     return () => {
-      tabNodes.current = tabNodes.current.filter(n => n !== node)
+      tabEls.current = tabEls.current.filter(e => e !== el)
     }
-  }, [tabNodes])
+  }, [tabEls])
 
   useEffect(() => {
     values.current.push(value)
@@ -188,15 +188,15 @@ export function Panel({
   const [isFocusable, setFocusable] = useState(false)
 
   useEffect(() => {
-    const node = ref.current
+    const el = ref.current
 
-    if (!node) return
+    if (!el) return
 
-    const focusableElements = (
-      Array.from(node.querySelectorAll(selectors.join(','))) as HTMLElement[]
+    const focusableEls = (
+      Array.from(el.querySelectorAll(selectors.join(','))) as HTMLElement[]
     ).filter(isVisible)
 
-    setFocusable(!focusableElements.length && isSelected === value)
+    setFocusable(!focusableEls.length && isSelected === value)
   }, [isSelected, value])
 
   return (

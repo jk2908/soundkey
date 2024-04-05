@@ -31,6 +31,7 @@
     "rate-limiter-flexible": "^5.0.0",
     "react": "0.0.0-experimental-05797cceb-20240328",
     "react-dom": "^18.2.0",
+    "react-error-boundary": "^4.0.13",
     "resend": "^3.2.0",
     "server-only": "^0.0.1"
   },

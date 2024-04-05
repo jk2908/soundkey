@@ -1,22 +1,18 @@
 'use client'
 
-import React from 'react'
-import { motion, MotionProps } from 'framer-motion'
+import { motion, type MotionProps } from 'framer-motion'
 
 import { cn } from '@/utils/cn'
 
-export function MessageWrapper({
+export function MotionDiv({
   children,
   className,
   ...rest
-}: {
-  children: React.ReactNode
-  className?: string
-} & React.HTMLProps<HTMLDivElement> &
+}: { children: React.ReactNode; className?: string } & React.HTMLProps<HTMLDivElement> &
   MotionProps) {
   return (
     <motion.div
-      layout
+      initial={{ opacity: 1 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}

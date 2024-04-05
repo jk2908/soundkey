@@ -20,31 +20,31 @@ export function useFocusScope(ref: React.RefObject<HTMLElement>, config?: FocusS
     loop = true,
     onTabFocusOut,
   } = config || {}
-  let nodes: HTMLElement[] = []
+  let els: HTMLElement[] = []
 
   useEffect(() => {
-    const node = ref.current
+    const el = ref.current
 
-    if (!node) return
+    if (!el) return
 
     const getNodes = () =>
-      (Array.from(node.querySelectorAll(focusableSelectors.join(', '))) as HTMLElement[]).filter(
+      (Array.from(el.querySelectorAll(focusableSelectors.join(', '))) as HTMLElement[]).filter(
         isVisible
       )
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    if (!nodes.length) nodes = getNodes()
+    if (!els.length) els = getNodes()
 
     const reset = (exclude?: HTMLElement) => {
-      nodes.forEach(node => {
-        if (node !== exclude) {
-          node.setAttribute('tabindex', '-1')
+      els.forEach(el => {
+        if (el !== exclude) {
+          el.setAttribute('tabindex', '-1')
         }
       })
     }
 
-    const first = nodes[0]
-    const last = nodes[nodes.length - 1]
+    const first = els[0]
+    const last = els[els.length - 1]
 
     if (roving) {
       first?.setAttribute('tabindex', '0')
@@ -64,14 +64,14 @@ export function useFocusScope(ref: React.RefObject<HTMLElement>, config?: FocusS
 
       const active = document.activeElement as HTMLElement
       const prev =
-        nodes.indexOf(active) - 1 >= 0
-          ? nodes[nodes.indexOf(active as HTMLElement) - 1]
+        els.indexOf(active) - 1 >= 0
+          ? els[els.indexOf(active as HTMLElement) - 1]
           : loop
             ? last
             : active
       const next =
-        nodes.indexOf(active) + 1 < nodes.length
-          ? nodes[nodes.indexOf(active as HTMLElement) + 1]
+        els.indexOf(active) + 1 < els.length
+          ? els[els.indexOf(active as HTMLElement) + 1]
           : loop
             ? first
             : active
@@ -112,10 +112,10 @@ export function useFocusScope(ref: React.RefObject<HTMLElement>, config?: FocusS
       }
     }
 
-    node.addEventListener('keydown', handler)
+    el.addEventListener('keydown', handler)
 
     return () => {
-      node.removeEventListener('keydown', handler)
+      el.removeEventListener('keydown', handler)
     }
   }, [state, ref, roving, orientation, loop])
 }

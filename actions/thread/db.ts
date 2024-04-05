@@ -19,6 +19,7 @@ export async function createThread({
       .insert(threadTable)
       .values({
         createdAt: Date.now(),
+        ownerId: senderId,
         userIds: [...new Set([senderId, ...recipientIds])].join(','),
       })
       .returning({ id: threadTable.id })
@@ -125,16 +126,7 @@ export async function getThread(threadId: string) {
   }
 }
 
-export async function deleteThread(userId: string) {
-  try {
-    await db.delete(threadToUserTable).where(eq(threadToUserTable.userId, userId))
-    revalidateTag('threads')
-  } catch (err) {
-    console.error(err)
-  }
-}
-
-export async function cleanThread(threadId: string) {
+export async function deleteThread(threadId: string) {
   try {
     await db.delete(threadToUserTable).where(eq(threadToUserTable.threadId, threadId))
     await db.delete(threadTable).where(eq(threadTable.id, threadId))

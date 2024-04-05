@@ -43,12 +43,13 @@ export type Theme = 'light' | 'dark' | undefined
 export type ServerResponse =
   | {
       type: 'success' | 'error'
+      ok: boolean
       message: string
       status: number
       key?: string
       payload?: unknown
     }
-  | { type: undefined; message: null; status: undefined; key?: string, payload?: unknown }
+  | { type: undefined; message: null; status: undefined; key?: string; payload?: unknown }
 
 export type Route = {
   label: string

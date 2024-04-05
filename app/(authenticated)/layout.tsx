@@ -6,8 +6,8 @@ import { auth } from '@/lib/auth'
 import { Nav } from '@/components/authenticated/nav'
 import { NavSkeletonLoader } from '@/components/authenticated/nav-skeleton-loader'
 import { Sidebar } from '@/components/authenticated/sidebar'
-import { FullscreenLoadingSpinner } from '@/components/global/fullscreen-loading-spinner'
-import { LoadingSpinner } from '@/components/global/loading-spinner'
+import { FullscreenSpinner } from '@/components/global/fullscreen-spinner'
+import { Spinner } from '@/components/global/spinner'
 import { Section } from '@/components/global/section'
 import { Wrapper } from '@/components/global/wrapper'
 
@@ -17,7 +17,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
   if (!user) throw redirect('/login')
 
   return (
-    <Suspense fallback={<FullscreenLoadingSpinner />}>
+    <Suspense fallback={<FullscreenSpinner />}>
       <Wrapper size="xxl" className="ml-0 flex grow bg-app-bg md:px-0">
         <Sidebar>
           <Suspense fallback={<NavSkeletonLoader />}>

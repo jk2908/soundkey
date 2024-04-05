@@ -12,6 +12,7 @@ export const success = (
   message?: string,
   config?: { key?: string; payload?: unknown }
 ): ServerResponse => ({
+  ok: true,
   type: 'success',
   message: message ? capitalise(message) : 'Success',
   status: status || 200,
@@ -24,6 +25,7 @@ export const error = (
   message?: string,
   config?: { key?: string; payload?: unknown }
 ): ServerResponse => ({
+  ok: false,
   type: 'error',
   message: message ? capitalise(message) : 'An unknown error occurred',
   status: status || 500,

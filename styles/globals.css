@@ -51,6 +51,11 @@
     :where(button, input, textarea, a, select) {
       @apply sk-focus;
     }
+
+    :where(button, a):is([disabled], [aria-disabled='true']) {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
   }
 
   @layer components {
@@ -66,7 +71,6 @@
         font-size: theme('fontSize.sm');
         letter-spacing: theme('letterSpacing.wider');
         padding: theme('spacing.2') theme('spacing.6');
-        outline: 1px solid transparent;
 
         &:hover {
           background-color: rgb(var(--keyline) / 40%);
@@ -123,8 +127,8 @@
       @apply shadow-neutral-500/30 dark:shadow-neutral-900/50;
     }
 
-    .sk-focus {
-      @apply outline-1 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-highlight;
+    :where(.sk-focus) {
+      @apply focus-visible:outline-dashed outline-1 focus-visible:outline-offset-2 focus-visible:outline-highlight;
     }
   }
 }

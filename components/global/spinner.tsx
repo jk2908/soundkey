@@ -2,7 +2,7 @@ import { cn } from '@/utils/cn'
 
 import { Icon, type Props } from '@/components/global/icon'
 
-export function LoadingSpinner(props: Omit<Props, 'name'>) {
+export function Spinner(props: Omit<Props, 'name'>) {
   const { className, ...rest } = props
 
   return (

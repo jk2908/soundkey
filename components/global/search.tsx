@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, forwardRef, use, useRef, useState } from 'react'
+import { createContext, forwardRef, use, useState } from 'react'
 
 import { cn } from '@/utils/cn'
 

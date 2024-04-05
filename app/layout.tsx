@@ -9,7 +9,7 @@ import { GeistSans } from 'geist/font/sans'
 import { APP_DESCRIPTION, APP_NAME } from '@/lib/config'
 import { cn } from '@/utils/cn'
 
-import { FullscreenLoadingSpinner } from '@/components/global/fullscreen-loading-spinner'
+import { FullscreenSpinner } from '@/components/global/fullscreen-spinner'
 import { Providers } from '@/components/global/providers'
 import { Toaster } from '@/components/global/toaster'
 
@@ -33,9 +33,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       dir="ltr"
       className={cn('h-full overflow-x-hidden font-sans', GeistSans.variable, MinorPraxis.variable)}
       suppressHydrationWarning>
-      <body className="sk-scrollbar flex min-h-full flex-col bg-app-bg text-app-fg">
+      <body className="sk-scrollbar flex min-h-full flex-col bg-app-bg text-app-fg selection:bg-highlight selection:text-white">
         <Providers>
-          <Suspense fallback={<FullscreenLoadingSpinner />}>
+          <Suspense fallback={<FullscreenSpinner />}>
             {children}
 
             <div id="portal" style={{ zIndex: 100 }}>

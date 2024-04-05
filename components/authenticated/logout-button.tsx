@@ -2,7 +2,7 @@
 
 import { logout } from '@/actions/user/state'
 
-import { LoadingSpinner } from '@/components/global/loading-spinner'
+import { Spinner } from '@/components/global/spinner'
 import { SubmitButton } from '@/components/global/submit-button'
 import type { Props } from '@/components/global/submit-button'
 
@@ -16,7 +16,7 @@ export function LogoutButton({
         {({ pending }) => (
           <>
             {children}
-            {pending && <LoadingSpinner size={16} />}
+            {pending && <Spinner size={16} />}
           </>
         )}
       </SubmitButton>
