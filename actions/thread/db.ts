@@ -96,6 +96,7 @@ export const getThreads = unstable_cache(
           createdAt: threadTable.createdAt,
           updatedAt: threadTable.updatedAt,
           userIds: threadTable.userIds,
+          ownerId: threadTable.ownerId,
         })
         .from(threadToUserTable)
         .leftJoin(threadTable, eq(threadTable.id, threadToUserTable.threadId))
