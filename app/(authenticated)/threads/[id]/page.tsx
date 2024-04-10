@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { getMessages, resolveMessageRecipients } from '@/actions/message/db'
+import { update } from '@/actions/message/state'
 import { getThread } from '@/actions/thread/db'
 
 import { auth } from '@/lib/auth'
@@ -15,6 +16,7 @@ import { Avatar, type Props as AvatarProps } from '@/components/global/avatar'
 import { Icon } from '@/components/global/icon'
 import { MotionDiv } from '@/components/global/motion-div'
 import { SpeechBubble } from '@/components/global/speech-bubble'
+import { SpeechBubbleSkeletonLoader } from '@/components/global/speech-bubble-skeleton-loader'
 import { YSpace } from '@/components/global/y-space'
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
@@ -68,7 +70,17 @@ export default async function Page({ params }: { params: { id: string } }) {
           const placement = fromMe ? 'right' : 'left'
 
           return (
-            <Suspense key={message.messageId} fallback="Loading...">
+            <Suspense
+              key={message.messageId}
+              fallback={
+                <SpeechBubbleSkeletonLoader
+                  placement={placement}
+                  className={cn(
+                    fromMe ? 'fg-app-fg-inverted bg-app-bg-inverted' : 'bg-keyline/80 text-app-fg'
+                  )}
+                  avatar={<Avatar {...avatarProps} />}
+                />
+              }>
               <MotionDiv
                 layout
                 className={cn(
@@ -82,27 +94,25 @@ export default async function Page({ params }: { params: { id: string } }) {
                     avatar={<Avatar {...avatarProps} />}
                     placement={placement}
                     className={cn(
+                      'flex flex-col gap-2',
                       fromMe ? 'fg-app-fg-inverted bg-app-bg-inverted' : 'bg-keyline/80 text-app-fg'
                     )}>
-                    <EditableMessage.Text
-                      messageId={message.messageId}
-                      className="sk-focus"
-                      style={{ outlineOffset: '8px' }}>
+                    <EditableMessage.Text className="sk-focus" style={{ outlineOffset: '8px' }}>
                       <>{message.body}</>
                     </EditableMessage.Text>
-                  </SpeechBubble>
 
-                  <div className="flex gap-2 font-mono">
-                    {message?.updatedAt ? (
-                      <span className="text-xs">
-                        Edited {new Date(message.updatedAt).toLocaleString()}
-                      </span>
-                    ) : (
-                      <span className="text-xs">
-                        Created {new Date(message.createdAt).toLocaleString()}
-                      </span>
-                    )}
-                  </div>
+                    <div className="font-mono pt-2 border-t border-keyline/25">
+                      {message?.updatedAt ? (
+                        <span className="text-xs">
+                          Edited {new Date(message.updatedAt).toLocaleString()}
+                        </span>
+                      ) : (
+                        <span className="text-xs">
+                          Created {new Date(message.createdAt).toLocaleString()}
+                        </span>
+                      )}
+                    </div>
+                  </SpeechBubble>
                 </EditableMessage.Root>
               </MotionDiv>
             </Suspense>

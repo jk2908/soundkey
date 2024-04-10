@@ -186,9 +186,9 @@ export type NewMessage = Omit<
   InferInsertModel<typeof messageTable>,
   'threadId' | 'recipientIds' | 'type'
 > & { threadId?: string; recipientIds?: string[]; type: MessageType }
-export type EditMessage = Omit<
+export type UpdateMessage = Omit<
   InferInsertModel<typeof messageTable>,
-  'threadId' | 'createdAt' | 'type'
+  'threadId' | 'createdAt' | 'type' | 'senderId' | 'recipientIds'
 >
 
 export type Thread = Omit<InferSelectModel<typeof threadTable>, 'id'> & { threadId: string }

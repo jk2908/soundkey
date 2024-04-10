@@ -49,7 +49,7 @@ export async function SpeechBubble({ children, avatar, placement = 'right', clas
             />
           )}
         </div>
-
+          
         {avatar && (
           <div
             className={cn(

@@ -1,6 +1,6 @@
 import 'server-only'
 
-import { revalidatePath, revalidateTag, unstable_cache } from 'next/cache'
+import { revalidateTag, unstable_cache } from 'next/cache'
 import { desc, eq } from 'drizzle-orm'
 
 import { db } from '@/lib/db'
@@ -110,8 +110,8 @@ export const getThreads = unstable_cache(
       return []
     }
   },
-  ['threads'],
-  { tags: ['threads'] }
+  ['thread'],
+  { tags: ['thread'] }
 )
 
 export async function getThread(threadId: string) {
@@ -133,8 +133,8 @@ export async function deleteThread(threadId: string) {
     await db.delete(threadTable).where(eq(threadTable.id, threadId))
     await db.delete(messageTable).where(eq(messageTable.threadId, threadId))
 
-    revalidateTag('threads')
-    revalidateTag('messages')
+    revalidateTag('thread')
+    revalidateTag('message')
   } catch (err) {
     console.error(err)
   }
