@@ -6,10 +6,8 @@ import { useFormState } from 'react-dom'
 
 import { ServerResponse } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
-import { cn } from '@/utils/cn'
 
 import { Button, type Props } from '@/components/global/button'
-import { Icon } from '@/components/global/icon'
 
 const initialState: ServerResponse = {
   type: undefined,

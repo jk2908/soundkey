@@ -31,7 +31,7 @@ export async function createThread({
       }))
     )
 
-    revalidateTag('threads')
+    revalidateTag('thread')
 
     return newThread.id
   } catch (err) {
