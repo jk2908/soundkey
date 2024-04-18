@@ -1,9 +1,10 @@
 'use server'
 
-import { createMessage, deleteMessage } from '@/actions/message/db'
+import { createMessage, deleteMessage, updateMessage } from '@/actions/message/db'
 
 import { error, success } from '@/lib/db'
 import { ServerResponse } from '@/lib/types'
+import { revalidateTag } from 'next/cache'
 
 export async function send(
   senderId: string,
@@ -38,8 +39,23 @@ export async function destroy(
 ): Promise<ServerResponse> {
   try {
     await deleteMessage(messageId)
-    
+
     return success(204, 'Message deleted')
+  } catch (err) {
+    return error(500, err instanceof Error ? err.message : 'An unknown error occurred')
+  }
+}
+
+export async function update(
+  messageId: string,
+  body: string,
+  prevState: ServerResponse
+): Promise<ServerResponse> {
+  try {
+    await updateMessage({ messageId, body })
+    
+    revalidateTag('message')
+    return success(200, 'Message updated')
   } catch (err) {
     return error(500, err instanceof Error ? err.message : 'An unknown error occurred')
   }

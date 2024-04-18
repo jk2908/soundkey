@@ -17,14 +17,13 @@ const Script = memo(function Script() {
 })
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(undefined)
+  const [theme, setTheme] = useState<Theme>()
 
   useEffect(() => {
     const t = document.documentElement.dataset.theme as Theme
 
     if (!theme) {
       setTheme(t)
-
       return
     }
 
@@ -36,9 +35,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }, [theme])
 
   useEffect(() => {
-    const mq = window.matchMedia('(prefers-color-scheme: dark)')
+    const mq = matchMedia('(prefers-color-scheme: dark)')
 
-    function handler({ matches }: MediaQueryListEvent) {
+    const handler = ({ matches }: MediaQueryListEvent) => {
       setTheme(matches ? 'dark' : 'light')
     }
 

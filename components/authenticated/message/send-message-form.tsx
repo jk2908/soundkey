@@ -14,7 +14,7 @@ import { Label } from '@/components/global/label'
 import { FormGroup } from '@/components/global/form-group'
 import { Icon } from '@/components/global/icon'
 import * as Listbox from '@/components/global/listbox'
-import { LoadingSpinner } from '@/components/global/loading-spinner'
+import { Spinner } from '@/components/global/spinner'
 import * as Search from '@/components/global/search'
 import { SubmitButton } from '@/components/global/submit-button'
 import { Textarea } from '@/components/global/textarea'
@@ -179,7 +179,7 @@ export function SendMessageForm({
           {({ pending }) => (
             <>
               Send
-              {pending && <LoadingSpinner />}
+              {pending && <Spinner />}
             </>
           )}
         </SubmitButton>

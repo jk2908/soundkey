@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/use-toast'
 import { Label } from '@/components/global/label'
 import { FormGroup } from '@/components/global/form-group'
 import { Input } from '@/components/global/input'
-import { LoadingSpinner } from '@/components/global/loading-spinner'
+import { Spinner } from '@/components/global/spinner'
 import { SubmitButton } from '@/components/global/submit-button'
 
 const initialState: ServerResponse = {
@@ -72,7 +72,7 @@ export function UpdateProfileForm({
           {({ pending }) => (
             <>
               Update
-              {pending && <LoadingSpinner />}
+              {pending && <Spinner />}
             </>
           )}
         </SubmitButton>

@@ -1,5 +1,4 @@
 'use client'
-'use client'
 
 import { useEffect } from 'react'
 import { destroy } from '@/actions/message/state'
@@ -7,10 +6,8 @@ import { useFormState } from 'react-dom'
 
 import { ServerResponse } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
-import { Button } from '@/components/global/button'
-import { cn } from '@/utils/cn'
 
-import { Icon } from '@/components/global/icon'
+import { Button, type Props } from '@/components/global/button'
 
 const initialState: ServerResponse = {
   type: undefined,
@@ -18,13 +15,14 @@ const initialState: ServerResponse = {
   status: undefined,
 }
 
-export function DeleteMessageButton({
+export function DeleteMessageButton<E extends React.ElementType = 'button'>({
+  children,
   messageId,
-  className,
+  ...rest
 }: {
+  children: React.ReactNode
   messageId: string
-  className?: string
-}) {
+} & Omit<Props<E>, 'as'>) {
   const [state, dispatch] = useFormState(destroy.bind(null, messageId), initialState)
   const { toast } = useToast()
 
@@ -36,14 +34,8 @@ export function DeleteMessageButton({
   }, [state])
 
   return (
-    <Button
-      onClick={() => dispatch()}
-      type="submit"
-      variant="secondary"
-      className={cn('flex flex-col items-center justify-center gap-2', className)}
-      iconOnly>
-      <Icon name="trash" size={14} title="Remove message" />
-      <span className="sr-only">Remove message</span>
+    <Button onClick={() => dispatch()} {...rest}>
+      {children}
     </Button>
   )
 }

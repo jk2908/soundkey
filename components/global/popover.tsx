@@ -146,37 +146,34 @@ export function Content({
   const id = useId()
 
   const handleCalc = useCallback(() => {
-    const toggleNode = toggleRef.current
-    const contentNode = contentRef.current
-
-    if (!toggleNode || !contentNode) return
+    if (!toggleRef.current || !contentRef.current) return
 
     const {
-      x: toggleX,
-      y: toggleY,
-      width: toggleWidth,
-      height: toggleHeight,
-    } = toggleNode.getBoundingClientRect()
-    const { width: contentWidth, height: contentHeight } = contentNode.getBoundingClientRect()
+      x: tX,
+      y: tY,
+      width: tW,
+      height: tH,
+    } = toggleRef.current.getBoundingClientRect()
+    const { width: cW, height: cH } = contentRef.current.getBoundingClientRect()
 
     const newStyle: React.CSSProperties = {}
 
     switch (position) {
       case 'top':
-        newStyle.top = `${toggleY - contentHeight - offset}px`
-        newStyle.left = `${toggleX + toggleWidth / 2 - contentWidth / 2}px`
+        newStyle.top = `${tY - cH - offset}px`
+        newStyle.left = `${tX + tW / 2 - cW / 2}px`
         break
       case 'bottom':
-        newStyle.top = `${toggleY + toggleHeight + offset}px`
-        newStyle.left = `${toggleX + toggleWidth / 2 - contentWidth / 2}px`
+        newStyle.top = `${tY + tH + offset}px`
+        newStyle.left = `${tX + tW / 2 - cW / 2}px`
         break
       case 'left':
-        newStyle.top = `${toggleY + toggleHeight / 2 - contentHeight / 2}px`
-        newStyle.left = `${toggleX - contentWidth - offset}px`
+        newStyle.top = `${tY + tH / 2 - cH / 2}px`
+        newStyle.left = `${tX - cW - offset}px`
         break
       case 'right':
-        newStyle.top = `${toggleY + toggleHeight / 2 - contentHeight / 2}px`
-        newStyle.left = `${toggleX + toggleWidth + offset}px`
+        newStyle.top = `${tY + tH / 2 - cH / 2}px`
+        newStyle.left = `${tX + tW + offset}px`
         break
     }
 

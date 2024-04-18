@@ -19,7 +19,7 @@ export function NavLink({
   visualOnly?: boolean
 } & React.AnchorHTMLAttributes<HTMLAnchorElement>) {
   const pathname = usePathname()
-  const isMatching = pathname === href || (!exact && (pathname.startsWith(href) && href !== '/'))
+  const isMatching = pathname === href || (!exact && pathname.startsWith(href) && href !== '/')
 
   return (
     <Link

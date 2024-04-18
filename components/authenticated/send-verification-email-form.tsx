@@ -1,13 +1,13 @@
 'use client'
 
 import { useEffect } from 'react'
-import { verify } from '@/actions/user/client'
+import { verify } from '@/actions/user/state'
 import { useFormState } from 'react-dom'
 
 import type { ServerResponse } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
 
-import { LoadingSpinner } from '@/components/global/loading-spinner'
+import { Spinner } from '@/components/global/spinner'
 import { SubmitButton } from '@/components/global/submit-button'
 
 const initialState: ServerResponse = {
@@ -34,7 +34,7 @@ export function SendVerificationEmailForm() {
         {({ pending }) => (
           <>
             Resend email
-            {pending && <LoadingSpinner />}
+            {pending && <Spinner />}
           </>
         )}
       </SubmitButton>

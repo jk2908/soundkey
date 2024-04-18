@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 
 import { auth } from '@/lib/auth'
 
-import { FullscreenLoadingSpinner } from '@/components/global/fullscreen-loading-spinner'
+import { FullscreenSpinner } from '@/components/global/fullscreen-spinner'
 import { Section } from '@/components/global/section'
 import { Wrapper } from '@/components/global/wrapper'
 import { Header } from '@/components/unauthenticated/header'
@@ -14,7 +14,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
   if (user) throw redirect('/dashboard')
 
   return (
-    <Suspense fallback={<FullscreenLoadingSpinner />}>
+    <Suspense fallback={<FullscreenSpinner />}>
       <div className="grow">
         <Header />
 

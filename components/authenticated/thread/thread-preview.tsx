@@ -30,11 +30,11 @@ type Props = {
 }
 
 export function ThreadPreview({ userId, thread, onDelete, onArchive, className }: Props) {
-  const users = use<SafeUser[]>(resolveThreadUsers(thread.threadId))
+  const { threadId, ownerId, createdAt, updatedAt } = thread
+  const users = use<SafeUser[]>(resolveThreadUsers(threadId))
   const { push } = useRouter()
 
-  const createdAt = new Date(thread.createdAt).toLocaleString()
-  const updatedAt = thread.updatedAt ? new Date(thread.updatedAt).toLocaleString() : '-'
+  const open = () => push(`/threads/${thread.threadId}`)
 
   const usersDisplay = users.filter(u => {
     if (users.length === 1 && u.userId === userId) {
@@ -46,8 +46,13 @@ export function ThreadPreview({ userId, thread, onDelete, onArchive, className }
 
   const actions = [
     {
+      label: 'Open',
+      onClick: open,
+    },
+    {
       label: 'Delete',
       onClick: onDelete,
+      hideWhen: ownerId !== userId,
     },
     {
       label: 'Archive',
@@ -58,7 +63,7 @@ export function ThreadPreview({ userId, thread, onDelete, onArchive, className }
   return (
     <motion.tr
       key={thread.threadId}
-      onClick={() => push(`/threads/${thread.threadId}`)}
+      onClick={open}
       role="row"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -74,8 +79,10 @@ export function ThreadPreview({ userId, thread, onDelete, onArchive, className }
         ))}
       </td>
 
-      <td className="font-mono text-sm">{createdAt}</td>
-      <td className="font-mono text-sm">{updatedAt}</td>
+      <td className="font-mono text-sm">{new Date(createdAt).toLocaleString()}</td>
+      <td className="font-mono text-sm">
+        {updatedAt ? new Date(updatedAt).toLocaleString() : '-'}
+      </td>
       <td>
         <ContextMenu.Root>
           <ContextMenu.Toggle
@@ -86,11 +93,14 @@ export function ThreadPreview({ userId, thread, onDelete, onArchive, className }
           </ContextMenu.Toggle>
 
           <ContextMenu.Content position="left" offset={10}>
-            {actions.map(({ label, onClick }) => (
-              <ContextMenu.Item key={label} onClick={() => onClick()}>
-                {label}
-              </ContextMenu.Item>
-            ))}
+            {actions.map(
+              ({ label, onClick, hideWhen = false }) =>
+                !hideWhen && (
+                  <ContextMenu.Item key={label} onClick={() => onClick()}>
+                    {label}
+                  </ContextMenu.Item>
+                )
+            )}
           </ContextMenu.Content>
         </ContextMenu.Root>{' '}
       </td>

@@ -8,10 +8,10 @@ export function useEscKey(onKeyDown: (e?: KeyboardEvent) => void, state?: boolea
       onKeyDown(e)
     }
 
-    window.addEventListener('keydown', handler as EventListenerOrEventListenerObject)
+    addEventListener('keydown', handler as EventListenerOrEventListenerObject)
 
     return () => {
-      window.removeEventListener('keydown', handler as EventListenerOrEventListenerObject)
+      removeEventListener('keydown', handler as EventListenerOrEventListenerObject)
     }
   }, [onKeyDown, state])
 }

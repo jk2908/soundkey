@@ -1,4 +1,4 @@
-import { ThreadNav } from '@/components/authenticated/thread-nav'
+import { ThreadNav } from '@/components/authenticated/thread/thread-nav'
 import { YSpace } from '@/components/global/y-space'
 
 export default function Layout({ children }: { children: React.ReactNode }) {

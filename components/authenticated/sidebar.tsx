@@ -15,7 +15,7 @@ import { LogoutButton } from '@/components/authenticated/logout-button'
 import { Button } from '@/components/global/button'
 import { HorizontalRule } from '@/components/global/horizontal-rule'
 import { Icon } from '@/components/global/icon'
-import { LoadingSpinner } from '@/components/global/loading-spinner'
+import { Spinner } from '@/components/global/spinner'
 import { Logo } from '@/components/global/logo'
 import { Section } from '@/components/global/section'
 import { YSpace } from '@/components/global/y-space'
@@ -74,7 +74,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
                   borderRadius: '50%',
                   marginRight: 'calc(var(--wrapper-px) - 6px)',
                 }}
-                className="md:hidden flex flex-col items-center justify-center">
+                className="flex flex-col items-center justify-center md:hidden">
                 <Icon name="x" size={20} />
                 <span className="sr-only">Close</span>
               </button>
@@ -87,7 +87,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
             <div className="mt-auto flex flex-col gap-6 px-4">
               <HorizontalRule />
 
-              <Suspense fallback={<LoadingSpinner />}>
+              <Suspense fallback={<Spinner />}>
                 <div className="flex gap-4">
                   <LogoutButton iconOnly>
                     <Icon name="logout" size={18} title="Logout" />

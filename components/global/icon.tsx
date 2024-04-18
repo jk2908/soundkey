@@ -14,6 +14,8 @@ export type Icon =
   | 'dots'
   | 'dots-vertical'
   | 'trash'
+  | 'pencil'
+  | 'check'
 
 export type Props = {
   name: Icon

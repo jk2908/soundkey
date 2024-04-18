@@ -1,5 +1,5 @@
 import type { NextRequest } from 'next/server'
-import { getThread } from '@/actions/thread/db'
+import { getMessages } from '@/actions/message/db'
 import { getUsers } from '@/actions/user/db'
 
 export async function GET(
@@ -15,19 +15,16 @@ export async function GET(
   const { id } = params
 
   try {
-    const thread = await getThread(id)
+    const messages = await getMessages(params.id)
 
-    if (!thread) {
-      return new Response(`Thread ${params.id} not found`, {
+    if (!messages) {
+      return new Response(`No messages found for thread ${params.id}`, {
         status: 400,
       })
     }
 
-    const userIds = thread.userIds.split(',')
-    const users = await getUsers(userIds)
-
-    return Response.json(
-      users,
+    return (
+      Response.json(messages),
       {
         status: 200,
         headers: {
@@ -36,7 +33,7 @@ export async function GET(
       }
     )
   } catch (err) {
-    return new Response(`Thread ${params.id} not found`, {
+    return new Response(`No messages found for thread ${params.id}`, {
       status: 400,
     })
   }

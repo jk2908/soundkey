@@ -6,7 +6,7 @@ import { asc, eq, inArray, or } from 'drizzle-orm'
 
 import { db } from '@/lib/db'
 import { messageTable, userTable } from '@/lib/schema'
-import type { EditMessage, NewMessage, Thread } from '@/lib/schema'
+import type { UpdateMessage, NewMessage } from '@/lib/schema'
 
 export async function createMessage(payload: NewMessage) {
   try {
@@ -27,7 +27,7 @@ export async function createMessage(payload: NewMessage) {
       })
       .returning({ messageId: messageTable.id, threadId: messageTable.threadId })
 
-    revalidateTag('messages')
+    revalidateTag('message')
 
     return createdMessage
   } catch (err) {
@@ -36,7 +36,7 @@ export async function createMessage(payload: NewMessage) {
   }
 }
 
-export async function editMessage(payload: EditMessage & { messageId: string }) {
+export async function updateMessage(payload: UpdateMessage & { messageId: string }) {
   try {
     const { messageId, body } = payload
 
@@ -67,7 +67,7 @@ export async function deleteMessage(messageId: string) {
       await deleteThread(message.threadId)
     }
 
-    revalidateTag('messages')
+    revalidateTag('message')
   } catch (err) {
     console.error(err)
   }
@@ -97,8 +97,8 @@ export const getMessages = unstable_cache(
       return []
     }
   },
-  ['messages'],
-  { tags: ['messages'] }
+  ['message'],
+  { tags: ['message'] }
 )
 
 export async function getMessage(messageId: string) {

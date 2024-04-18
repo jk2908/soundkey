@@ -3,7 +3,7 @@ import { resolveMessageRecipient } from '@/actions/message/db'
 
 import { auth } from '@/lib/auth'
 
-import { SendMessageForm } from '@/components/authenticated/send-message-form'
+import { SendMessageForm } from '@/components/authenticated/message/send-message-form'
 
 export const metadata = {
   title: 'New thread',
