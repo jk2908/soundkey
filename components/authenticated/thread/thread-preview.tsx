@@ -74,13 +74,14 @@ export function ThreadPreview({ userId, thread, onDelete, onArchive, className }
           <span
             key={u.userId}
             className={cn(
-              u.userId === userId && 'italic'
+              'font-medium',
+              u.userId === userId && 'italic font-mono text-xs'
             )}>{`${u.username}${idx < usersDisplay.length - 1 ? ', ' : ''}`}</span>
         ))}
       </td>
 
-      <td className="font-mono text-sm">{new Date(createdAt).toLocaleString()}</td>
-      <td className="font-mono text-sm">
+      <td className="font-mono text-xs">{new Date(createdAt).toLocaleString()}</td>
+      <td className="font-mono text-xs">
         {updatedAt ? new Date(updatedAt).toLocaleString() : '-'}
       </td>
       <td>

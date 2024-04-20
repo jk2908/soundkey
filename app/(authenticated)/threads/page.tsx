@@ -20,10 +20,6 @@ export default async function Page() {
 
   return (
     <>
-      <Heading level={1} className="sr-only">
-        Threads
-      </Heading>
-
       {threads.length ? (
         <ErrorBoundary fallback={<div>Something went wrong loading your threads</div>}>
           <div className="sk-scrollbar flex overflow-x-auto">
@@ -58,7 +54,7 @@ export default async function Page() {
       ) : (
         <div className="flex items-center gap-4">
           <Icon name="inbox" size={20} />
-          <p className="font-mono">
+          <p>
             No threads found.{' '}
             <Link href="/threads/new" className="body-link">
               Send a message

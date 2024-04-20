@@ -1,13 +1,10 @@
-import { ThemeContext } from '@/ctx/theme'
 import { use } from 'react'
+import { ThemeContext } from '@/ctx/theme'
 
 export function useTheme() {
   const { theme, setTheme } = use(ThemeContext)
   const altTheme = theme === 'light' ? 'dark' : 'light'
+  const toggle = () => setTheme(altTheme)
 
-  function toggleTheme() {
-    setTheme(altTheme)
-  }
-
-  return { theme, altTheme, toggleTheme }
+  return { theme, setTheme, altTheme, toggle }
 }

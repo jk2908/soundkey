@@ -20,18 +20,18 @@ export function MessageActionsMenu({
 }) {
   const { ref, isEditing, setEditing, save, cancel } = use(EditableMessageContext)
 
-  const props = { variant: 'secondary' as IntentVariant, iconOnly: true }
+  const props = { iconOnly: true }
 
   return (
     <div className={cn('flex gap-2', className)}>
       {isEditing ? (
         <>
-          <Button onClick={async () => await save()} className="bg-success" {...props}>
+          <Button onClick={async () => await save()} variant="success" {...props}>
             <Icon name="check" size={14} colour="#fff" title="Save changes" />
             <span className="sr-only">Save changes</span>
           </Button>
 
-          <Button onClick={cancel} className="bg-danger" {...props}>
+          <Button onClick={cancel} variant="danger" {...props}>
             <Icon name="x" size={14} colour="#fff" title="Cancel edit" />
             <span className="sr-only">Cancel edit</span>
           </Button>

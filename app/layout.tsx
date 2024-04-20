@@ -4,7 +4,6 @@ import '@/styles/globals.css'
 
 import { Suspense } from 'react'
 import localFont from 'next/font/local'
-import { GeistSans } from 'geist/font/sans'
 
 import { APP_DESCRIPTION, APP_NAME } from '@/lib/config'
 import { cn } from '@/utils/cn'
@@ -26,14 +25,24 @@ const MinorPraxis = localFont({
   variable: '--font-mono',
 })
 
+const MartianMono = localFont({
+  src: '../public/assets/MartianMonoVF.woff2',
+  variable: '--font-mono',
+})
+
+const UncutSans = localFont({
+  src: '../public/assets/UncutSans-Variable.woff2',
+  variable: '--font-sans',
+})
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
       dir="ltr"
-      className={cn('h-full overflow-x-hidden font-sans', GeistSans.variable, MinorPraxis.variable)}
+      className={cn('h-full overflow-x-hidden font-sans', UncutSans.variable, MartianMono.variable)}
       suppressHydrationWarning>
-      <body className="sk-scrollbar flex min-h-full flex-col bg-app-bg text-app-fg selection:bg-highlight selection:text-white">
+      <body className="sk-scrollbar flex min-h-full tracking-wide flex-col bg-app-bg text-app-fg selection:bg-highlight selection:text-white">
         <Providers>
           <Suspense fallback={<FullscreenSpinner />}>
             {children}

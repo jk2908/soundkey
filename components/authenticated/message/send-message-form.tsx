@@ -146,7 +146,7 @@ export function SendMessageForm({
                         <Listbox.Option
                           key={generateId()}
                           value={u.label}
-                          className="flex gap-1 rounded-full bg-keyline/80 px-2.5 py-1.5 font-mono text-sm">
+                          className="flex gap-1 rounded-full bg-keyline/80 px-2.5 py-1.5 text-sm">
                           {u.label}
                           <Icon name="x" size={10} />
                         </Listbox.Option>

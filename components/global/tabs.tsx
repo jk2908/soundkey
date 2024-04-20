@@ -20,7 +20,7 @@ import { isVisible } from '@/utils/is-visible'
 type Activation = 'manual' | 'auto'
 type Orientation = 'horizontal' | 'vertical'
 
-const TabsContext = createContext<{
+type TabsProvider = {
   isSelected: string
   selectTab: (value: string) => void
   tabEls: React.MutableRefObject<HTMLElement[]>
@@ -31,7 +31,9 @@ const TabsContext = createContext<{
   loop?: boolean
   id: string
   params?: boolean
-}>({
+}
+
+const TabsContext = createContext<TabsProvider>({
   isSelected: '',
   selectTab: () => null,
   tabEls: { current: [] },
@@ -41,6 +43,10 @@ const TabsContext = createContext<{
   id: '',
 })
 
+type Props = {
+  children: React.ReactNode
+} & Pick<TabsProvider, 'initialValue' | 'activation' | 'orientation' | 'loop' | 'params'>
+
 export function Root({
   children,
   initialValue,
@@ -48,14 +54,7 @@ export function Root({
   orientation = 'horizontal',
   loop = false,
   params = false,
-}: {
-  children: React.ReactNode
-  initialValue?: string
-  activation?: Activation
-  orientation?: Orientation
-  loop?: boolean
-  params?: boolean
-}) {
+}: Props) {
   const searchParams = useSearchParams()
   const router = useRouter()
 
@@ -87,18 +86,7 @@ export function Root({
       id,
       params,
     }),
-    [
-      isSelected,
-      selectTab,
-      tabEls,
-      values,
-      initialValue,
-      activation,
-      orientation,
-      loop,
-      id,
-      params,
-    ]
+    [isSelected, selectTab, tabEls, values, initialValue, activation, orientation, loop, id, params]
   )
 
   useEffect(() => {

@@ -8,8 +8,10 @@
     --y3llow-50: 255 211 59;
 
     --gr33n-100: 0 26 1;
+    --gr33n-75: 0 92 38;
     --gr33n-50: 0 133 5;
 
+    --r3d-75: 192 38 38;
     --r3d-50: 255 32 20;
 
     --blu3-0: 186 213 255;
@@ -20,10 +22,13 @@
     --p1nk-70: 255 41 73;
 
     --error: var(--r3d-50);
+    --error-dark: var(--r3d-75);
     --success: var(--gr33n-50);
+    --success-dark: var(--gr33n-75);
     --warning: var(--y3llow-50);
     --info: var(--blu3-50);
     --danger: var(--r3d-50);
+    --danger-dark: var(--r3d-75);
     --highlight: var(--p1nk-70);
 
     --app-bg: var(--y3llow-0);
@@ -67,8 +72,9 @@
       > :is(button, a) {
         border-radius: 9999px;
         flex-grow: 1;
-        font-family: theme('fontFamily.mono');
+        font-family: theme('fontFamily.sans');
         font-size: theme('fontSize.sm');
+        font-weight: 500;
         letter-spacing: theme('letterSpacing.wider');
         padding: theme('spacing.2') theme('spacing.6');
 
@@ -95,9 +101,9 @@
       width: 100%;
 
       th {
-        font-family: theme('fontFamily.mono');
-        font-size: theme('fontSize.xs');
-        font-weight: 400;
+        font-family: theme('fontFamily.sans');
+        font-size: theme('fontSize.sm');
+        font-weight: 500;
         letter-spacing: theme('letterSpacing.wider');
         padding: theme('spacing.2') theme('spacing.6');
         text-align: start;

@@ -27,14 +27,14 @@ export function Button<E extends React.ElementType = typeof DEFAULT_ELEMENT>({
   const Cmp = as ?? DEFAULT_ELEMENT
 
   const styleMap: { [key in StateVariant | IntentVariant]: string } = {
-    primary: 'bg-app-bg-inverted text-app-fg-inverted',
+    primary: 'bg-app-bg-inverted hover:bg-app-bg-inverted/75 text-app-fg-inverted',
     secondary: 'bg-keyline/70 hover:bg-keyline text-app-fg',
     tertiary: 'bg-transparent hover:bg-neutral-100 text-neutral-900',
-    danger: 'bg-danger-500 hover:bg-danger-600 text-white',
-    success: 'bg-success-500 hover:bg-success-600 text-white',
-    warning: 'bg-warning-500 hover:bg-warning-600 text-white',
-    info: 'bg-info-500 hover:bg-info-600 text-white',
-    error: 'bg-error-500 hover:bg-error-600 text-white',
+    danger: 'bg-danger hover:bg-danger-dark text-white',
+    success: 'bg-success hover:bg-success-dark text-white',
+    warning: 'bg-warning hover:bg-warning-dark text-white',
+    info: 'bg-info hover:bg-info-dark text-white',
+    error: 'bg-error hover:bg-error-dark text-white',
   }
 
   return (

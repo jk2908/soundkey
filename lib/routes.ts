@@ -25,8 +25,8 @@ export const authRoutes: Route[] = [
     href: '/threads',
   },
   {
-    label: 'Profile',
-    href: '/profile',
+    label: 'Projects',
+    href: '/projects',
   },
   {
     label: 'Settings',

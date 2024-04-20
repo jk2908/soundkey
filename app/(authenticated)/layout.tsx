@@ -7,7 +7,6 @@ import { Nav } from '@/components/authenticated/nav'
 import { NavSkeletonLoader } from '@/components/authenticated/nav-skeleton-loader'
 import { Sidebar } from '@/components/authenticated/sidebar'
 import { FullscreenSpinner } from '@/components/global/fullscreen-spinner'
-import { Spinner } from '@/components/global/spinner'
 import { Section } from '@/components/global/section'
 import { Wrapper } from '@/components/global/wrapper'
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { use, useEffect } from 'react'
+import { use } from 'react'
 
 import { cn } from '@/utils/cn'
 
@@ -61,7 +61,7 @@ export function Item({
       onClick={onClick}
       role="menuitem"
       className={cn(
-        'cursor-default text-start font-mono text-sm text-app-fg-inverted hover:bg-keyline/10 focus-visible:bg-highlight focus-visible:text-white focus-visible:outline-none group-aria-[orientation=horizontal]:px-4 group-aria-[orientation=horizontal]:py-4 group-aria-[orientation=vertical]:px-4 group-aria-[orientation=vertical]:py-2',
+        'cursor-default text-start font-mono text-xs text-app-fg-inverted hover:bg-keyline/10 focus-visible:bg-highlight focus-visible:text-white focus-visible:outline-none group-aria-[orientation=horizontal]:px-4 group-aria-[orientation=horizontal]:py-4 group-aria-[orientation=vertical]:px-4 group-aria-[orientation=vertical]:py-2',
         className
       )}
       {...rest}>

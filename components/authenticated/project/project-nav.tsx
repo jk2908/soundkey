@@ -2,16 +2,16 @@ import type { Icon as IconType } from '@/components/global/icon'
 import { Icon } from '@/components/global/icon'
 import { NavLink } from '@/components/global/nav-link'
 
-type ThreadNavItem = {
+type ProjectNavItem = {
   href: string
   label: string
   icon?: IconType
 }
 
-export function ThreadNav() {
-  const items: ThreadNavItem[] = [
-    { href: '/threads', label: 'Threads', icon: 'mails' },
-    { href: '/threads/new', label: 'New', icon: 'mail-+' },
+export function ProjectNav() {
+  const items: ProjectNavItem[] = [
+    { href: '/projects', label: 'Projects', icon: 'folder-heart' },
+    { href: '/projects/new', label: 'New', icon: 'folder-+' },
   ]
 
   return (

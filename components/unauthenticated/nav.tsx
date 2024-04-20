@@ -7,7 +7,7 @@ export function Nav() {
     <nav>
       <ul className="flex items-center gap-8">
         {unauthRoutes.map(({ label, href }) => (
-          <NavLink key={href} href={href} className="rounded-full px-4 py-1 tracking-wide">
+          <NavLink key={href} href={href} className="rounded-full font-medium px-4 py-1 tracking-wide">
             {label}
           </NavLink>
         ))}

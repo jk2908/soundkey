@@ -9,13 +9,19 @@ export type Icon =
   | 'mails'
   | 'mail'
   | 'send'
-  | 'mail+'
+  | 'mail-+'
+  | 'mail-x'
   | 'inbox'
   | 'dots'
   | 'dots-vertical'
   | 'trash'
   | 'pencil'
   | 'check'
+  | 'folder'
+  | 'folder-heart'
+  | 'folder-+'
+  | 'folder-x'
+  | 'info'
 
 export type Props = {
   name: Icon

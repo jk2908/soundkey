@@ -5,19 +5,15 @@ import { usePathname } from 'next/navigation'
 
 import { cn } from '@/utils/cn'
 
-export function NavLink({
-  children,
-  href,
-  className,
-  exact,
-  visualOnly,
-}: {
+export type Props = {
   children: React.ReactNode
   href: string
   className?: string
   exact?: boolean
   visualOnly?: boolean
-} & React.AnchorHTMLAttributes<HTMLAnchorElement>) {
+} & React.ComponentProps<typeof Link>
+
+export function NavLink({ children, href, className, exact, visualOnly, ...rest }: Props) {
   const pathname = usePathname()
   const isMatching = pathname === href || (!exact && pathname.startsWith(href) && href !== '/')
 
@@ -29,7 +25,8 @@ export function NavLink({
         'relative',
         visualOnly ? (isMatching ? 'active' : 'inactive') : undefined,
         className
-      )}>
+      )}
+      {...rest}>
       {children}
     </Link>
   )

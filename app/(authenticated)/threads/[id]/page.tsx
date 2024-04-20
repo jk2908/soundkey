@@ -40,7 +40,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     return (
       <div className="flex items-start gap-4">
         <Icon name="inbox" size={20} />
-        <p className="font-mono">
+        <p>
           The thread is gone.{' '}
           <Link href="/dashboard" className="body-link">
             Return to dashboard

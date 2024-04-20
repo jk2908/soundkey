@@ -7,7 +7,7 @@ import { Icon } from '@/components/global/icon'
 import { Spinner } from '@/components/global/spinner'
 
 export function ThemeToggle() {
-  const { theme, altTheme, toggleTheme } = useTheme()
+  const { theme, altTheme, toggle } = useTheme()
   const isMounted = useMounted()
 
   return (
@@ -15,7 +15,7 @@ export function ThemeToggle() {
       {!isMounted ? (
         <Spinner />
       ) : (
-        <button onClick={toggleTheme} style={{ borderRadius: '50%' }}>
+        <button onClick={toggle} style={{ borderRadius: '50%' }}>
           <span className="sr-only">Switch to {altTheme} theme</span>
           <Icon
             name={theme === 'light' ? 'moon' : 'sun'}
