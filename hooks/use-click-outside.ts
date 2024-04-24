@@ -1,10 +1,10 @@
 import { useEffect, useRef } from 'react'
 
-export function useClickOutside<T extends HTMLElement>(onClick: () => void, state?: boolean ) {
+export function useClickOutside<T extends HTMLElement>(onClick: () => void, when?: boolean ) {
   const ref = useRef<T>(null)
 
   useEffect(() => {
-    if (state === false) return
+    if (when === false) return
 
     function handler(e: Event) {
       const target = e.target as HTMLElement
@@ -19,7 +19,7 @@ export function useClickOutside<T extends HTMLElement>(onClick: () => void, stat
     return () => {
       document.removeEventListener('click', handler)
     }
-  }, [onClick, state])
+  }, [onClick, when])
 
   return ref
 }

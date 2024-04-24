@@ -1,13 +1,11 @@
 'use client'
 
-import { on } from 'events'
 import { createContext, use, useCallback, useEffect, useId, useRef, useState } from 'react'
-import { AnimatePresence, motion, type MotionProps } from 'framer-motion'
 import { flushSync } from 'react-dom'
 
 import { useClickOutside } from '@/hooks/use-click-outside'
-import { useEscKey } from '@/hooks/use-esc-key'
 import { useFocusScope } from '@/hooks/use-focus-scope'
+import { useKey } from '@/hooks/use-key'
 import { cn } from '@/utils/cn'
 
 import { Portal } from '@/components/global/portal'
@@ -15,45 +13,34 @@ import { Portal } from '@/components/global/portal'
 const positions = ['top', 'bottom', 'left', 'right'] as const
 type Position = (typeof positions)[number]
 
-export type Props = {
-  id: string
-  children: React.ReactNode
-  isOpen: boolean
-  content: React.ReactNode
-  position?: Position
-  offset?: number
-  onClickOutside?: () => void
-  className?: string
-} & React.HTMLAttributes<HTMLDivElement>
-
 export const PopoverContext = createContext<{
   id: string
   isOpen: boolean
-  handleToggle: (prev: boolean) => void
+  toggle: (prev: boolean) => void
   toggleRef: React.MutableRefObject<HTMLButtonElement | null>
   contentRef: React.MutableRefObject<HTMLDivElement | null>
   position?: Position
 }>({
   id: '',
   isOpen: false,
-  handleToggle: () => null,
+  toggle: () => null,
   toggleRef: { current: null },
   contentRef: { current: null },
   position: 'top',
 })
 
-export type RootProps = {
+export type Props = {
   children: React.ReactNode
   onBeforeOpen?: () => Promise<void>
   onAfterClose?: () => Promise<void>
   duration?: number
 }
 
-export function Root({ children, onBeforeOpen, onAfterClose, duration }: RootProps) {
+export function Root({ children, onBeforeOpen, onAfterClose, duration }: Props) {
   const [isOpen, setOpen] = useState(false)
   const id = useId()
 
-  const handleToggle = useCallback(
+  const toggle = useCallback(
     async (prev: boolean) => {
       const newState = !prev
 
@@ -73,8 +60,8 @@ export function Root({ children, onBeforeOpen, onAfterClose, duration }: RootPro
   )
 
   const onClickOutsideOrEsc = useCallback(() => {
-    if (isOpen) handleToggle(isOpen)
-  }, [isOpen, handleToggle])
+    if (isOpen) toggle(isOpen)
+  }, [isOpen, toggle])
 
   function onClickOutsideOrEscWithFocus() {
     flushSync(() => {
@@ -88,14 +75,14 @@ export function Root({ children, onBeforeOpen, onAfterClose, duration }: RootPro
   const contentRef = useClickOutside<HTMLDivElement>(onClickOutsideOrEsc)
 
   useFocusScope(contentRef, {
-    state: isOpen,
+    when: isOpen,
     roving: true,
     onTabFocusOut: onClickOutsideOrEscWithFocus,
   })
-  useEscKey(onClickOutsideOrEscWithFocus)
+  useKey('Escape', onClickOutsideOrEscWithFocus)
 
   return (
-    <PopoverContext.Provider value={{ id, isOpen, handleToggle, toggleRef, contentRef }}>
+    <PopoverContext.Provider value={{ id, isOpen, toggle, toggleRef, contentRef }}>
       {children}
     </PopoverContext.Provider>
   )
@@ -106,11 +93,11 @@ export type ToggleProps = {
 } & React.HTMLAttributes<HTMLButtonElement>
 
 export function Toggle({ children, ...rest }: ToggleProps) {
-  const { id, isOpen, handleToggle, toggleRef } = use(PopoverContext)
+  const { id, isOpen, toggle, toggleRef } = use(PopoverContext)
 
   function handleClick(e: React.SyntheticEvent) {
     e.stopPropagation()
-    handleToggle(isOpen)
+    toggle(isOpen)
   }
 
   return (
@@ -131,8 +118,7 @@ export type ContentProps = {
   children: React.ReactNode
   offset?: number
   position?: Position
-} & React.HTMLAttributes<HTMLDivElement> &
-  MotionProps
+} & React.HTMLAttributes<HTMLDivElement>
 
 export function Content({
   children,
@@ -145,15 +131,10 @@ export function Content({
   const [style, setStyle] = useState({})
   const id = useId()
 
-  const handleCalc = useCallback(() => {
+  const doCalc = useCallback(() => {
     if (!toggleRef.current || !contentRef.current) return
 
-    const {
-      x: tX,
-      y: tY,
-      width: tW,
-      height: tH,
-    } = toggleRef.current.getBoundingClientRect()
+    const { x: tX, y: tY, width: tW, height: tH } = toggleRef.current.getBoundingClientRect()
     const { width: cW, height: cH } = contentRef.current.getBoundingClientRect()
 
     const newStyle: React.CSSProperties = {}
@@ -181,39 +162,33 @@ export function Content({
   }, [position, offset, toggleRef, contentRef])
 
   useEffect(() => {
-    handleCalc()
-  }, [handleCalc, isOpen])
+    doCalc()
+  }, [doCalc, isOpen])
 
   useEffect(() => {
-    window.addEventListener('resize', handleCalc)
+    window.addEventListener('resize', doCalc)
 
     return () => {
-      window.removeEventListener('resize', handleCalc)
+      window.removeEventListener('resize', doCalc)
     }
-  }, [handleCalc])
+  }, [doCalc])
 
   return (
     <Portal>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            key={id}
-            ref={contentRef}
-            id={`${id}-c`}
-            aria-labelledby={`${id}-t`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className={cn(
-              'fixed whitespace-nowrap rounded-[3px] bg-app-bg-inverted/95 bg-gr33n-100 px-1 py-0.5 text-xs text-app-fg-inverted',
-              className
-            )}
-            style={style}
-            {...rest}>
-            {children}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {isOpen && (
+        <div
+          ref={contentRef}
+          id={`${id}-c`}
+          aria-labelledby={`${id}-t`}
+          className={cn(
+            'fixed whitespace-nowrap rounded-[3px] bg-app-bg-inverted/95 bg-gr33n-100 px-1 py-0.5 text-xs text-app-fg-inverted',
+            className
+          )}
+          style={style}
+          {...rest}>
+          {children}
+        </div>
+      )}
     </Portal>
   )
 }

@@ -15,7 +15,7 @@ export type Props = {
 function Default({ size = 20, className }: Pick<Props, 'size' | 'className'>) {
   return (
     <div
-      className={cn('relative overflow-hidden bg-app-bg-inverted', className)}
+      className={cn('relative overflow-hidden bg-app-bg-inverted p-2', className)}
       style={{ width: `${size}px`, height: `${size}px`, borderRadius: '50%' }}>
       <Icon
         name="user"

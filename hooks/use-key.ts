@@ -1,9 +1,15 @@
 import { useEffect } from 'react'
 
-export function useEscKey(onKeyDown: (e?: KeyboardEvent) => void, state?: boolean, ) {
+type KeyConfig = {
+  when?: boolean
+}
+
+export function useKey(key: string, onKeyDown: (e: KeyboardEvent) => void, config?: KeyConfig, ) {
+  const { when } = config || {}
+
   useEffect(() => {
     function handler(e: KeyboardEvent) {
-      if (e.key !== 'Escape' || state === false) return
+      if (e.key !== key || when === false) return
 
       onKeyDown(e)
     }
@@ -13,5 +19,5 @@ export function useEscKey(onKeyDown: (e?: KeyboardEvent) => void, state?: boolea
     return () => {
       removeEventListener('keydown', handler as EventListenerOrEventListenerObject)
     }
-  }, [onKeyDown, state])
+  }, [key, onKeyDown, when])
 }

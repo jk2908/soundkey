@@ -59,7 +59,7 @@ export default async function Page({ params }: { params: { id: string } }) {
   const avatarProps = {
     userId: user.userId,
     username: user.username,
-    size: 28,
+    size: 24,
   } satisfies AvatarProps
 
   return (

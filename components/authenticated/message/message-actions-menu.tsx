@@ -3,7 +3,6 @@
 import { use } from 'react'
 import { flushSync } from 'react-dom'
 
-import { IntentVariant } from '@/lib/types'
 import { cn } from '@/utils/cn'
 
 import { DeleteMessageButton } from '@/components/authenticated/message/delete-message-button'

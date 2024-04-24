@@ -6,19 +6,19 @@ import { cn } from '@/utils/cn'
 
 import { SearchBox, Props as SearchBoxProps } from '@/components/global/search-box'
 
-type SearchContextProps = {
+type SearchProvider = {
   value: string
   setValue: React.Dispatch<React.SetStateAction<string>>
 }
 
-const SearchContext = createContext<SearchContextProps>({ value: '', setValue: () => {} })
+const SearchContext = createContext<SearchProvider>({ value: '', setValue: () => {} })
 
 export function Root({
   children,
   role = 'search',
   className,
 }: {
-  children: React.ReactNode | (({ value, setValue }: SearchContextProps) => React.ReactNode)
+  children: React.ReactNode | (({ value, setValue }: SearchProvider) => React.ReactNode)
   role?: string
   className?: string
 }) {

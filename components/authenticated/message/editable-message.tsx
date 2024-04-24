@@ -8,7 +8,7 @@ import type { ServerResponse } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
 import { cn } from '@/utils/cn'
 
-export const EditableMessageContext = createContext<{
+type EditableProvider = {
   ref: React.RefObject<HTMLDivElement>
   isEditing: boolean
   setEditing: React.Dispatch<React.SetStateAction<boolean>>
@@ -16,7 +16,9 @@ export const EditableMessageContext = createContext<{
   setEdit: React.Dispatch<React.SetStateAction<string>>
   save: (t?: string) => Promise<void>
   cancel: () => void
-}>({
+}
+
+export const EditableMessageContext = createContext<EditableProvider>({
   ref: { current: null },
   isEditing: false,
   setEditing: () => {},

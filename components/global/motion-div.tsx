@@ -4,12 +4,16 @@ import { motion, type MotionProps } from 'framer-motion'
 
 import { cn } from '@/utils/cn'
 
+export type Props = {
+  children: React.ReactNode,
+  className?: string
+} & React.HTMLProps<HTMLDivElement> & MotionProps
+
 export function MotionDiv({
   children,
   className,
   ...rest
-}: { children: React.ReactNode; className?: string } & React.HTMLProps<HTMLDivElement> &
-  MotionProps) {
+}: Props) {
   return (
     <motion.div
       initial={{ opacity: 1 }}

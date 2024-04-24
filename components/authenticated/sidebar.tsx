@@ -5,8 +5,8 @@ import Link from 'next/link'
 import { flushSync } from 'react-dom'
 
 import { useClickOutside } from '@/hooks/use-click-outside'
-import { useEscKey } from '@/hooks/use-esc-key'
 import { useFocusScope } from '@/hooks/use-focus-scope'
+import { useKey } from '@/hooks/use-key'
 import { useMediaQuery } from '@/hooks/use-media-query'
 import { breakpoints } from '@/utils/breakpoints'
 import { cn } from '@/utils/cn'
@@ -38,14 +38,20 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
     setOpen(mq ? true : false)
   }, [mq])
 
-  useFocusScope(sidebarRef, { state: isOpen && !mq })
-  useEscKey(() => {
-    flushSync(() => {
-      setOpen(false)
-    })
+  useFocusScope(sidebarRef, { when: isOpen && !mq })
+  useKey(
+    'Escape',
+    () => {
+      flushSync(() => {
+        setOpen(false)
+      })
 
-    toggleRef.current?.focus()
-  }, isOpen)
+      toggleRef.current?.focus()
+    },
+    {
+      when: isOpen && !mq,
+    }
+  )
 
   return (
     <>

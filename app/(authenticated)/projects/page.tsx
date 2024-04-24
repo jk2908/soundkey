@@ -1,11 +1,11 @@
-import { Heading } from '@/components/global/heading'
+import { BodyHeading } from '@/components/global/body-heading'
 
 export default function Page() {
   return (
     <>
-      <Heading level={1} className="sr-only">
+      <BodyHeading level={1} className="sr-only">
         Projects
-      </Heading>
+      </BodyHeading>
     </>
   )
 }

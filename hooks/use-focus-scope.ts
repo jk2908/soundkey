@@ -5,7 +5,7 @@ import focusableSelectors from 'focusable-selectors'
 import { isVisible } from '@/utils/is-visible'
 
 type FocusScopeConfig = {
-  state?: boolean
+  when?: boolean
   roving?: boolean
   orientation?: 'horizontal' | 'vertical'
   loop?: boolean
@@ -14,7 +14,7 @@ type FocusScopeConfig = {
 
 export function useFocusScope(ref: React.RefObject<HTMLElement>, config?: FocusScopeConfig) {
   const {
-    state,
+    when,
     roving = false,
     orientation = 'vertical',
     loop = true,
@@ -51,8 +51,8 @@ export function useFocusScope(ref: React.RefObject<HTMLElement>, config?: FocusS
       reset(first)
     }
 
-    if (state === false) return
-    if (state) first?.focus()
+    if (when === false) return
+    if (when) first?.focus()
 
     function handler(e: KeyboardEvent) {
       const rovingKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End']
@@ -112,10 +112,10 @@ export function useFocusScope(ref: React.RefObject<HTMLElement>, config?: FocusS
       }
     }
 
-    el.addEventListener('keydown', handler)
+    document.addEventListener('keydown', handler)
 
     return () => {
-      el.removeEventListener('keydown', handler)
+      document.removeEventListener('keydown', handler)
     }
-  }, [state, ref, roving, orientation, loop])
+  }, [when, ref, roving, orientation, loop])
 }

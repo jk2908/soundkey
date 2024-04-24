@@ -30,7 +30,7 @@ export async function SpeechBubble({ children, avatar, placement = 'right', clas
         <div className="relative grow">
           <div
             className={cn(
-              'peer rounded-lg bg-app-bg-inverted p-6 text-app-fg-inverted has-[div[contenteditable=true]]:bg-white has-[div[contenteditable=true]]:text-gr33n-100',
+              'peer bg-app-bg-inverted rounded-lg p-6 text-app-fg-inverted has-[div[contenteditable=true]]:bg-white has-[div[contenteditable=true]]:text-gr33n-100',
               className
             )}>
             {children}
