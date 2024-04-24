@@ -99,7 +99,7 @@ export const Content = forwardRef<
     <div
       ref={localRef}
       className={cn(
-        'fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white/95 p-6 text-gr33n-100 shadow-lg',
+        'fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-app-bg-inverted p-6 text-app-fg-inverted shadow-lg',
         className
       )}
       style={{
