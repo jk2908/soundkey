@@ -1,6 +1,14 @@
 'use client'
 
-import { Children, createContext, forwardRef, use, useCallback, useImperativeHandle } from 'react'
+import React, {
+  Children,
+  createContext,
+  forwardRef,
+  use,
+  useCallback,
+  useImperativeHandle,
+} from 'react'
+import { flushSync } from 'react-dom'
 
 import { useClickOutside } from '@/hooks/use-click-outside'
 import { useFocusScope } from '@/hooks/use-focus-scope'
@@ -18,20 +26,19 @@ import { Portal } from '@/components/global/portal'
 
 type ModalProvider = {
   isOpen: boolean
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>
   close: () => void
   isDismissible?: boolean
-  onAfterClose?: () => void
 }
 
-export type RootProps = {
-  children: React.ReactNode | (({ close }: { close: () => Promise<void> }) => React.ReactNode)
-  className?: string
+export type Props = {
+  children: React.ReactNode | (({ close }: { close: () => void }) => React.ReactNode)
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>
+  onBeforeClose?: () => unknown
+  onAfterClose?: () => unknown
 } & Omit<ModalProvider, 'close'>
 
 const ModalContext = createContext<ModalProvider>({
   isOpen: false,
-  setOpen: () => {},
   close: () => {},
 })
 
@@ -39,21 +46,25 @@ export const Root = ({
   children,
   isOpen,
   setOpen,
-  isDismissible = true,
+  onBeforeClose,
   onAfterClose,
-}: RootProps) => {
-  const close = useCallback(async () => {
-    setOpen(false)
+  isDismissible = true,
+}: Props) => {
+  const close = useCallback(() => {
+    onBeforeClose?.()
+
+    flushSync(() => {
+      setOpen(false)
+    })
+
     onAfterClose?.()
-  }, [setOpen, onAfterClose])
+  }, [onBeforeClose, onAfterClose, setOpen])
 
   useScrollLock(isOpen)
   useKey(
     'Escape',
     (e: KeyboardEvent) => {
-      toSmartEscape(e, async () => {
-        await close()
-      })
+      toSmartEscape(e, close)
     },
     {
       when: isOpen,
@@ -63,7 +74,7 @@ export const Root = ({
   if (!isOpen) return null
 
   return (
-    <ModalContext.Provider value={{ isOpen, setOpen, isDismissible, close, onAfterClose }}>
+    <ModalContext.Provider value={{ isOpen, close, isDismissible }}>
       <Portal>{typeof children === 'function' ? children({ close }) : children}</Portal>
     </ModalContext.Provider>
   )
@@ -138,7 +149,7 @@ export function Close({ variant = 'tertiary', className, ...rest }: Omit<ButtonP
       <Button
         onClick={close}
         variant={variant}
-        className={cn('absolute right-1 top-1', className)}
+        className={cn('absolute right-1 top-1 text-app-fg-inverted', className)}
         aria-label="Close modal"
         iconOnly
         {...rest}>

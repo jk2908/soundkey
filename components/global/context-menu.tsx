@@ -5,11 +5,11 @@ import { use } from 'react'
 import { cn } from '@/utils/cn'
 
 import * as Popover from '@/components/global/popover'
-import type { ContentProps, RootProps, ToggleProps } from '@/components/global/popover'
+import type { ContentProps, Props, ToggleProps } from '@/components/global/popover'
 
 const { PopoverContext } = Popover
 
-export function Root({ children, ...rest }: RootProps) {
+export function Root({ children, ...rest }: Props) {
   return <Popover.Root {...rest}>{children}</Popover.Root>
 }
 

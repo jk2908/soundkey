@@ -40,7 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="en"
       dir="ltr"
-      className={cn('h-full overflow-x-hidden font-sans', UncutSans.variable, MartianMono.variable)}
+      className={cn('h-full overflow-x-hidden font-sans sk-scrollbar', UncutSans.variable, MartianMono.variable)}
       suppressHydrationWarning>
       <body className="sk-scrollbar flex min-h-full tracking-wide flex-col bg-app-bg text-app-fg selection:bg-highlight selection:text-white">
         <Providers>

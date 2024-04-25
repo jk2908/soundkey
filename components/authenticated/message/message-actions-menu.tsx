@@ -50,7 +50,7 @@ export function MessageActionsMenu({
         </Button>
       )}
 
-      <DeleteMessageButton messageId={messageId} {...props}>
+      <DeleteMessageButton messageId={messageId} onModalOpen={cancel} {...props}>
         <Icon name="trash" size={14} title="Delete message" />
         <span className="sr-only">Delete message</span>
       </DeleteMessageButton>

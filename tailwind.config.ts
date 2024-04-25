@@ -35,6 +35,8 @@ const config: Config = {
         keyline: 'rgb(var(--keyline) / <alpha-value>)',
         highlight: 'rgb(var(--highlight) / <alpha-value>)',
         'gr33n-100': 'rgb(var(--gr33n-100) / <alpha-value>)',
+        'y3llow-50': 'rgb(var(--y3llow-50) / <alpha-value>)',
+        'y3llow-0': 'rgb(var(--y3llow-0) / <alpha-value>)',
       },
       fontFamily: {
         sans: ['var(--font-sans)', ...fontFamily.sans],

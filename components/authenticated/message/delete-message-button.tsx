@@ -16,13 +16,15 @@ const initialState: ServerResponse = {
   status: undefined,
 }
 
-export function DeleteMessageButton<E extends React.ElementType = 'button'>({
+export function DeleteMessageButton({
   children,
   messageId,
+  onModalOpen,
   ...rest
 }: {
   children: React.ReactNode
   messageId: string
+  onModalOpen?: () => void
 } & Omit<ButtonProps<'button'>, 'as'>) {
   const [isConfirmOpen, setConfirmOpen] = useState(false)
   const [state, dispatch] = useFormState(destroy.bind(null, messageId), initialState)
@@ -41,12 +43,14 @@ export function DeleteMessageButton<E extends React.ElementType = 'button'>({
   return (
     <>
       <Button
+        ref={openRef}
         onClick={() => {
           flushSync(() => {
             setConfirmOpen(true)
           })
 
           confirmRef.current?.focus()
+          onModalOpen?.()
         }}
         {...rest}>
         {children}
@@ -55,7 +59,9 @@ export function DeleteMessageButton<E extends React.ElementType = 'button'>({
       <Modal.Root
         isOpen={isConfirmOpen}
         setOpen={setConfirmOpen}
-        onAfterClose={() => openRef?.current?.focus()}>
+        onAfterClose={() => {
+          openRef?.current?.focus()
+        }}>
         {({ close }) => (
           <>
             <Modal.Overlay />
@@ -69,8 +75,8 @@ export function DeleteMessageButton<E extends React.ElementType = 'button'>({
               <Modal.Actions>
                 <Button
                   ref={confirmRef}
-                  onClick={async () => {
-                    await close()
+                  onClick={() => {
+                    close()
                     dispatch()
                   }}
                   variant="danger"

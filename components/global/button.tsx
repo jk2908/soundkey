@@ -6,6 +6,7 @@ import { cn } from '@/utils/cn'
 const DEFAULT_ELEMENT = 'button'
 
 // TODO: This isn't finished, Button is typed as any rn
+// Maybe just wait for React 19 to be released to get rid of forwardRef
 // See for reference:
 // https://www.benmvp.com/blog/forwarding-refs-polymorphic-react-component-typescript/
 
@@ -53,8 +54,8 @@ export const Button = forwardRef(
 
     const styleMap: Record<StateVariant | IntentVariant, string> = {
       primary: 'bg-app-bg-inverted hover:bg-app-bg-inverted/75 text-app-fg-inverted',
-      secondary: 'bg-keyline/70 hover:bg-keyline text-app-fg',
-      tertiary: 'bg-transparent hover:bg-keyline/25 text-neutral-900',
+      secondary: 'bg-keyline hover:bg-keyline/75 text-app-fg',
+      tertiary: 'bg-transparent hover:bg-keyline/25 text-app-fg',
       danger: 'bg-danger hover:bg-danger-dark text-white',
       success: 'bg-success hover:bg-success-dark text-white',
       warning: 'bg-warning hover:bg-warning-dark text-white',

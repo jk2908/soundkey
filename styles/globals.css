@@ -129,7 +129,11 @@
 
     .sk-scrollbar {
       scrollbar-width: thin;
-      scrollbar-color: rgb(var(--keyline) / 100%) rgb(var(--keyline) / 50%);
+      scrollbar-color: rgb(var(--gr33n-100) / 50%) rgb(var(--keyline) / 50%);
+
+      [data-theme=dark] &, &[data-theme=dark] {
+        scrollbar-color: rgb(var(--y3llow-0) / 50%) rgb(var(--keyline) / 100%);
+      }
     }
   }
 

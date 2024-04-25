@@ -169,7 +169,7 @@ export function SendMessageForm({
           id={bodyId}
           name="body"
           required
-          className="max-w-prose"
+          className="max-w-prose bg-keyline"
           style={{ minHeight: '200px' }}
         />
       </FormGroup>
