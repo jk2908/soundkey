@@ -1,6 +1,8 @@
 import 'server-only'
 
+import { cache } from 'react'
 import { revalidateTag, unstable_cache } from 'next/cache'
+import { getUsers } from '@/api/user/utils'
 import { desc, eq } from 'drizzle-orm'
 
 import { db } from '@/lib/db'
@@ -114,7 +116,7 @@ export const getThreads = unstable_cache(
   { tags: ['thread'] }
 )
 
-export async function getThread(threadId: string) {
+export const getThread = cache(async (threadId: string) => {
   try {
     const [thread] = await db.select().from(threadTable).where(eq(threadTable.id, threadId))
 
@@ -125,7 +127,7 @@ export async function getThread(threadId: string) {
     console.error(err)
     return null
   }
-}
+})
 
 export async function deleteThread(threadId: string) {
   try {
@@ -139,3 +141,23 @@ export async function deleteThread(threadId: string) {
     console.error(err)
   }
 }
+
+export const resolveThreadUsers = cache(async (threadId: string, remove?: string[]) => {
+  try {
+    const thread = await getThread(threadId)
+
+    if (!thread) return []
+
+    const userIds = thread.userIds.split(',')
+    const users = await getUsers(userIds)
+
+    if (remove?.length) {
+      return users.filter(u => !remove.includes(u.userId))
+    }
+
+    return users
+  } catch (err) {
+    console.error(err)
+    return []
+  }
+})

@@ -10,7 +10,7 @@ export function Nav() {
           <li key={href}>
             <SidebarLink
               href={href}
-              className="block w-full rounded-e-full text-sm tracking-wider px-4 py-3 font-mono lowercase hover:bg-keyline/40 [&.active]:bg-keyline/25"
+              className="block w-full rounded-e-full text-sm tracking-wider px-4 py-3 font-mono lowercase hover:bg-keyline/40 [&.active]:bg-keyline/30"
               visualOnly>
               {label}
             </SidebarLink>

@@ -12,10 +12,8 @@ export async function GET(
     }
   }
 ) {
-  const { id } = params
-
   try {
-    const thread = await getThread(id)
+    const thread = await getThread(params.id)
 
     if (!thread) {
       return new Response(`Thread ${params.id} not found`, {

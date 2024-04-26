@@ -1,9 +1,8 @@
 import { Suspense } from 'react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { getMessages, resolveMessageRecipients } from '@/api/message/utils'
-import { update } from '@/api/message/actions'
-import { getThread } from '@/api/thread/utils'
+import { getMessages } from '@/api/message/utils'
+import { getThread, resolveThreadUsers } from '@/api/thread/utils'
 
 import { auth } from '@/lib/auth'
 import { cn } from '@/utils/cn'
@@ -20,13 +19,14 @@ import { SpeechBubbleSkeletonLoader } from '@/components/global/speech-bubble-sk
 import { YSpace } from '@/components/global/y-space'
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
-  const [message] = await getMessages(params.id)
+  const user = await auth()
+  const users = await resolveThreadUsers(params.id)
 
-  if (!message) return
+  if (users.length === 1 && users[0].userId === user?.userId) {
+    return { title: 'With yourself' }
+  }
 
-  const recipients = await resolveMessageRecipients(message.recipientIds.split(','))
-
-  return { title: `With ${recipients.map(r => r.username).join(', ')}` }
+  return { title: `With ${users.map(u => u.username).join(', ')}` }
 }
 
 export default async function Page({ params }: { params: { id: string } }) {
@@ -101,7 +101,7 @@ export default async function Page({ params }: { params: { id: string } }) {
                       <>{message.body}</>
                     </EditableMessage.Text>
 
-                    <div className="font-mono pt-2 border-t border-keyline/25">
+                    <div className="border-t border-keyline/25 pt-2 font-mono">
                       {message?.updatedAt ? (
                         <span className="text-xs">
                           Edited {new Date(message.updatedAt).toLocaleString()}
