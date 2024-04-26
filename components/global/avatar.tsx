@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { getProfile } from '@/actions/profile/db'
+import { getProfile } from '@/api/profile/utils'
 
 import { cn } from '@/utils/cn'
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { logout } from '@/actions/user/state'
+import { logout } from '@/api/user/actions'
 
 import { Spinner } from '@/components/global/spinner'
 import { SubmitButton } from '@/components/global/submit-button'
