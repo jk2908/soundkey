@@ -73,14 +73,18 @@
       border: 1px solid rgb(var(--keyline) / 100%);
       border-radius: 9999px;
       display: flex;
+      flex-shrink: 0;
+      gap: 1px;
 
       > :is(button, a) {
+        border: 1px solid rgb(var(--keyline));
         border-radius: 9999px;
         flex-grow: 1;
         font-family: theme('fontFamily.sans');
         font-size: theme('fontSize.sm');
         font-weight: 500;
         letter-spacing: theme('letterSpacing.wider');
+        margin: -1px;
         padding: theme('spacing.2') theme('spacing.6');
 
         &:hover {

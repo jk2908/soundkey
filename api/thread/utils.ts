@@ -142,7 +142,7 @@ export async function deleteThread(threadId: string) {
   }
 }
 
-export const resolveThreadUsers = cache(async (threadId: string, remove?: string[]) => {
+export const resolveThreadUsers = cache(async (threadId: string) => {
   try {
     const thread = await getThread(threadId)
 
@@ -150,10 +150,6 @@ export const resolveThreadUsers = cache(async (threadId: string, remove?: string
 
     const userIds = thread.userIds.split(',')
     const users = await getUsers(userIds)
-
-    if (remove?.length) {
-      return users.filter(u => !remove.includes(u.userId))
-    }
 
     return users
   } catch (err) {
