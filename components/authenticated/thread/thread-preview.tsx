@@ -1,25 +1,16 @@
 'use client'
 
-import { use } from 'react'
+import { use, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import { motion } from 'framer-motion'
+import { resolveThreadUsers } from '@/api/thread/handlers'
 
 import { APP_URL } from '@/lib/config'
 import type { SafeUser, Thread } from '@/lib/schema'
+import { useThreadUsers } from '@/hooks/use-thread-users'
 import { cn } from '@/utils/cn'
 
 import * as ContextMenu from '@/components/global/context-menu'
 import { Icon } from '@/components/global/icon'
-
-async function resolveThreadUsers(threadId: string) {
-  const res = await fetch(`${APP_URL}/api/thread/users/${threadId}`)
-
-  if (!res.ok) {
-    throw new Error('Could not get thread users')
-  }
-
-  return res.json()
-}
 
 type Props = {
   userId: string
@@ -31,7 +22,8 @@ type Props = {
 
 export function ThreadPreview({ userId, thread, onDelete, onArchive, className }: Props) {
   const { threadId, ownerId, createdAt, updatedAt } = thread
-  const users = use<SafeUser[]>(resolveThreadUsers(threadId))
+  const usersPromise = useMemo(() => resolveThreadUsers(threadId), [threadId])
+  const users = use<SafeUser[]>(usersPromise)
   const { push } = useRouter()
 
   const open = () => push(`/threads/${thread.threadId}`)
@@ -61,21 +53,14 @@ export function ThreadPreview({ userId, thread, onDelete, onArchive, className }
   ]
 
   return (
-    <motion.tr
-      key={thread.threadId}
-      onClick={open}
-      role="row"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className={cn('cursor-pointer', className)}>
+    <tr key={thread.threadId} onClick={open} role="row" className={cn('cursor-pointer', className)}>
       <td role="gridcell">
         {usersDisplay.map((u, idx) => (
           <span
             key={u.userId}
             className={cn(
               'font-medium',
-              u.userId === userId && 'italic font-mono text-xs'
+              u.userId === userId && 'font-mono text-xs italic'
             )}>{`${u.username}${idx < usersDisplay.length - 1 ? ', ' : ''}`}</span>
         ))}
       </td>
@@ -103,8 +88,8 @@ export function ThreadPreview({ userId, thread, onDelete, onArchive, className }
                 )
             )}
           </ContextMenu.Content>
-        </ContextMenu.Root>{' '}
+        </ContextMenu.Root>
       </td>
-    </motion.tr>
+    </tr>
   )
 }
