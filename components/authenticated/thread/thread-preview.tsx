@@ -4,9 +4,7 @@ import { use, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { resolveThreadUsers } from '@/api/thread/handlers'
 
-import { APP_URL } from '@/lib/config'
 import type { SafeUser, Thread } from '@/lib/schema'
-import { useThreadUsers } from '@/hooks/use-thread-users'
 import { cn } from '@/utils/cn'
 
 import * as ContextMenu from '@/components/global/context-menu'
