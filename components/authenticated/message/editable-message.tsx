@@ -64,6 +64,8 @@ export function Root({ messageId, children }: { messageId: string; children: Rea
 
     dispatch()
     setEditing(false)
+    setOriginalStr(edit)
+    setEdit('')
   }, [originalStr, edit, dispatch])
 
   const cancel = useCallback(() => {
