@@ -69,7 +69,7 @@ export const Button = forwardRef(
         className={cn(
           'flex items-center gap-3 rounded-full px-8 py-2',
           styleMap[variant],
-          iconOnly && 'aspect-square p-2',
+          iconOnly && 'p-2',
           className
         )}
         {...rest}>
