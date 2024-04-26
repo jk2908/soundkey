@@ -1,10 +1,10 @@
 'use server'
 
 import { cookies } from 'next/headers'
-import { sendPasswordResetEmail, sendVerificationEmail } from '@/actions/email/db'
-import { createMessage } from '@/actions/message/db'
-import { createEmailVerificationToken, createPasswordResetToken } from '@/actions/token/db'
-import { createUser, getSystemUser } from '@/actions/user/db'
+import { sendPasswordResetEmail, sendVerificationEmail } from '@/api/email/utils'
+import { createMessage } from '@/api/message/utils'
+import { createEmailVerificationToken, createPasswordResetToken } from '@/api/token/utils'
+import { createUser, getSystemUser } from '@/api/user/utils'
 import { eq } from 'drizzle-orm'
 import { Argon2id } from 'oslo/password'
 

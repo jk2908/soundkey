@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { resolveMessageRecipient } from '@/actions/message/db'
+import { resolveMessageRecipient } from '@/api/message/utils'
 
 import { auth } from '@/lib/auth'
 

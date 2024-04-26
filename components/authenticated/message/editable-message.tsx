@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, use, useCallback, useEffect, useRef, useState } from 'react'
-import { update } from '@/actions/message/state'
+import { update } from '@/api/message/actions'
 import { flushSync, useFormState } from 'react-dom'
 
 import type { ServerResponse } from '@/lib/types'

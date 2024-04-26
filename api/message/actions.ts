@@ -1,6 +1,6 @@
 'use server'
 
-import { createMessage, deleteMessage, updateMessage } from '@/actions/message/db'
+import { createMessage, deleteMessage, updateMessage } from '@/api/message/utils'
 
 import { error, success } from '@/lib/db'
 import { ServerResponse } from '@/lib/types'

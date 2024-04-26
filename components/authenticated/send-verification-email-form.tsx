@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { verify } from '@/actions/user/state'
+import { verify } from '@/api/user/actions'
 import { useFormState } from 'react-dom'
 
 import type { ServerResponse } from '@/lib/types'

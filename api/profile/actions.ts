@@ -1,7 +1,7 @@
 'use server'
 
 import { revalidateTag } from 'next/cache'
-import { updateProfile } from '@/actions/profile/db'
+import { updateProfile } from '@/api/profile/utils'
 
 import { error, success } from '@/lib/db'
 import { ServerResponse } from '@/lib/types'

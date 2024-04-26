@@ -1,9 +1,9 @@
 import { Suspense } from 'react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { getMessages, resolveMessageRecipients } from '@/actions/message/db'
-import { update } from '@/actions/message/state'
-import { getThread } from '@/actions/thread/db'
+import { getMessages, resolveMessageRecipients } from '@/api/message/utils'
+import { update } from '@/api/message/actions'
+import { getThread } from '@/api/thread/utils'
 
 import { auth } from '@/lib/auth'
 import { cn } from '@/utils/cn'
@@ -47,7 +47,7 @@ export default async function Page({ params }: { params: { id: string } }) {
           </Link>{' '}
           or{' '}
           <Link href="/threads/new" className="body-link">
-            start a new thread
+            start a new one.
           </Link>
           .
         </p>

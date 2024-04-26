@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useId } from 'react'
-import { signup } from '@/actions/user/state'
+import { signup } from '@/api/user/actions'
 import { useFormState } from 'react-dom'
 
 import { ServerResponse } from '@/lib/types'

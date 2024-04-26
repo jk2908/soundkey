@@ -1,7 +1,7 @@
 import 'server-only'
 
 import { revalidateTag, unstable_cache } from 'next/cache'
-import { deleteThread, resolveThread } from '@/actions/thread/db'
+import { deleteThread, resolveThread } from '@/api/thread/utils'
 import { asc, eq, inArray, or } from 'drizzle-orm'
 
 import { db } from '@/lib/db'

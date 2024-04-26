@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useId, useRef } from 'react'
-import { update } from '@/actions/profile/state'
+import { update } from '@/api/profile/actions'
 import { useFormState } from 'react-dom'
 
 import { ServerResponse } from '@/lib/types'

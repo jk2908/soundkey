@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { send } from '@/actions/message/state'
+import { send } from '@/api/message/actions'
 import { flushSync, useFormState } from 'react-dom'
 
 import type { ServerResponse } from '@/lib/types'

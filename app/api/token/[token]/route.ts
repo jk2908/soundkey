@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers'
 import type { NextRequest } from 'next/server'
-import { validateEmailVerificationToken } from '@/actions/token/db'
-import { getUser } from '@/actions/user/db'
+import { validateEmailVerificationToken } from '@/api/token/utils'
+import { getUser } from '@/api/user/utils'
 import { eq } from 'drizzle-orm'
 
 import { lucia } from '@/lib/auth'

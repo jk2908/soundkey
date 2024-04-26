@@ -1,7 +1,7 @@
 import { cache } from 'react'
-import { sendVerificationEmail } from '@/actions/email/db'
-import { createProfile } from '@/actions/profile/db'
-import { createEmailVerificationToken } from '@/actions/token/db'
+import { sendVerificationEmail } from '@/api/email/utils'
+import { createProfile } from '@/api/profile/utils'
+import { createEmailVerificationToken } from '@/api/token/utils'
 import { eq, inArray, or } from 'drizzle-orm'
 import { Argon2id } from 'oslo/password'
 

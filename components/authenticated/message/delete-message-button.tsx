@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { destroy } from '@/actions/message/state'
+import { destroy } from '@/api/message/actions'
 import { flushSync, useFormState } from 'react-dom'
 
 import { ServerResponse } from '@/lib/types'
