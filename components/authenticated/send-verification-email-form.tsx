@@ -1,8 +1,7 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useActionState } from 'react'
 import { verify } from '@/api/user/actions'
-import { useFormState } from 'react-dom'
 
 import type { ServerResponse } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
@@ -17,7 +16,7 @@ const initialState: ServerResponse = {
 }
 
 export function SendVerificationEmailForm() {
-  const [state, dispatch] = useFormState(verify, initialState)
+  const [state, dispatch] = useActionState(verify, initialState)
 
   const { toast } = useToast()
 

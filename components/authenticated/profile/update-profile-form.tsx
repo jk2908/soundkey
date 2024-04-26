@@ -1,8 +1,7 @@
 'use client'
 
-import { useEffect, useId, useRef } from 'react'
+import { useEffect, useId, useRef, useActionState } from 'react'
 import { update } from '@/api/profile/actions'
-import { useFormState } from 'react-dom'
 
 import { ServerResponse } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
@@ -33,7 +32,7 @@ export function UpdateProfileForm({
   const usernameId = useId()
   const bioId = useId()
 
-  const [state, dispatch] = useFormState(update.bind(null, userId), initialState)
+  const [state, dispatch] = useActionState(update.bind(null, userId), initialState)
   const { toast } = useToast()
 
   useEffect(() => {

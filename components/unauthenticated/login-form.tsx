@@ -1,8 +1,7 @@
 'use client'
 
-import { useEffect, useId } from 'react'
+import { useEffect, useId, useActionState } from 'react'
 import { login } from '@/api/user/actions'
-import { useFormState } from 'react-dom'
 
 import { ServerResponse } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
@@ -23,7 +22,7 @@ export function LoginForm() {
   const emailId = useId()
   const passwordId = useId()
 
-  const [state, dispatch] = useFormState(login, initialState)
+  const [state, dispatch] = useActionState(login, initialState)
   const { toast } = useToast()
 
   useEffect(() => {

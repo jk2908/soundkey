@@ -1,8 +1,7 @@
 'use client'
 
-import { createContext, use, useCallback, useEffect, useRef, useState } from 'react'
+import { createContext, use, useActionState, useCallback, useEffect, useRef, useState } from 'react'
 import { update } from '@/api/message/actions'
-import { flushSync, useFormState } from 'react-dom'
 
 import type { ServerResponse } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
@@ -39,7 +38,7 @@ export function Root({ messageId, children }: { messageId: string; children: Rea
   const [isEditing, setEditing] = useState(false)
   const [edit, setEdit] = useState('')
   const [originalStr, setOriginalStr] = useState('')
-  const [state, dispatch] = useFormState(update.bind(null, messageId, edit), initialState)
+  const [state, dispatch] = useActionState(update.bind(null, messageId, edit), initialState)
 
   const { toast } = useToast()
 

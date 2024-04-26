@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useActionState } from 'react'
 import { destroy } from '@/api/message/actions'
-import { flushSync, useFormState } from 'react-dom'
+import { flushSync } from 'react-dom'
 
 import { ServerResponse } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
@@ -27,7 +27,7 @@ export function DeleteMessageButton({
   onModalOpen?: () => void
 } & Omit<ButtonProps<'button'>, 'as'>) {
   const [isConfirmOpen, setConfirmOpen] = useState(false)
-  const [state, dispatch] = useFormState(destroy.bind(null, messageId), initialState)
+  const [state, dispatch] = useActionState(destroy.bind(null, messageId), initialState)
   const { toast } = useToast()
 
   const openRef = useRef<HTMLButtonElement>(null)

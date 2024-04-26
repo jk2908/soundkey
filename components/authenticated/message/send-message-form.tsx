@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState, useActionState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { send } from '@/api/message/actions'
-import { flushSync, useFormState } from 'react-dom'
+import { flushSync } from 'react-dom'
 
 import type { ServerResponse } from '@/lib/types'
 import { useToast } from '@/hooks/use-toast'
@@ -49,7 +49,7 @@ export function SendMessageForm({
   const bodyRef = useRef<HTMLTextAreaElement>(null)
   const [recipients, setRecipients] = useState<ResolvedRecipient[] | []>(resolvedRecipients)
 
-  const [state, dispatch] = useFormState(
+  const [state, dispatch] = useActionState(
     send.bind(
       null,
       senderId,
