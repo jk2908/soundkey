@@ -1,6 +1,6 @@
 import { createContext, useState } from 'react'
 
-import type { Toast } from '@/lib/types'
+import type { Toast } from '#/lib/types'
 
 export const ToastContext = createContext<{
   toasts: Toast[]

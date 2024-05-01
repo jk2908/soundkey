@@ -1,4 +1,4 @@
-import { APP_URL } from '@/lib/config'
+import { APP_URL } from '#/lib/config'
 
 export async function resolveThreadUsers(threadId: string) {
   const res = await fetch(`${APP_URL}/api/thread/users/${threadId}`)

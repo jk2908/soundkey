@@ -2,7 +2,7 @@ import { on } from 'events'
 import { useEffect } from 'react'
 import focusableSelectors from 'focusable-selectors'
 
-import { isVisible } from '@/utils/is-visible'
+import { isVisible } from '#/utils/is-visible'
 
 type FocusScopeConfig = {
   when?: boolean

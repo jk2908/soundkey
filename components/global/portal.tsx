@@ -2,7 +2,7 @@
 
 import { createPortal } from 'react-dom'
 
-import { useMounted } from '@/hooks/use-mounted'
+import { useMounted } from '#/hooks/use-mounted'
 
 export function Portal({
   children,

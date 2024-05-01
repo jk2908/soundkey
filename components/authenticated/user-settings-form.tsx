@@ -2,11 +2,11 @@
 
 import { useId } from 'react'
 
-import { useTheme } from '@/hooks/use-theme'
+import { useTheme } from '#/hooks/use-theme'
 
-import { FormFieldDescription } from '@/components/global/form-field-description'
-import { FormGroup } from '@/components/global/form-group'
-import * as Switch from '@/components/global/switch'
+import { FormFieldDescription } from '#/components/global/form-field-description'
+import { FormGroup } from '#/components/global/form-group'
+import * as Switch from '#/components/global/switch'
 
 export function UserSettingsForm() {
   const themeId = useId()

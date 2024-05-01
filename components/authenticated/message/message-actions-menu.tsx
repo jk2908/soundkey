@@ -3,12 +3,12 @@
 import { use } from 'react'
 import { flushSync } from 'react-dom'
 
-import { cn } from '@/utils/cn'
+import { cn } from '#/utils/cn'
 
-import { DeleteMessageButton } from '@/components/authenticated/message/delete-message-button'
-import { EditableMessageContext } from '@/components/authenticated/message/editable-message'
-import { Button } from '@/components/global/button'
-import { Icon } from '@/components/global/icon'
+import { DeleteMessageButton } from '#/components/authenticated/message/delete-message-button'
+import { EditableMessageContext } from '#/components/authenticated/message/editable-message'
+import { Button } from '#/components/global/button'
+import { Icon } from '#/components/global/icon'
 
 export function MessageActionsMenu({
   messageId,

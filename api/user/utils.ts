@@ -1,14 +1,14 @@
 import { cache } from 'react'
-import { sendVerificationEmail } from '@/api/email/utils'
-import { createProfile } from '@/api/profile/utils'
-import { createEmailVerificationToken } from '@/api/token/utils'
+import { sendVerificationEmail } from '#/api/email/utils'
+import { createProfile } from '#/api/profile/utils'
+import { createEmailVerificationToken } from '#/api/token/utils'
 import { eq, inArray, or } from 'drizzle-orm'
 import { Argon2id } from 'oslo/password'
 
-import { toSafeUser } from '@/lib/auth'
-import { db } from '@/lib/db'
-import { NewUser, userTable } from '@/lib/schema'
-import { generateId } from '@/utils/generate-id'
+import { toSafeUser } from '#/lib/auth'
+import { db } from '#/lib/db'
+import { NewUser, userTable } from '#/lib/schema'
+import { generateId } from '#/utils/generate-id'
 
 export const getUser = cache(async (str: string) =>
   toSafeUser(

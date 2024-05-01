@@ -1,4 +1,4 @@
-import { cn } from '@/utils/cn'
+import { cn } from '#/utils/cn'
 
 export function YSpace({ children, className }: { children: React.ReactNode; className?: string }) {
   return (

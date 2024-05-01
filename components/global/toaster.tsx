@@ -2,9 +2,9 @@
 
 import { AnimatePresence } from 'framer-motion'
 
-import { useToast } from '@/hooks/use-toast'
+import { useToast } from '#/hooks/use-toast'
 
-import { Toast } from '@/components/global/toast'
+import { Toast } from '#/components/global/toast'
 
 export function Toaster() {
   const { toasts } = useToast()

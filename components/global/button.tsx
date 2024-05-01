@@ -1,7 +1,7 @@
 import { forwardRef } from 'react'
 
-import type { IntentVariant, StateVariant } from '@/lib/types'
-import { cn } from '@/utils/cn'
+import type { IntentVariant, StateVariant } from '#/lib/types'
+import { cn } from '#/utils/cn'
 
 const DEFAULT_ELEMENT = 'button'
 

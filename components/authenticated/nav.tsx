@@ -1,6 +1,6 @@
-import { authRoutes } from '@/lib/routes'
+import { authRoutes } from '#/lib/routes'
 
-import { SidebarLink } from '@/components/authenticated/sidebar-link'
+import { SidebarLink } from '#/components/authenticated/sidebar-link'
 
 export function Nav() {
   return (

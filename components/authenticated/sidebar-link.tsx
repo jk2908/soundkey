@@ -3,8 +3,8 @@
 import { startTransition, use, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 
-import { SidebarContext } from '@/components/authenticated/sidebar'
-import { NavLink, type Props as NavLinkProps } from '@/components/global/nav-link'
+import { SidebarContext } from '#/components/authenticated/sidebar'
+import { NavLink, type Props as NavLinkProps } from '#/components/global/nav-link'
 
 // https://github.com/shuding/next-view-transitions/blob/main/src/link.tsx
 

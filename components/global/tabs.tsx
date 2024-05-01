@@ -14,8 +14,8 @@ import {
 import { useRouter, useSearchParams } from 'next/navigation'
 import selectors from 'focusable-selectors'
 
-import { useFocusScope } from '@/hooks/use-focus-scope'
-import { isVisible } from '@/utils/is-visible'
+import { useFocusScope } from '#/hooks/use-focus-scope'
+import { isVisible } from '#/utils/is-visible'
 
 type Activation = 'manual' | 'auto'
 type Orientation = 'horizontal' | 'vertical'

@@ -1,4 +1,4 @@
-import { cn } from '@/utils/cn'
+import { cn } from '#/utils/cn'
 
 export function Pill({ children, className }: { children: React.ReactNode; className?: string }) {
   return (

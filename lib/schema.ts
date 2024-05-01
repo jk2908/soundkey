@@ -1,7 +1,7 @@
 import { InferInsertModel, InferSelectModel, relations, sql } from 'drizzle-orm'
 import { integer, primaryKey, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
-import { generateId } from '@/utils/generate-id'
+import { generateId } from '#/utils/generate-id'
 
 export const userRoles = ['user', 'admin', 'system'] as const
 export const userRole = text('user_role', { enum: userRoles })

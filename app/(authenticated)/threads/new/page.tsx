@@ -1,9 +1,9 @@
 import { redirect } from 'next/navigation'
-import { resolveMessageRecipient } from '@/api/message/utils'
+import { resolveMessageRecipient } from '#/api/message/utils'
 
-import { auth } from '@/lib/auth'
+import { auth } from '#/lib/auth'
 
-import { SendMessageForm } from '@/components/authenticated/message/send-message-form'
+import { SendMessageForm } from '#/components/authenticated/message/send-message-form'
 
 export const metadata = {
   title: 'New thread',

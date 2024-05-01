@@ -1,10 +1,10 @@
 'use client'
 
-import { logout } from '@/api/user/actions'
+import { logout } from '#/api/user/actions'
 
-import { Spinner } from '@/components/global/spinner'
-import { SubmitButton } from '@/components/global/submit-button'
-import type { Props } from '@/components/global/submit-button'
+import { Spinner } from '#/components/global/spinner'
+import { SubmitButton } from '#/components/global/submit-button'
+import type { Props } from '#/components/global/submit-button'
 
 export function LogoutButton({
   children,

@@ -1,19 +1,19 @@
 'use server'
 
 import { cookies } from 'next/headers'
-import { sendPasswordResetEmail, sendVerificationEmail } from '@/api/email/utils'
-import { createMessage } from '@/api/message/utils'
-import { createEmailVerificationToken, createPasswordResetToken } from '@/api/token/utils'
-import { createUser, getSystemUser } from '@/api/user/utils'
+import { sendPasswordResetEmail, sendVerificationEmail } from '#/api/email/utils'
+import { createMessage } from '#/api/message/utils'
+import { createEmailVerificationToken, createPasswordResetToken } from '#/api/token/utils'
+import { createUser, getSystemUser } from '#/api/user/utils'
 import { eq } from 'drizzle-orm'
 import { Argon2id } from 'oslo/password'
 
-import { lucia } from '@/lib/auth'
-import { APP_NAME } from '@/lib/config'
-import { db, error, success } from '@/lib/db'
-import { userTable } from '@/lib/schema'
-import type { ServerResponse } from '@/lib/types'
-import { isValidEmail } from '@/utils/is-valid-email'
+import { lucia } from '#/lib/auth'
+import { APP_NAME } from '#/lib/config'
+import { db, error, success } from '#/lib/db'
+import { userTable } from '#/lib/schema'
+import type { ServerResponse } from '#/lib/types'
+import { isValidEmail } from '#/utils/is-valid-email'
 
 export async function signup(
   prevState: ServerResponse,

@@ -1,5 +1,5 @@
-import { StateVariant } from '@/lib/types'
-import { cn } from '@/utils/cn'
+import { StateVariant } from '#/lib/types'
+import { cn } from '#/utils/cn'
 
 type Props = {
   children: React.ReactNode

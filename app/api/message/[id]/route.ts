@@ -1,6 +1,6 @@
 import type { NextRequest } from 'next/server'
-import { getMessages } from '@/api/message/utils'
-import { getUsers } from '@/api/user/utils'
+import { getMessages } from '#/api/message/utils'
+import { getUsers } from '#/api/user/utils'
 
 export async function GET(
   _: NextRequest,

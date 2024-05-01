@@ -2,10 +2,10 @@
 
 import { use } from 'react'
 
-import { cn } from '@/utils/cn'
+import { cn } from '#/utils/cn'
 
-import * as Popover from '@/components/global/popover'
-import type { ContentProps, Props, ToggleProps } from '@/components/global/popover'
+import * as Popover from '#/components/global/popover'
+import type { ContentProps, Props, ToggleProps } from '#/components/global/popover'
 
 const { PopoverContext } = Popover
 

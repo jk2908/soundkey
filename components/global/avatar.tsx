@@ -1,9 +1,9 @@
 import Image from 'next/image'
-import { getProfile } from '@/api/profile/utils'
+import { getProfile } from '#/api/profile/utils'
 
-import { cn } from '@/utils/cn'
+import { cn } from '#/utils/cn'
 
-import { Icon } from '@/components/global/icon'
+import { Icon } from '#/components/global/icon'
 
 export type Props = {
   userId: string | null

@@ -1,4 +1,4 @@
-import { Spinner } from '@/components/global/spinner'
+import { Spinner } from '#/components/global/spinner'
 
 export function FullscreenSpinner() {
   return (

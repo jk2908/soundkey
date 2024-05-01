@@ -2,9 +2,9 @@
 
 import { createContext, use } from 'react'
 
-import { cn } from '@/utils/cn'
+import { cn } from '#/utils/cn'
 
-import { Label as LabelPrimitive, type Props as LabelProps } from '@/components/global/label'
+import { Label as LabelPrimitive, type Props as LabelProps } from '#/components/global/label'
 
 type SwitchProvider = {
   id: string

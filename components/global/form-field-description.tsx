@@ -1,6 +1,6 @@
-import { cn } from '@/utils/cn'
+import { cn } from '#/utils/cn'
 
-import { Icon } from '@/components/global/icon'
+import { Icon } from '#/components/global/icon'
 
 export type Props = {
   children: React.ReactNode

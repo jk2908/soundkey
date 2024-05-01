@@ -1,6 +1,6 @@
 import type { NextRequest } from 'next/server'
-import { getThread } from '@/api/thread/utils'
-import { getUsers } from '@/api/user/utils'
+import { getThread } from '#/api/thread/utils'
+import { getUsers } from '#/api/user/utils'
 
 export async function GET(
   _: NextRequest,

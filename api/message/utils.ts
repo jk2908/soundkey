@@ -1,12 +1,12 @@
 import 'server-only'
 
 import { revalidateTag, unstable_cache } from 'next/cache'
-import { deleteThread, resolveThread } from '@/api/thread/utils'
+import { deleteThread, resolveThread } from '#/api/thread/utils'
 import { asc, eq, inArray, or } from 'drizzle-orm'
 
-import { db } from '@/lib/db'
-import { messageTable, userTable } from '@/lib/schema'
-import type { UpdateMessage, NewMessage } from '@/lib/schema'
+import { db } from '#/lib/db'
+import { messageTable, userTable } from '#/lib/schema'
+import type { UpdateMessage, NewMessage } from '#/lib/schema'
 
 export async function createMessage(payload: NewMessage) {
   try {

@@ -3,8 +3,8 @@ import { cookies } from 'next/headers'
 import { DrizzleSQLiteAdapter } from '@lucia-auth/adapter-drizzle'
 import { Lucia, TimeSpan } from 'lucia'
 
-import { db } from '@/lib/db'
-import { SafeUser, sessionTable, userTable, type User, type UserRole } from '@/lib/schema'
+import { db } from '#/lib/db'
+import { SafeUser, sessionTable, userTable, type User, type UserRole } from '#/lib/schema'
 
 const adapter = new DrizzleSQLiteAdapter(db, sessionTable, userTable)
 

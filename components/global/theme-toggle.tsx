@@ -1,10 +1,10 @@
 'use client'
 
-import { useMounted } from '@/hooks/use-mounted'
-import { useTheme } from '@/hooks/use-theme'
+import { useMounted } from '#/hooks/use-mounted'
+import { useTheme } from '#/hooks/use-theme'
 
-import { Icon } from '@/components/global/icon'
-import { Spinner } from '@/components/global/spinner'
+import { Icon } from '#/components/global/icon'
+import { Spinner } from '#/components/global/spinner'
 
 export function ThemeToggle() {
   const { theme, altTheme, toggle } = useTheme()

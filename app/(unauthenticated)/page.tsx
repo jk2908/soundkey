@@ -1,7 +1,7 @@
-import { KeylineBox } from '@/components/global/keyline-box'
-import * as Tabs from '@/components/global/tabs'
-import { LoginForm } from '@/components/unauthenticated/login-form'
-import { SignupForm } from '@/components/unauthenticated/signup-form'
+import { KeylineBox } from '#/components/global/keyline-box'
+import * as Tabs from '#/components/global/tabs'
+import { LoginForm } from '#/components/unauthenticated/login-form'
+import { SignupForm } from '#/components/unauthenticated/signup-form'
 
 export default async function Page() {
   return (

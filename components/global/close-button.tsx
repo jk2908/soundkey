@@ -1,6 +1,6 @@
 'use client'
 
-import { Icon, type Props } from '@/components/global/icon'
+import { Icon, type Props } from '#/components/global/icon'
 
 export function CloseButton({
   onClick,

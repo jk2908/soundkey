@@ -1,14 +1,14 @@
 'use client'
 
 import { useEffect, useRef, useState, useActionState } from 'react'
-import { destroy } from '@/api/message/actions'
+import { destroy } from '#/api/message/actions'
 import { flushSync } from 'react-dom'
 
-import { ServerResponse } from '@/lib/types'
-import { useToast } from '@/hooks/use-toast'
+import { ServerResponse } from '#/lib/types'
+import { useToast } from '#/hooks/use-toast'
 
-import { Button, type ButtonProps } from '@/components/global/button'
-import * as Modal from '@/components/global/modal'
+import { Button, type ButtonProps } from '#/components/global/button'
+import * as Modal from '#/components/global/modal'
 
 const initialState: ServerResponse = {
   type: undefined,

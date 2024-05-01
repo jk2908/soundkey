@@ -1,6 +1,6 @@
-import { cn } from '@/utils/cn'
+import { cn } from '#/utils/cn'
 
-import { Icon, type Props } from '@/components/global/icon'
+import { Icon, type Props } from '#/components/global/icon'
 
 export function Spinner(props: Omit<Props, 'name'>) {
   const { className, ...rest } = props

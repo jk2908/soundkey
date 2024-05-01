@@ -1,7 +1,7 @@
-import { UserSettingsForm } from '@/components/authenticated/user-settings-form'
-import { BodyHeading } from '@/components/global/body-heading'
-import { YSpace } from '@/components/global/y-space'
-import { KeylineBox } from '@/components/global/keyline-box'
+import { UserSettingsForm } from '#/components/authenticated/user-settings-form'
+import { BodyHeading } from '#/components/global/body-heading'
+import { YSpace } from '#/components/global/y-space'
+import { KeylineBox } from '#/components/global/keyline-box'
 
 export default function Page() {
   return (

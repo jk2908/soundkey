@@ -1,4 +1,4 @@
-import { cn } from '@/utils/cn'
+import { cn } from '#/utils/cn'
 
 export function SkeletonText({ lines = 3, className }: { lines?: number; className?: string }) {
   return (

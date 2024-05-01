@@ -1,13 +1,13 @@
 'use client'
 
 import { useEffect, useActionState } from 'react'
-import { verify } from '@/api/user/actions'
+import { verify } from '#/api/user/actions'
 
-import type { ServerResponse } from '@/lib/types'
-import { useToast } from '@/hooks/use-toast'
+import type { ServerResponse } from '#/lib/types'
+import { useToast } from '#/hooks/use-toast'
 
-import { Spinner } from '@/components/global/spinner'
-import { SubmitButton } from '@/components/global/submit-button'
+import { Spinner } from '#/components/global/spinner'
+import { SubmitButton } from '#/components/global/submit-button'
 
 const initialState: ServerResponse = {
   type: undefined,

@@ -1,5 +1,5 @@
-import { NavLink } from '@/components/global/nav-link'
-import { unauthRoutes } from '@/lib/routes'
+import { NavLink } from '#/components/global/nav-link'
+import { unauthRoutes } from '#/lib/routes'
 
 export function Nav() {
 

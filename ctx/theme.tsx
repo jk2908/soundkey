@@ -1,6 +1,6 @@
 import { createContext, memo, useEffect, useState } from 'react'
 
-import type { Theme } from '@/lib/types'
+import type { Theme } from '#/lib/types'
 
 export const ThemeContext = createContext<{
   theme: Theme

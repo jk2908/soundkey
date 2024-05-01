@@ -2,13 +2,13 @@
 
 import { use, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import { resolveThreadUsers } from '@/api/thread/handlers'
+import { resolveThreadUsers } from '#/api/thread/handlers'
 
-import type { SafeUser, Thread } from '@/lib/schema'
-import { cn } from '@/utils/cn'
+import type { SafeUser, Thread } from '#/lib/schema'
+import { cn } from '#/utils/cn'
 
-import * as ContextMenu from '@/components/global/context-menu'
-import { Icon } from '@/components/global/icon'
+import * as ContextMenu from '#/components/global/context-menu'
+import { Icon } from '#/components/global/icon'
 
 type Props = {
   userId: string

@@ -1,10 +1,10 @@
 import 'server-only'
 
-import { APP_EMAIL, APP_NAME } from '@/lib/config'
-import { resend } from '@/lib/resend'
+import { APP_EMAIL, APP_NAME } from '#/lib/config'
+import { resend } from '#/lib/resend'
 
-import { AccountVerificationTemplate } from '@/components/email-templates/account-verification-template'
-import { ResetPasswordTemplate } from '@/components/email-templates/reset-password-template'
+import { AccountVerificationTemplate } from '#/components/email-templates/account-verification-template'
+import { ResetPasswordTemplate } from '#/components/email-templates/reset-password-template'
 
 export async function sendVerificationEmail(email: string, token: string) {
   try {

@@ -2,9 +2,9 @@
 
 import { createContext, forwardRef, use, useState } from 'react'
 
-import { cn } from '@/utils/cn'
+import { cn } from '#/utils/cn'
 
-import { SearchBox, Props as SearchBoxProps } from '@/components/global/search-box'
+import { SearchBox, Props as SearchBoxProps } from '#/components/global/search-box'
 
 type SearchProvider = {
   value: string

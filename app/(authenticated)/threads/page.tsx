@@ -1,14 +1,14 @@
 import { Suspense } from 'react'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { deleteThread, getThreads } from '@/api/thread/utils'
+import { deleteThread, getThreads } from '#/api/thread/utils'
 import { ErrorBoundary } from 'react-error-boundary'
 
-import { auth } from '@/lib/auth'
+import { auth } from '#/lib/auth'
 
-import { ThreadPreview } from '@/components/authenticated/thread/thread-preview'
-import { Icon } from '@/components/global/icon'
-import { SKTableRowLoader } from '@/components/global/sk-table-row-loader'
+import { ThreadPreview } from '#/components/authenticated/thread/thread-preview'
+import { Icon } from '#/components/global/icon'
+import { SKTableRowLoader } from '#/components/global/sk-table-row-loader'
 
 export default async function Page() {
   const user = await auth()

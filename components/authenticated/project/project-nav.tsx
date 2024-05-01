@@ -1,6 +1,6 @@
-import type { Icon as IconType } from '@/components/global/icon'
-import { Icon } from '@/components/global/icon'
-import { NavLink } from '@/components/global/nav-link'
+import type { Icon as IconType } from '#/components/global/icon'
+import { Icon } from '#/components/global/icon'
+import { NavLink } from '#/components/global/nav-link'
 
 type ProjectNavItem = {
   href: string

@@ -10,19 +10,19 @@ import React, {
 } from 'react'
 import { flushSync } from 'react-dom'
 
-import { useClickOutside } from '@/hooks/use-click-outside'
-import { useFocusScope } from '@/hooks/use-focus-scope'
-import { useKey } from '@/hooks/use-key'
-import { useScrollLock } from '@/hooks/use-scroll-lock'
-import { cn } from '@/utils/cn'
-import { generateId } from '@/utils/generate-id'
-import { toSmartEscape } from '@/utils/to-smart-escape'
+import { useClickOutside } from '#/hooks/use-click-outside'
+import { useFocusScope } from '#/hooks/use-focus-scope'
+import { useKey } from '#/hooks/use-key'
+import { useScrollLock } from '#/hooks/use-scroll-lock'
+import { cn } from '#/utils/cn'
+import { generateId } from '#/utils/generate-id'
+import { toSmartEscape } from '#/utils/to-smart-escape'
 
-import { Button, type Props as ButtonProps } from '@/components/global/button'
-import { Icon } from '@/components/global/icon'
-import type { Props as OverlayProps } from '@/components/global/overlay'
-import { Overlay as OverlayPrimitive } from '@/components/global/overlay'
-import { Portal } from '@/components/global/portal'
+import { Button, type Props as ButtonProps } from '#/components/global/button'
+import { Icon } from '#/components/global/icon'
+import type { Props as OverlayProps } from '#/components/global/overlay'
+import { Overlay as OverlayPrimitive } from '#/components/global/overlay'
+import { Portal } from '#/components/global/portal'
 
 type ModalProvider = {
   isOpen: boolean

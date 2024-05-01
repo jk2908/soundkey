@@ -1,9 +1,9 @@
 import { redirect } from 'next/navigation'
 
-import { auth, is$User } from '@/lib/auth'
-import { getTimedMessage } from '@/utils/get-timed-message'
+import { auth, is$User } from '#/lib/auth'
+import { getTimedMessage } from '#/utils/get-timed-message'
 
-import { YSpace } from '@/components/global/y-space'
+import { YSpace } from '#/components/global/y-space'
 
 export default async function Layout({
   user,

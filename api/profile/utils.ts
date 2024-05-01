@@ -3,8 +3,8 @@ import 'server-only'
 import { unstable_cache } from 'next/cache'
 import { and, eq, ne, or } from 'drizzle-orm'
 
-import { db } from '@/lib/db'
-import { profileTable, type EditProfile } from '@/lib/schema'
+import { db } from '#/lib/db'
+import { profileTable, type EditProfile } from '#/lib/schema'
 
 export const createProfile = async (userId: string) => {
   try {

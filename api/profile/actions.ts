@@ -1,11 +1,11 @@
 'use server'
 
 import { revalidateTag } from 'next/cache'
-import { updateProfile } from '@/api/profile/utils'
+import { updateProfile } from '#/api/profile/utils'
 
-import { error, success } from '@/lib/db'
-import { ServerResponse } from '@/lib/types'
-import { generateId } from '@/utils/generate-id'
+import { error, success } from '#/lib/db'
+import { ServerResponse } from '#/lib/types'
+import { generateId } from '#/utils/generate-id'
 
 export async function update(
   userId: string,

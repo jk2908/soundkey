@@ -1,4 +1,4 @@
-import { BodyHeading } from '@/components/global/body-heading'
+import { BodyHeading } from '#/components/global/body-heading'
 
 export default function Page() {
   return (

@@ -1,4 +1,4 @@
-import { APP_NAME, APP_URL } from '@/lib/config'
+import { APP_NAME, APP_URL } from '#/lib/config'
 
 export function ResetPasswordTemplate({ token }: { token: string }) {
   const url = `${APP_URL}/reset-password/${token}`

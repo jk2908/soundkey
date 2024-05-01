@@ -1,5 +1,5 @@
-import { Spinner } from '@/components/global/spinner'
-import { SkeletonText } from '@/components/global/skeleton-text'
+import { Spinner } from '#/components/global/spinner'
+import { SkeletonText } from '#/components/global/skeleton-text'
 
 export function SKTableRowLoader({ cells = 2 }: { cells?: number }) {
   return (

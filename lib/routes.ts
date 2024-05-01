@@ -1,4 +1,4 @@
-import type { Route } from '@/lib/types'
+import type { Route } from '#/lib/types'
 
 export const unauthRoutes: Route[] = [
   {

@@ -1,9 +1,9 @@
 'use server'
 
-import { createMessage, deleteMessage, updateMessage } from '@/api/message/utils'
+import { createMessage, deleteMessage, updateMessage } from '#/api/message/utils'
 
-import { error, success } from '@/lib/db'
-import { ServerResponse } from '@/lib/types'
+import { error, success } from '#/lib/db'
+import { ServerResponse } from '#/lib/types'
 import { revalidateTag } from 'next/cache'
 
 export async function send(

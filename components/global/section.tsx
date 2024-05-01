@@ -1,5 +1,5 @@
 import { forwardRef } from 'react'
-import { cn } from '@/utils/cn'
+import { cn } from '#/utils/cn'
 
 type Size = '3xs' | '2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl'
 

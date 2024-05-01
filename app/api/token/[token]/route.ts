@@ -1,12 +1,12 @@
 import { cookies } from 'next/headers'
 import type { NextRequest } from 'next/server'
-import { validateEmailVerificationToken } from '@/api/token/utils'
-import { getUser } from '@/api/user/utils'
+import { validateEmailVerificationToken } from '#/api/token/utils'
+import { getUser } from '#/api/user/utils'
 import { eq } from 'drizzle-orm'
 
-import { lucia } from '@/lib/auth'
-import { db } from '@/lib/db'
-import { userTable } from '@/lib/schema'
+import { lucia } from '#/lib/auth'
+import { db } from '#/lib/db'
+import { userTable } from '#/lib/schema'
 
 export async function GET(
   _: NextRequest,

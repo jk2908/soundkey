@@ -1,5 +1,5 @@
-import { ProjectNav } from '@/components/authenticated/project/project-nav'
-import { YSpace } from '@/components/global/y-space'
+import { ProjectNav } from '#/components/authenticated/project/project-nav'
+import { YSpace } from '#/components/global/y-space'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (

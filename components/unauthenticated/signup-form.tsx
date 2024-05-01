@@ -1,16 +1,16 @@
 'use client'
 
-import { useEffect, useId, useActionState } from 'react'
-import { signup } from '@/api/user/actions'
+import { useActionState, useEffect, useId } from 'react'
+import { signup } from '#/api/user/actions'
 
-import { ServerResponse } from '@/lib/types'
-import { useToast } from '@/hooks/use-toast'
+import { ServerResponse } from '#/lib/types'
+import { useToast } from '#/hooks/use-toast'
 
-import { Label } from '@/components/global/label'
-import { FormGroup } from '@/components/global/form-group'
-import { Input } from '@/components/global/input'
-import { Spinner } from '@/components/global/spinner'
-import { SubmitButton } from '@/components/global/submit-button'
+import { FormGroup } from '#/components/global/form-group'
+import { Input } from '#/components/global/input'
+import { Label } from '#/components/global/label'
+import { Spinner } from '#/components/global/spinner'
+import { SubmitButton } from '#/components/global/submit-button'
 
 const initialState: ServerResponse = {
   type: undefined,

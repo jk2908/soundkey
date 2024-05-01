@@ -1,6 +1,6 @@
-import { ThreadNav } from '@/components/authenticated/thread/thread-nav'
-import { BodyHeading } from '@/components/global/body-heading'
-import { YSpace } from '@/components/global/y-space'
+import { ThreadNav } from '#/components/authenticated/thread/thread-nav'
+import { BodyHeading } from '#/components/global/body-heading'
+import { YSpace } from '#/components/global/y-space'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (

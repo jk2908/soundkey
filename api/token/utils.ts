@@ -3,9 +3,9 @@ import 'server-only'
 import { eq } from 'drizzle-orm'
 import { createDate, isWithinExpirationDate, TimeSpan } from 'oslo'
 
-import { db } from '@/lib/db'
-import { emailVerificationTokenTable, passwordResetTokenTable } from '@/lib/schema'
-import { generateId } from '@/utils/generate-id'
+import { db } from '#/lib/db'
+import { emailVerificationTokenTable, passwordResetTokenTable } from '#/lib/schema'
+import { generateId } from '#/utils/generate-id'
 
 const EXPIRES_IN = 1000 * 60 * 60 * 2
 

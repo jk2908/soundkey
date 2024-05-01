@@ -1,14 +1,14 @@
 import { Suspense } from 'react'
 import { redirect } from 'next/navigation'
 
-import { auth } from '@/lib/auth'
+import { auth } from '#/lib/auth'
 
-import { Nav } from '@/components/authenticated/nav'
-import { NavSkeletonLoader } from '@/components/authenticated/nav-skeleton-loader'
-import { Sidebar } from '@/components/authenticated/sidebar'
-import { FullscreenSpinner } from '@/components/global/fullscreen-spinner'
-import { Section } from '@/components/global/section'
-import { Wrapper } from '@/components/global/wrapper'
+import { Nav } from '#/components/authenticated/nav'
+import { NavSkeletonLoader } from '#/components/authenticated/nav-skeleton-loader'
+import { Sidebar } from '#/components/authenticated/sidebar'
+import { FullscreenSpinner } from '#/components/global/fullscreen-spinner'
+import { Section } from '#/components/global/section'
+import { Wrapper } from '#/components/global/wrapper'
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
   const user = await auth()

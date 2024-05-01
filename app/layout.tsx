@@ -1,16 +1,16 @@
 import type { Metadata } from 'next'
 
-import '@/styles/globals.css'
+import '#/styles/globals.css'
 
 import { Suspense } from 'react'
 import localFont from 'next/font/local'
 
-import { APP_DESCRIPTION, APP_NAME } from '@/lib/config'
-import { cn } from '@/utils/cn'
+import { APP_DESCRIPTION, APP_NAME } from '#/lib/config'
+import { cn } from '#/utils/cn'
 
-import { FullscreenSpinner } from '@/components/global/fullscreen-spinner'
-import { Providers } from '@/components/global/providers'
-import { Toaster } from '@/components/global/toaster'
+import { FullscreenSpinner } from '#/components/global/fullscreen-spinner'
+import { Providers } from '#/components/global/providers'
+import { Toaster } from '#/components/global/toaster'
 
 export const metadata: Metadata = {
   title: {

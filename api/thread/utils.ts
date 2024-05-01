@@ -2,12 +2,12 @@ import 'server-only'
 
 import { cache } from 'react'
 import { revalidateTag, unstable_cache } from 'next/cache'
-import { getUsers } from '@/api/user/utils'
+import { getUsers } from '#/api/user/utils'
 import { desc, eq } from 'drizzle-orm'
 
-import { db } from '@/lib/db'
-import { messageTable, threadTable, threadToUserTable } from '@/lib/schema'
-import type { Thread } from '@/lib/schema'
+import { db } from '#/lib/db'
+import { messageTable, threadTable, threadToUserTable } from '#/lib/schema'
+import type { Thread } from '#/lib/schema'
 
 export async function createThread({
   senderId,

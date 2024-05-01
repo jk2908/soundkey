@@ -2,22 +2,22 @@
 
 import { useEffect, useId, useRef, useState, useActionState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { send } from '@/api/message/actions'
+import { send } from '#/api/message/actions'
 import { flushSync } from 'react-dom'
 
-import type { ServerResponse } from '@/lib/types'
-import { useToast } from '@/hooks/use-toast'
-import { cn } from '@/utils/cn'
-import { generateId } from '@/utils/generate-id'
+import type { ServerResponse } from '#/lib/types'
+import { useToast } from '#/hooks/use-toast'
+import { cn } from '#/utils/cn'
+import { generateId } from '#/utils/generate-id'
 
-import { Label } from '@/components/global/label'
-import { FormGroup } from '@/components/global/form-group'
-import { Icon } from '@/components/global/icon'
-import * as Listbox from '@/components/global/listbox'
-import { Spinner } from '@/components/global/spinner'
-import * as Search from '@/components/global/search'
-import { SubmitButton } from '@/components/global/submit-button'
-import { Textarea } from '@/components/global/textarea'
+import { Label } from '#/components/global/label'
+import { FormGroup } from '#/components/global/form-group'
+import { Icon } from '#/components/global/icon'
+import * as Listbox from '#/components/global/listbox'
+import { Spinner } from '#/components/global/spinner'
+import * as Search from '#/components/global/search'
+import { SubmitButton } from '#/components/global/submit-button'
+import { Textarea } from '#/components/global/textarea'
 
 const initialState: ServerResponse = {
   type: undefined,

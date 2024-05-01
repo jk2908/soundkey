@@ -2,7 +2,7 @@
 
 import { useFormStatus } from 'react-dom'
 
-import { Button, type Props as ButtonProps } from '@/components/global/button'
+import { Button, type Props as ButtonProps } from '#/components/global/button'
 
 export type Props = {
   children: React.ReactNode | (({ pending }: { pending: boolean }) => React.ReactNode)

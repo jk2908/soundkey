@@ -3,10 +3,10 @@
 import { forwardRef, useEffect, useRef, useTransition } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
-import { Chip } from '@/components/global/chip'
-import { Icon } from '@/components/global/icon'
-import { Input, Props as InputProps } from '@/components/global/input'
-import { Spinner } from '@/components/global/spinner'
+import { Chip } from '#/components/global/chip'
+import { Icon } from '#/components/global/icon'
+import { Input, Props as InputProps } from '#/components/global/input'
+import { Spinner } from '#/components/global/spinner'
 
 export type Props = {
   value?: string

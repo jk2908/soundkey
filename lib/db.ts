@@ -1,8 +1,8 @@
 import Database from 'better-sqlite3'
 import { drizzle } from 'drizzle-orm/better-sqlite3'
 
-import type { ServerResponse } from '@/lib/types'
-import { capitalise } from '@/utils/capitalise'
+import type { ServerResponse } from '#/lib/types'
+import { capitalise } from '#/utils/capitalise'
 
 const sqlite = new Database(process.env.DB_URL)
 export const db = drizzle(sqlite)

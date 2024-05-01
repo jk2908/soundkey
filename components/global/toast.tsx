@@ -3,13 +3,13 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 
-import type { Toast } from '@/lib/types'
-import { useToast } from '@/hooks/use-toast'
-import { cn } from '@/utils/cn'
-import { copy } from '@/utils/copy'
+import type { Toast } from '#/lib/types'
+import { useToast } from '#/hooks/use-toast'
+import { cn } from '#/utils/cn'
+import { copy } from '#/utils/copy'
 
-import { CloseButton } from '@/components/global/close-button'
-import * as Popover from '@/components/global/popover'
+import { CloseButton } from '#/components/global/close-button'
+import * as Popover from '#/components/global/popover'
 
 export function Toast({ toast, className, ...rest }: { toast: Toast; className?: string }) {
   const { id, type, message, status } = toast

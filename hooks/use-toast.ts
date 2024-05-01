@@ -1,7 +1,7 @@
 import { use } from 'react'
-import { ToastContext } from '@/ctx/toast'
+import { ToastContext } from '#/ctx/toast'
 
-import type { Toast } from '@/lib/types'
+import type { Toast } from '#/lib/types'
 
 export function useToast() {
   const { toasts, setToasts } = use(ToastContext)
