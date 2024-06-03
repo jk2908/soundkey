@@ -129,6 +129,11 @@ export function SendMessageForm({
 
                     searchRef.current?.focus()
                   }}
+                  onClear={() => {
+                    queueMicrotask(() => {
+                      searchRef.current?.focus()
+                    })
+                  }}
                 />
 
                 <Search.Results>

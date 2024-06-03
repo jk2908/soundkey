@@ -1,9 +1,9 @@
 const config = {
-  reactStrictMode: false,
+  reactStrictMode: false, // temp fix to get Framer Motion working in dev
   experimental: {
     reactCompiler: true
   },
-  webpack: config => {
+  webpack(config) {
     config.externals.push('@node-rs/argon2', '@node-rs/bcrypt')
     return config
   },

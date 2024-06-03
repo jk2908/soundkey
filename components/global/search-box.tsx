@@ -15,6 +15,7 @@ export type Props = {
   param?: string
   results?: string[]
   onConfirm?: (value: string) => void
+  onClear?: () => void
 } & Omit<InputProps, 'results'>
 
 export function SearchBox({
@@ -24,6 +25,7 @@ export function SearchBox({
   param = 'q',
   results,
   onConfirm,
+  onClear,
   ...rest
 }: Props) {
   const { replace } = useRouter()
@@ -47,10 +49,13 @@ export function SearchBox({
         replace(`${pathname}?${params.toString()}`)
       })
     }
+
+    if (!t) onClear?.()
   }
 
   useEffect(() => {
     if (!results?.length || !chipRef.current) return
+
     chipRef.current.focus()
   }, [results])
 
