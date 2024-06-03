@@ -11,7 +11,7 @@ type ThreadNavItem = {
 export function ThreadNav() {
   const items: ThreadNavItem[] = [
     { href: '/threads', label: 'Threads', icon: 'mails' },
-    { href: '/threads/new', label: 'New', icon: 'mail-+' },
+    { href: '/threads/send', label: 'Send', icon: 'mail-+' },
   ]
 
   return (

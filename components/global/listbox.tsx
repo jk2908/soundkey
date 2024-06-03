@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, forwardRef, use, useId, useState } from 'react'
+import { createContext, use, useId, useMemo, useState } from 'react'
 
 import { cn } from '#/utils/cn'
 
@@ -69,12 +69,19 @@ export function Options({
   )
 }
 
-export const Option = forwardRef<
-  HTMLButtonElement,
-  { children: React.ReactNode; value: string; className?: string }
->(({ children, value, className }, ref) => {
+export function Option({
+  value,
+  children,
+  ref,
+  className,
+}: {
+  value: string
+  children: React.ReactNode
+  ref?: React.Ref<HTMLButtonElement>
+  className?: string
+}) {
   const { selected, onSelect } = use(ListBoxContext)
-  const isSelected = selected.some(o => o === value)
+  const isSelected = useMemo(() => selected.some(o => o === value), [selected, value])
 
   return (
     <button
@@ -86,6 +93,4 @@ export const Option = forwardRef<
       {children}
     </button>
   )
-})
-
-Option.displayName = 'Option'
+}

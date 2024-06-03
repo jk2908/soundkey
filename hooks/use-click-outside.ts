@@ -1,15 +1,24 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 
-export function useClickOutside<T extends HTMLElement>(onClick: () => void, when?: boolean ) {
-  const ref = useRef<T>(null)
+type ClickOutsideProps = {
+  when?: boolean
+}
+
+export function useClickOutside(
+  ref: React.RefObject<HTMLElement> | React.RefObject<HTMLElement>[],
+  onClick: () => void,
+  config?: ClickOutsideProps
+) {
+  const { when } = config || {}
 
   useEffect(() => {
     if (when === false) return
 
     function handler(e: Event) {
       const target = e.target as HTMLElement
+      const refs = Array.isArray(ref) ? ref : [ref]
 
-      if (target !== ref.current && !ref.current?.contains(target)) {
+      if (!refs.some(r => r.current?.contains(target) || target === r.current)) {
         onClick?.()
       }
     }
@@ -19,7 +28,5 @@ export function useClickOutside<T extends HTMLElement>(onClick: () => void, when
     return () => {
       document.removeEventListener('click', handler)
     }
-  }, [onClick, when])
-
-  return ref
+  }, [ref, onClick, when])
 }

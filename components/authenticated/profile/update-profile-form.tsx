@@ -3,7 +3,6 @@
 import { useActionState, useEffect, useId, useRef } from 'react'
 import { update } from '#/api/profile/actions'
 
-import { ServerResponse } from '#/lib/types'
 import { useToast } from '#/hooks/use-toast'
 
 import { FormGroup } from '#/components/global/form-group'
@@ -11,12 +10,6 @@ import { Input } from '#/components/global/input'
 import { Label } from '#/components/global/label'
 import { Spinner } from '#/components/global/spinner'
 import { SubmitButton } from '#/components/global/submit-button'
-
-const initialState: ServerResponse = {
-  type: undefined,
-  message: null,
-  status: undefined,
-}
 
 export function UpdateProfileForm({
   userId,
@@ -32,18 +25,25 @@ export function UpdateProfileForm({
   const usernameId = useId()
   const bioId = useId()
 
-  const [state, dispatch] = useActionState(update.bind(null, userId), initialState)
+  const [res, dispatch] = useActionState(update.bind(null, userId), null)
   const { toast } = useToast()
 
   useEffect(() => {
-    if (!state.type) return
+    if (!res) return
+    
+    const { ok, message = '', status } = res
 
-    toast({ ...state })
+    if (!ok) {
+      toast.error({ message, status })
+      return
+    }
+      
+    toast.success({ message, status })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state])
+  }, [res])
 
   return (
-    <form key={state?.key} ref={ref} action={dispatch}>
+    <form key={res?.key} ref={ref} action={dispatch}>
       <FormGroup>
         <Label htmlFor={usernameId}>Username</Label>
         <Input
@@ -68,10 +68,10 @@ export function UpdateProfileForm({
 
       <FormGroup>
         <SubmitButton>
-          {({ pending }) => (
+          {({ isPending }) => (
             <>
               Update
-              {pending && <Spinner />}
+              {isPending && <Spinner />}
             </>
           )}
         </SubmitButton>

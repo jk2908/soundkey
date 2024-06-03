@@ -2,9 +2,9 @@ export function debounce<T extends Array<unknown>>(callback: (...args: T) => voi
   let timeoutId: ReturnType<typeof setTimeout> | number | undefined = undefined
 
   return (...args: T) => {
-    window.clearTimeout(timeoutId)
+    clearTimeout(timeoutId)
 
-    timeoutId = window.setTimeout(() => {
+    timeoutId = setTimeout(() => {
       callback.apply(null, args)
     }, wait)
   }

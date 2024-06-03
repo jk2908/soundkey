@@ -2,17 +2,17 @@
 
 import { createMessage, deleteMessage, updateMessage } from '#/api/message/utils'
 
-import { error, success } from '#/lib/db'
-import { ServerResponse } from '#/lib/types'
+import { error, success } from '#/utils/action-response'
+import { ActionResponse } from '#/lib/types'
 import { revalidateTag } from 'next/cache'
 
 export async function send(
   senderId: string,
   threadId: string | undefined,
   recipientIds: string[],
-  prevState: ServerResponse,
+  prevState: ActionResponse | null,
   formData: FormData
-): Promise<ServerResponse> {
+): Promise<ActionResponse> {
   try {
     const body = formData.get('body') as string
 
@@ -35,8 +35,8 @@ export async function send(
 
 export async function destroy(
   messageId: string,
-  prevState: ServerResponse
-): Promise<ServerResponse> {
+  prevState: ActionResponse | null
+): Promise<ActionResponse> {
   try {
     await deleteMessage(messageId)
 
@@ -49,8 +49,8 @@ export async function destroy(
 export async function update(
   messageId: string,
   body: string,
-  prevState: ServerResponse
-): Promise<ServerResponse> {
+  prevState: ActionResponse | null
+): Promise<ActionResponse> {
   try {
     await updateMessage({ messageId, body })
     

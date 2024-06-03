@@ -1,10 +1,11 @@
 'use client'
 
-import { use, useMemo } from 'react'
+import { use } from 'react'
 import { useRouter } from 'next/navigation'
-import { resolveThreadUsers } from '#/api/thread/handlers'
 
 import type { SafeUser, Thread } from '#/lib/schema'
+import { type WithFormattedTimestamps } from '#/lib/types'
+import { useResolvedThreadUsers } from '#/hooks/use-resolved-thread-users'
 import { cn } from '#/utils/cn'
 
 import * as ContextMenu from '#/components/global/context-menu'
@@ -12,15 +13,15 @@ import { Icon } from '#/components/global/icon'
 
 type Props = {
   userId: string
-  thread: Thread
+  thread: WithFormattedTimestamps<Thread, 'createdAt' | 'updatedAt'>
   onDelete: () => void
   onArchive?: () => void
   className?: string
 }
 
-export function ThreadPreview({ userId, thread, onDelete, onArchive, className }: Props) {
+export function ThreadPreview({ userId, thread, onDelete, className }: Props) {
   const { threadId, ownerId, createdAt, updatedAt } = thread
-  const usersPromise = useMemo(() => resolveThreadUsers(threadId), [threadId])
+  const usersPromise = useResolvedThreadUsers(threadId)
   const users = use<SafeUser[]>(usersPromise)
   const { push } = useRouter()
 
@@ -44,15 +45,11 @@ export function ThreadPreview({ userId, thread, onDelete, onArchive, className }
       onClick: onDelete,
       hideWhen: ownerId !== userId,
     },
-    {
-      label: 'Archive',
-      onClick: () => {},
-    },
   ]
 
   return (
-    <tr key={thread.threadId} onClick={open} role="row" className={cn('cursor-pointer', className)}>
-      <td role="gridcell">
+    <tr key={threadId} onClick={open} role="row" className={cn('cursor-pointer', className)}>
+      <td>
         {usersDisplay.map((u, idx) => (
           <span
             key={u.userId}
@@ -63,10 +60,8 @@ export function ThreadPreview({ userId, thread, onDelete, onArchive, className }
         ))}
       </td>
 
-      <td className="font-mono text-xs">{new Date(createdAt).toLocaleString()}</td>
-      <td className="font-mono text-xs">
-        {updatedAt ? new Date(updatedAt).toLocaleString() : '-'}
-      </td>
+      <td className="font-mono text-xs">{createdAt}</td>
+      <td className="font-mono text-xs">{updatedAt ?? '-'}</td>
       <td>
         <ContextMenu.Root>
           <ContextMenu.Toggle

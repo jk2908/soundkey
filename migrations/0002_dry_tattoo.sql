@@ -1,1 +1,0 @@
-ALTER TABLE `profile` RENAME COLUMN `description` TO `bio`;

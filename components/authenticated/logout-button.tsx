@@ -13,10 +13,10 @@ export function LogoutButton({
   return (
     <form action={logout}>
       <SubmitButton {...rest}>
-        {({ pending }) => (
+        {({ isPending }) => (
           <>
             {children}
-            {pending && <Spinner size={16} />}
+            {isPending && <Spinner size={16} />}
           </>
         )}
       </SubmitButton>

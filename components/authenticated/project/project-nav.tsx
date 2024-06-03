@@ -10,8 +10,10 @@ type ProjectNavItem = {
 
 export function ProjectNav() {
   const items: ProjectNavItem[] = [
-    { href: '/projects', label: 'Projects', icon: 'folder-heart' },
-    { href: '/projects/new', label: 'New', icon: 'folder-+' },
+    { href: '/projects', label: 'Ongoing', icon: 'folder-heart' },
+    { href: '/projects/create', label: 'Create', icon: 'folder-+' },
+    { href: '/projects/search', label: 'Search', icon: 'search' },
+    { href: '/projects/archive', label: 'Archive', icon: 'folder-x' },
   ]
 
   return (

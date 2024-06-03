@@ -2,17 +2,20 @@ import { cn } from '#/utils/cn'
 
 export function KeylineBox({
   children,
+  ref,
   fill,
   className,
 }: {
   children: React.ReactNode
+  ref?: React.Ref<HTMLDivElement>
   fill?: boolean
   className?: string
 }) {
   return (
     <div
+      ref={ref}
       className={cn(
-        'xs:rounded-2xl xs:border xs:border-keyline xs:p-8',
+        'border-keyline xs:rounded-2xl xs:border xs:p-8',
         fill && 'bg-keyline/25',
         className
       )}>

@@ -16,6 +16,7 @@ import { Button } from '#/components/global/button'
 import { HorizontalRule } from '#/components/global/horizontal-rule'
 import { Icon } from '#/components/global/icon'
 import { Logo } from '#/components/global/logo'
+import { Overlay } from '#/components/global/overlay'
 import { Section } from '#/components/global/section'
 import { Spinner } from '#/components/global/spinner'
 import { YSpace } from '#/components/global/y-space'
@@ -30,15 +31,17 @@ export const SidebarContext = createContext<{
 
 export function Sidebar({ children }: { children: React.ReactNode }) {
   const [isOpen, setOpen] = useState(false)
-  const mq = useMediaQuery(`(min-width: ${breakpoints.md})`)
+  const mq = useMediaQuery(`(min-width: ${breakpoints.lg})`)
   const toggleRef = useRef<HTMLButtonElement>(null)
-  const sidebarRef = useClickOutside<HTMLDivElement>(() => !mq && setOpen(false))
+  const sidebarRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setOpen(mq ? true : false)
   }, [mq])
 
+  useClickOutside([sidebarRef, toggleRef], () => !mq && setOpen(false))
   useFocusScope(sidebarRef, { when: isOpen && !mq })
+
   useKey(
     'Escape',
     () => {
@@ -56,12 +59,22 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
   return (
     <>
       {!mq && (
-        <button
+        <Button
           ref={toggleRef}
-          onClick={() => setOpen(prev => !prev)}
-          className="fixed bottom-8 right-8 z-50 md:hidden">
-          Toggle
-        </button>
+          onClick={(e: React.MouseEvent) => {
+            e.stopPropagation()
+            setOpen(prev => !prev)
+          }}
+          className="fixed bottom-8 right-8 z-50 px-6 lg:hidden">
+          Menu
+          <Icon
+            name="chevron-right"
+            size={16}
+            colour="#fff"
+            className="transition-transform"
+            style={{ transform: `rotate(${isOpen ? 180 : 0}deg)` }}
+          />
+        </Button>
       )}
 
       <SidebarContext.Provider value={{ isOpen, setOpen }}>
@@ -69,10 +82,10 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
           ref={sidebarRef}
           size="lg"
           className={cn(
-            'h-screen w-56 shrink-0 rounded-e-3xl border border-keyline bg-app-bg aria-current:bg-app-bg-inverted',
+            'h-screen w-[min(320px,_100vw)] shrink-0 rounded-e-3xl border border-keyline bg-app-bg aria-current:bg-app-bg-inverted',
             'fixed inset-0 z-40 transition-transform',
             !isOpen && '-translate-x-full',
-            'md:sticky md:top-0 md:translate-x-0'
+            'lg:sticky lg:top-0 lg:translate-x-0'
           )}>
           <YSpace className="flex h-full flex-col">
             <div className="flex items-center justify-between">

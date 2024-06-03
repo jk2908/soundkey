@@ -3,10 +3,10 @@
 import React, {
   Children,
   createContext,
-  forwardRef,
   use,
   useCallback,
   useImperativeHandle,
+  useRef,
 } from 'react'
 import { flushSync } from 'react-dom'
 
@@ -15,7 +15,6 @@ import { useFocusScope } from '#/hooks/use-focus-scope'
 import { useKey } from '#/hooks/use-key'
 import { useScrollLock } from '#/hooks/use-scroll-lock'
 import { cn } from '#/utils/cn'
-import { generateId } from '#/utils/generate-id'
 import { toSmartEscape } from '#/utils/to-smart-escape'
 
 import { Button, type Props as ButtonProps } from '#/components/global/button'
@@ -84,21 +83,20 @@ type Size = 'sm' | 'md' | 'lg'
 
 type ContentProps = {
   children: React.ReactNode
+  ref?: React.Ref<HTMLDivElement>
   size?: Size
   className?: string
 }
 
-export const Content = forwardRef<
-  HTMLDivElement,
-  ContentProps & React.HTMLAttributes<HTMLDivElement>
->(({ children, size = 'sm', className, ...rest }, ref) => {
+export function Content({ children, ref, size = 'md', className, ...rest }: ContentProps) {
   const { isOpen, isDismissible, close } = use(ModalContext)
+  const localRef = useRef<HTMLDivElement>(null)
 
-  const localRef = useClickOutside<HTMLDivElement>(() => isOpen && isDismissible && close())
-  useImperativeHandle(ref, () => localRef.current!)
+  useClickOutside(localRef, () => isOpen && isDismissible && close())
   useFocusScope(localRef, {
     when: isOpen,
   })
+  useImperativeHandle(ref, () => localRef.current!)
 
   const styleMap: Record<Size, string> = {
     sm: '300px',
@@ -110,7 +108,7 @@ export const Content = forwardRef<
     <div
       ref={localRef}
       className={cn(
-        'fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-app-bg-inverted p-6 text-app-fg-inverted shadow-lg',
+        'fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-app-bg-inverted px-6 py-10 text-app-fg-inverted shadow-lg',
         className
       )}
       style={{
@@ -120,9 +118,7 @@ export const Content = forwardRef<
       {children}
     </div>
   )
-})
-
-Content.displayName = 'ModalContent'
+}
 
 export function Heading({
   children,
@@ -161,7 +157,7 @@ export function Close({ variant = 'tertiary', className, ...rest }: Omit<ButtonP
 }
 
 export function Actions({ children, className, ...rest }: React.HTMLAttributes<HTMLUListElement>) {
-  const wrapped = Children.map(children, child => <li key={generateId()}>{child}</li>)
+  const wrapped = Children.map(children, (child, idx) => <li key={idx}>{child}</li>)
 
   return (
     <ul className={cn('mt-5 flex justify-center gap-2', className)} {...rest}>
@@ -170,6 +166,6 @@ export function Actions({ children, className, ...rest }: React.HTMLAttributes<H
   )
 }
 
-export function Overlay({ children, ...props }: OverlayProps) {
-  return <OverlayPrimitive {...props}>{children}</OverlayPrimitive>
+export function Overlay(props: OverlayProps) {
+  return <OverlayPrimitive {...props} />
 }

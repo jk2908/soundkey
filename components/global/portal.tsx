@@ -6,14 +6,17 @@ import { useMounted } from '#/hooks/use-mounted'
 
 export function Portal({
   children,
+  when = true,
   target,
 }: {
   children: React.ReactNode
+  when?: boolean
   target?: Element | DocumentFragment | null
-}) {
-  const mounted = useMounted()
+}) {  
+  const isMounted = useMounted()
 
-  if (!mounted) return null
+  if (!when) return children
+  if (!isMounted) return null
 
   return createPortal(children, target || document.getElementById('portal')!)
 }

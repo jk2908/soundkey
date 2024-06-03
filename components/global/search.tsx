@@ -33,13 +33,11 @@ export function Root({
   )
 }
 
-export const Box = forwardRef<HTMLInputElement, SearchBoxProps>(({ ...props }, ref) => {
+export function Box({ ref, ...rest }: SearchBoxProps) {
   const { value, setValue } = use(SearchContext)
-
-  return <SearchBox ref={ref} value={value} setValue={setValue} {...props} />
-})
-
-Box.displayName = 'Box'
+  
+  return <SearchBox ref={ref} value={value} setValue={setValue} {...rest} />
+}
 
 export function Results({ children }: { children: React.ReactNode }) {
   return <>{children}</>

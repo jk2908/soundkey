@@ -22,6 +22,9 @@ export type Icon =
   | 'folder-+'
   | 'folder-x'
   | 'info'
+  | 'chevron-right'
+  | 'chevron-left'
+  | 'calendar-plus'
 
 export type Props = {
   name: Icon

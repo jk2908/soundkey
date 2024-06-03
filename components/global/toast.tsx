@@ -13,7 +13,7 @@ import * as Popover from '#/components/global/popover'
 
 export function Toast({ toast, className, ...rest }: { toast: Toast; className?: string }) {
   const { id, type, message, status } = toast
-  const { removeToast } = useToast()
+  const { toast: { remove } } = useToast()
 
   const [isCopied, setCopied] = useState(false)
 
@@ -61,7 +61,7 @@ export function Toast({ toast, className, ...rest }: { toast: Toast; className?:
           </Popover.Root>
         )}
       </div>
-      <CloseButton onClick={() => removeToast(id)} colour="#fff" />
+      <CloseButton onClick={() => remove(id)} colour="#fff" />
     </motion.div>
   )
 }

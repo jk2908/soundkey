@@ -3,15 +3,15 @@
 import { revalidateTag } from 'next/cache'
 import { updateProfile } from '#/api/profile/utils'
 
-import { error, success } from '#/lib/db'
-import { ServerResponse } from '#/lib/types'
+import { error, success } from '#/utils/action-response'
+import { ActionResponse } from '#/lib/types'
 import { generateId } from '#/utils/generate-id'
 
 export async function update(
   userId: string,
-  prevState: ServerResponse,
+  prevState: ActionResponse | null,
   formData: FormData
-): Promise<ServerResponse> {
+): Promise<ActionResponse> {
   try {
     const bio = formData.get('bio') as string
 

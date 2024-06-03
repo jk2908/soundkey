@@ -1,4 +1,3 @@
-import { on } from 'events'
 import { useEffect } from 'react'
 import focusableSelectors from 'focusable-selectors'
 

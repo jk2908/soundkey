@@ -1,5 +1,5 @@
 import { InferInsertModel, InferSelectModel, relations, sql } from 'drizzle-orm'
-import { integer, primaryKey, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
 
 import { generateId } from '#/utils/generate-id'
 
@@ -51,18 +51,17 @@ export const passwordResetTokenTable = sqliteTable('password_reset_token', {
   expiresAt: integer('expires_at').notNull(),
 })
 
-export const threadToUserTable = sqliteTable(
-  'thread_to_user',
-  {
-    id: text('id').primaryKey().$defaultFn(() => generateId()),
-    threadId: text('thread_id')
-      .notNull()
-      .references(() => threadTable.id),
-    userId: text('user_id')
-      .notNull()
-      .references(() => userTable.id, { onUpdate: 'cascade', onDelete: 'cascade' }),
-  },
-)
+export const threadToUserTable = sqliteTable('thread_to_user', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => generateId()),
+  threadId: text('thread_id')
+    .notNull()
+    .references(() => threadTable.id),
+  userId: text('user_id')
+    .notNull()
+    .references(() => userTable.id, { onUpdate: 'cascade', onDelete: 'cascade' }),
+})
 
 export const threadTable = sqliteTable('thread', {
   id: text('id')
@@ -86,8 +85,7 @@ export const messageTable = sqliteTable('message', {
   senderId: text('sender_id')
     .notNull()
     .references(() => userTable.id),
-  recipientIds: text('recipient_ids')
-    .notNull(),
+  recipientIds: text('recipient_ids').notNull(),
   body: text('body').notNull(),
   createdAt: integer('created_at')
     .notNull()
@@ -110,6 +108,53 @@ export const profileTable = sqliteTable('profile', {
   avatar: text('avatar'),
 })
 
+export const projectTable = sqliteTable('project', {
+  id: text('id')
+    .primaryKey()
+    .notNull()
+    .$defaultFn(() => generateId()),
+  userId: text('user_id')
+    .notNull()
+    .references(() => userTable.id, {
+      onUpdate: 'cascade',
+      onDelete: 'cascade',
+    }),
+  name: text('name').notNull(),
+  description: text('description'),
+  coordinatorName: text('coordinator_name').notNull(),
+  coordinatorEmail: text('coordinator_email').notNull(),
+  coordinatorPhone: text('coordinator_phone'),
+  artist: text('artist').notNull(),
+  management: text('management'),
+  label: text('label'),
+  createdAt: integer('created_at')
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: integer('updated_at'),
+})
+
+export const projectTaskTable = sqliteTable('project_task', {
+  id: text('id')
+    .primaryKey()
+    .notNull()
+    .$defaultFn(() => generateId()),
+  projectId: text('project_id')
+    .notNull()
+    .references(() => projectTable.id, {
+      onUpdate: 'cascade',
+      onDelete: 'cascade',
+    }),
+  assigneeIds: text('assignee_ids').notNull(),
+  title: text('title').notNull(),
+  description: text('description'),
+  due: integer('due'),
+  isCompleted: integer('is_completed', { mode: 'boolean' }).default(false).notNull(),
+  createdAt: integer('created_at')
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: integer('updated_at'),
+})
+
 export const userRelations = relations(userTable, ({ one, many }) => ({
   session: many(sessionTable),
   emailVerificationToken: many(emailVerificationTokenTable),
@@ -119,6 +164,7 @@ export const userRelations = relations(userTable, ({ one, many }) => ({
     fields: [userTable.id],
     references: [profileTable.userId],
   }),
+  project: many(projectTable),
 }))
 
 export const sessionRelations = relations(sessionTable, ({ one }) => ({
@@ -175,8 +221,25 @@ export const profileRelations = relations(profileTable, ({ one }) => ({
   }),
 }))
 
+export const projectRelations = relations(projectTable, ({ one, many }) => ({
+  user: one(userTable, {
+    fields: [projectTable.userId],
+    references: [userTable.id],
+  }),
+  task: many(projectTaskTable),
+}))
+
+export const projectTaskRelations = relations(projectTaskTable, ({ one }) => ({
+  project: one(projectTable, {
+    fields: [projectTaskTable.projectId],
+    references: [projectTable.id],
+  }),
+}))
+
 export type User = InferSelectModel<typeof userTable>
-export type SafeUser = Omit<User, 'id' | 'hashedPassword' | 'emailVerified' | 'role'> & { userId: string }
+export type SafeUser = Omit<User, 'id' | 'hashedPassword' | 'emailVerified' | 'role'> & {
+  userId: string
+}
 export type NewUser = Omit<InferInsertModel<typeof userTable>, 'id' | 'hashedPassword'> & {
   password: string
 }
@@ -199,3 +262,9 @@ export type EditProfile = InferInsertModel<typeof profileTable> & { userId: stri
 
 export type MessageType = (typeof messageTypes)[number]
 export type UserRole = (typeof userRoles)[number]
+
+export type Project =  Omit<InferSelectModel<typeof projectTable>, 'id'> & { projectId: string }
+export type NewProject = InferInsertModel<typeof projectTable>
+
+export type ProjectTask = InferSelectModel<typeof projectTaskTable>
+export type NewProjectTask = InferInsertModel<typeof projectTaskTable>

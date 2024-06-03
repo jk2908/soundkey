@@ -1,29 +1,22 @@
 'use client'
 
-import { useEffect, useId, useRef, useState, useActionState } from 'react'
+import { useActionState, useEffect, useId, useRef, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { send } from '#/api/message/actions'
 import { flushSync } from 'react-dom'
 
-import type { ServerResponse } from '#/lib/types'
 import { useToast } from '#/hooks/use-toast'
 import { cn } from '#/utils/cn'
 import { generateId } from '#/utils/generate-id'
 
-import { Label } from '#/components/global/label'
 import { FormGroup } from '#/components/global/form-group'
 import { Icon } from '#/components/global/icon'
+import { Label } from '#/components/global/label'
 import * as Listbox from '#/components/global/listbox'
-import { Spinner } from '#/components/global/spinner'
 import * as Search from '#/components/global/search'
+import { Spinner } from '#/components/global/spinner'
 import { SubmitButton } from '#/components/global/submit-button'
 import { Textarea } from '#/components/global/textarea'
-
-const initialState: ServerResponse = {
-  type: undefined,
-  message: null,
-  status: undefined,
-}
 
 type ResolvedRecipient = {
   userId: string
@@ -36,27 +29,28 @@ export function SendMessageForm({
   resolvedRecipients = [],
   forceScroll = true,
   className,
+  ...rest
 }: {
   senderId: string
   threadId?: string
   resolvedRecipients: ResolvedRecipient[] | []
   forceScroll?: boolean
   className?: string
-}) {
+} & React.HTMLAttributes<HTMLFormElement>) {
   const ref = useRef<HTMLFormElement>(null)
   const recipientId = useId()
   const bodyId = useId()
   const bodyRef = useRef<HTMLTextAreaElement>(null)
   const [recipients, setRecipients] = useState<ResolvedRecipient[] | []>(resolvedRecipients)
 
-  const [state, dispatch] = useActionState(
+  const [res, dispatch] = useActionState(
     send.bind(
       null,
       senderId,
       threadId,
       recipients.map(r => r.userId)
     ),
-    initialState
+    null
   )
 
   const { replace, push } = useRouter()
@@ -65,16 +59,19 @@ export function SendMessageForm({
   const pathname = usePathname()
 
   useEffect(() => {
-    const { type, payload } = state
+    if (!res) return
 
-    if (!type) return
+    const { ok, message = '', status, payload } = res
 
-    toast({ ...state })
+    if (!ok) {
+      toast.error({ message, status })
+      return
+    }
 
-    if (type !== 'success') return
+    toast.success({ message, status })
 
     if (payload && !threadId) {
-      push(pathname.replace('new', payload.toString()))
+      push(`/threads/${payload}`)
     }
 
     if (bodyRef.current) {
@@ -83,10 +80,10 @@ export function SendMessageForm({
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state, push])
+  }, [res, push])
 
   useEffect(() => {
-    if (!forceScroll || state.type !== 'success') return
+    if (!forceScroll || !res?.ok) return
 
     setTimeout(() => {
       if (!ref.current) return
@@ -96,10 +93,14 @@ export function SendMessageForm({
         behavior: 'smooth',
       })
     }, 1000)
-  }, [forceScroll, state])
+  }, [forceScroll, res])
 
   return (
-    <form ref={ref} action={dispatch} className={cn('flex flex-col', className)}>
+    <form
+      ref={ref}
+      action={dispatch}
+      className={cn('flex max-w-prose flex-col', className)}
+      {...rest}>
       {!threadId && (
         <FormGroup>
           <Label htmlFor={recipientId} className="sr-only">
@@ -164,22 +165,15 @@ export function SendMessageForm({
         <Label htmlFor={bodyId} className={cn(threadId && 'sr-only')}>
           Message
         </Label>
-        <Textarea
-          ref={bodyRef}
-          id={bodyId}
-          name="body"
-          required
-          className="max-w-prose bg-keyline/30"
-          style={{ minHeight: '200px' }}
-        />
+        <Textarea ref={bodyRef} id={bodyId} name="body" required style={{ minHeight: '200px' }} />
       </FormGroup>
 
       <FormGroup>
         <SubmitButton>
-          {({ pending }) => (
+          {({ isPending }) => (
             <>
               Send
-              {pending && <Spinner />}
+              {isPending && <Spinner />}
             </>
           )}
         </SubmitButton>

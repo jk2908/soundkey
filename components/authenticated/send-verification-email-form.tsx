@@ -1,39 +1,39 @@
 'use client'
 
-import { useEffect, useActionState } from 'react'
+import { useActionState, useEffect } from 'react'
 import { verify } from '#/api/user/actions'
 
-import type { ServerResponse } from '#/lib/types'
 import { useToast } from '#/hooks/use-toast'
 
 import { Spinner } from '#/components/global/spinner'
 import { SubmitButton } from '#/components/global/submit-button'
 
-const initialState: ServerResponse = {
-  type: undefined,
-  message: null,
-  status: undefined,
-}
-
 export function SendVerificationEmailForm() {
-  const [state, dispatch] = useActionState(verify, initialState)
+  const [res, dispatch] = useActionState(verify, null)
 
   const { toast } = useToast()
 
   useEffect(() => {
-    if (!state.type) return
+    if (!res) return
+    
+    const { ok, message = '', status } = res
 
-    toast({ ...state })
+    if (!ok) {
+      toast.error({ message, status })
+      return
+    } 
+      
+    toast.success({ message, status })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state])
+  }, [res])
 
   return (
     <form action={dispatch}>
       <SubmitButton>
-        {({ pending }) => (
+        {({ isPending }) => (
           <>
             Resend email
-            {pending && <Spinner />}
+            {isPending && <Spinner />}
           </>
         )}
       </SubmitButton>

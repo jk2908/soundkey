@@ -3,7 +3,6 @@
 import { useActionState, useEffect, useId } from 'react'
 import { signup } from '#/api/user/actions'
 
-import { ServerResponse } from '#/lib/types'
 import { useToast } from '#/hooks/use-toast'
 
 import { FormGroup } from '#/components/global/form-group'
@@ -12,27 +11,27 @@ import { Label } from '#/components/global/label'
 import { Spinner } from '#/components/global/spinner'
 import { SubmitButton } from '#/components/global/submit-button'
 
-const initialState: ServerResponse = {
-  type: undefined,
-  message: null,
-  status: undefined,
-}
-
 export function SignupForm() {
   const emailId = useId()
   const passwordId = useId()
   const usernameId = useId()
 
-  const [state, dispatch] = useActionState(signup, initialState)
+  const [res, dispatch] = useActionState(signup, null)
   const { toast } = useToast()
 
   useEffect(() => {
-    if (!state.type) return
+    if (!res) return
+    
+    const { ok, message = '', status } = res
 
-    toast({ ...state })
+    if (!ok) {
+      toast.error({ message, status })
+      return
+    }
 
+    toast.success({ message, status })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state])
+  }, [res])
 
   return (
     <form action={dispatch} autoComplete="off">
@@ -59,10 +58,10 @@ export function SignupForm() {
 
       <FormGroup>
         <SubmitButton>
-          {({ pending }) => (
+          {({ isPending }) => (
             <>
               Signup
-              {pending && <Spinner />}
+              {isPending && <Spinner />}
             </>
           )}
         </SubmitButton>

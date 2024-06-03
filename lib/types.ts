@@ -40,16 +40,13 @@ export type Toast = {
 
 export type Theme = 'light' | 'dark' | undefined
 
-export type ServerResponse =
-  | {
-      type: 'success' | 'error'
-      ok: boolean
-      message: string
-      status: number
-      key?: string
-      payload?: unknown
-    }
-  | { type: undefined; message: null; status: undefined; key?: string; payload?: unknown }
+export type ActionResponse = {
+  ok?: boolean
+  message?: string
+  status?: number
+  key?: string
+  payload?: unknown
+}
 
 export type Route = {
   label: string
@@ -61,3 +58,14 @@ export type ThreadAction = {
   label: string
   onClick: () => Promise<void>
 }
+
+export type ProjectTask = {
+  id: string
+  title: string
+  description: string
+  isCompleted: boolean
+}
+
+export type WithFormattedTimestamps<T extends {}, K extends keyof T> = {
+  [P in Exclude<keyof T, K>]: T[P]
+} & { [P in K]: string | null }

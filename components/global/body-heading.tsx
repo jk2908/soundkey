@@ -13,17 +13,17 @@ export function BodyHeading({ children, level = 2, styleAsLevel, className, ...r
   const Cmp = `h${level}` as const
 
   const styleMap: Record<Level, string> = {
-    1: 'text-2xl',
-    2: 'text-xl',
-    3: 'text-lg',
-    4: 'text-md',
-    5: 'text-base',
-    6: 'text-sm',
+    1: 'text-lg',
+    2: 'text-md',
+    3: 'text-base',
+    4: 'text-sm',
+    5: 'text-xs',
+    6: 'text-xs',
   }
 
   return (
     <Cmp
-      className={cn('font-medium tracking-wide', className, styleMap[styleAsLevel ?? level])}
+      className={cn('font-medium tracking-wide font-mono italic', className, styleMap[styleAsLevel ?? level])}
       {...rest}>
       {children}
     </Cmp>

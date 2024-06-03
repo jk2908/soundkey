@@ -5,6 +5,7 @@ import { deleteThread, getThreads } from '#/api/thread/utils'
 import { ErrorBoundary } from 'react-error-boundary'
 
 import { auth } from '#/lib/auth'
+import { toLocaleFromTimestamp } from '#/utils/to-locale-from-timestamp'
 
 import { ThreadPreview } from '#/components/authenticated/thread/thread-preview'
 import { Icon } from '#/components/global/icon'
@@ -24,7 +25,7 @@ export default async function Page() {
           <div className="sk-scrollbar flex overflow-x-auto">
             <table className="sk-table" role="treegrid" aria-label="List of threads">
               <thead>
-                <tr role="row">
+                <tr>
                   <th>With</th>
                   <th className="w-56">Created</th>
                   <th className="w-56">Updated</th>
@@ -33,12 +34,17 @@ export default async function Page() {
                   </th>
                 </tr>
               </thead>
+
               <tbody>
                 {threads.map(t => (
                   <Suspense key={t.threadId} fallback={<SKTableRowLoader cells={4} />}>
                     <ThreadPreview
                       userId={user.userId}
-                      thread={t}
+                      thread={{
+                        ...t,
+                        createdAt: toLocaleFromTimestamp(t.createdAt),
+                        updatedAt: toLocaleFromTimestamp(t.updatedAt),
+                      }}
                       onDelete={async () => {
                         'use server'
                         await deleteThread(t.threadId)
@@ -55,7 +61,7 @@ export default async function Page() {
           <Icon name="inbox" size={20} />
           <p>
             No threads found.{' '}
-            <Link href="/threads/new" className="body-link">
+            <Link href="/threads/send" className="body-link">
               Send a message
             </Link>
             ?

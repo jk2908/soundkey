@@ -310,4 +310,43 @@
     <circle cx="12" cy="12" r="10"/>
     <path d="M12 16v-4m0-4h.01"/>
   </symbol>
+
+  <symbol 
+    id="icon-chevron-right"
+    xmlns="http://www.w3.org/2000/svg" 
+    fill="none" 
+    stroke="currentColor" 
+    stroke-linecap="round" 
+    stroke-linejoin="round" 
+    stroke-width="2"
+    style="stroke: var(--c, currentColor)"
+    viewBox="0 0 24 24">
+    <path d="m9 18 6-6-6-6"/>
+  </symbol>
+
+  <symbol
+    id="icon-chevron-left" 
+    xmlns="http://www.w3.org/2000/svg" 
+    fill="none" 
+    stroke="currentColor" 
+    stroke-linecap="round" 
+    stroke-linejoin="round" 
+    stroke-width="2" 
+    style="stroke: var(--c, currentColor)"
+    viewBox="0 0 24 24">
+    <path d="m15 18-6-6 6-6"/>
+  </symbol>
+
+  <symbol 
+    id="icon-calendar-plus"
+    xmlns="http://www.w3.org/2000/svg" 
+    fill="none" 
+    stroke="currentColor" 
+    stroke-linecap="round" 
+    stroke-linejoin="round" 
+    stroke-width="2" 
+    style="stroke: var(--c, currentColor)"
+    viewBox="0 0 24 24">
+    <path d="M8 2v4m8-4v4m5 7V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h8M3 10h18m-5 9h6m-3-3v6"/>
+  </symbol>
 </svg>

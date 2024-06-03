@@ -10,30 +10,31 @@ import { Argon2id } from 'oslo/password'
 
 import { lucia } from '#/lib/auth'
 import { APP_NAME } from '#/lib/config'
-import { db, error, success } from '#/lib/db'
+import { db } from '#/lib/db'
+import { error, success } from '#/utils/action-response'
 import { userTable } from '#/lib/schema'
-import type { ServerResponse } from '#/lib/types'
+import type { ActionResponse } from '#/lib/types'
 import { isValidEmail } from '#/utils/is-valid-email'
 
 export async function signup(
-  prevState: ServerResponse,
+  prevState: ActionResponse | null,
   formData: FormData
-): Promise<ServerResponse> {
-  const email = formData.get('email') as string
-  const password = formData.get('password') as string
-  const username = formData.get('username') as string
-
-  if (!isValidEmail(email)) return error(400, 'Invalid email')
-
-  if (typeof password !== 'string' || password.length < 8 || password.length > 255) {
-    return error(400, 'Invalid password')
-  }
-
-  if (typeof username !== 'string' || username.length < 3 || username.length > 255) {
-    return error(400, 'Invalid username')
-  }
-
+): Promise<ActionResponse> {
   try {
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
+    const username = formData.get('username') as string
+
+    if (!isValidEmail(email)) return error(400, 'Invalid email')
+
+    if (typeof password !== 'string' || password.length < 8 || password.length > 255) {
+      return error(400, 'Invalid password')
+    }
+
+    if (typeof username !== 'string' || username.length < 3 || username.length > 255) {
+      return error(400, 'Invalid username')
+    }
+
     const user = await createUser({ email, password, username })
     const session = await lucia.createSession(user.userId, {})
 
@@ -59,19 +60,19 @@ export async function signup(
 }
 
 export async function login(
-  prevState: ServerResponse,
+  prevState: ActionResponse | null,
   formData: FormData
-): Promise<ServerResponse> {
-  const email = formData.get('email') as string
-  const password = formData.get('password') as string
-
-  if (!isValidEmail(email)) return error(400, 'Invalid email')
-
-  if (typeof password !== 'string' || password.length < 8 || password.length > 255) {
-    return error(400, 'Invalid password')
-  }
-
+): Promise<ActionResponse> {
   try {
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
+
+    if (!isValidEmail(email)) return error(400, 'Invalid email')
+
+    if (typeof password !== 'string' || password.length < 8 || password.length > 255) {
+      return error(400, 'Invalid password')
+    }
+
     const [user] = await db
       .select({ userId: userTable.id, hashedPassword: userTable.hashedPassword })
       .from(userTable)
@@ -94,30 +95,34 @@ export async function login(
 }
 
 export async function logout() {
-  const sessionId = cookies().get(lucia.sessionCookieName)?.value
+  try {
+    const sessionId = cookies().get(lucia.sessionCookieName)?.value
 
-  if (!sessionId) return error(401, 'No session')
+    if (!sessionId) return error(401, 'No session')
 
-  await lucia.invalidateSession(sessionId)
+    await lucia.invalidateSession(sessionId)
 
-  const sessionCookie = lucia.createBlankSessionCookie()
-  cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes)
+    const sessionCookie = lucia.createBlankSessionCookie()
+    cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes)
 
-  return success(200, 'Logged out')
+    return success(200, 'Logged out')
+  } catch (err) {
+    return error(500, err instanceof Error ? err.message : 'An unknown error occurred')
+  }
 }
 
-export async function verify(prevState: ServerResponse): Promise<ServerResponse> {
-  const sessionId = lucia.readSessionCookie('auth_session=abc')
-
-  if (!sessionId) return error(401, 'Session not found')
-
-  const { user } = await lucia.validateSession(sessionId)
-
-  if (!user) return error(401, 'User not found')
-
-  if (user.emailVerified) error(400, 'Email already verified')
-
+export async function verify(prevState: ActionResponse | null): Promise<ActionResponse> {
   try {
+    const sessionId = lucia.readSessionCookie('auth_session=abc')
+
+    if (!sessionId) return error(401, 'Session not found')
+
+    const { user } = await lucia.validateSession(sessionId)
+
+    if (!user) return error(401, 'User not found')
+
+    if (user.emailVerified) error(400, 'Email already verified')
+
     const token = await createEmailVerificationToken(user.userId)
     await sendVerificationEmail(user.email, token)
 
@@ -128,16 +133,16 @@ export async function verify(prevState: ServerResponse): Promise<ServerResponse>
 }
 
 export async function reset(
-  prevState: ServerResponse,
+  prevState: ActionResponse | null,
   formData: FormData
-): Promise<ServerResponse> {
-  const email = formData.get('email') as string
-
-  if (!isValidEmail(email)) {
-    return error(400, 'Invalid email')
-  }
-
+): Promise<ActionResponse> {
   try {
+    const email = formData.get('email') as string
+
+    if (!isValidEmail(email)) {
+      return error(400, 'Invalid email')
+    }
+
     const [user] = await db
       .select()
       .from(userTable)

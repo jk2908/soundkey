@@ -19,7 +19,7 @@ export const Chip = forwardRef<HTMLElement | HTMLButtonElement, Props>(
         onClick={onClick}
         type={onClick ? 'button' : undefined}
         className={cn(
-          'flex h-full items-center gap-2 rounded-full bg-keyline/30 px-4 py-2 font-mono text-xs text-gr33n-100',
+          'flex h-full items-center gap-2 rounded-full bg-keyline/30 px-4 py-2 font-mono text-xs',
           className
         )}
         {...rest}>

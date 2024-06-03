@@ -72,8 +72,9 @@ export function Root({ children, onBeforeOpen, onAfterClose, duration }: Props) 
   }
 
   const toggleRef = useRef<HTMLButtonElement>(null)
-  const contentRef = useClickOutside<HTMLDivElement>(onClickOutsideOrEsc)
+  const contentRef = useRef<HTMLDivElement>(null)
 
+  useClickOutside(contentRef, onClickOutsideOrEsc)
   useFocusScope(contentRef, {
     when: isOpen,
     roving: true,
@@ -90,15 +91,10 @@ export function Root({ children, onBeforeOpen, onAfterClose, duration }: Props) 
 
 export type ToggleProps = {
   children: React.ReactNode | (({ isOpen }: { isOpen: boolean }) => React.ReactNode)
-} & React.HTMLAttributes<HTMLButtonElement>
+} & Omit<React.HTMLAttributes<HTMLButtonElement>, 'children'>
 
 export function Toggle({ children, ...rest }: ToggleProps) {
   const { id, isOpen, toggle, toggleRef } = use(PopoverContext)
-
-  function handleClick(e: React.SyntheticEvent) {
-    e.stopPropagation()
-    toggle(isOpen)
-  }
 
   return (
     <button
@@ -107,7 +103,10 @@ export function Toggle({ children, ...rest }: ToggleProps) {
       aria-haspopup="true"
       aria-expanded={isOpen}
       aria-controls={`${id}-c`}
-      onClick={handleClick}
+      onClick={(e: React.SyntheticEvent) => {
+        e.stopPropagation()
+        toggle(isOpen)
+      }}
       {...rest}>
       {typeof children === 'function' ? children({ isOpen }) : children}
     </button>
@@ -166,10 +165,10 @@ export function Content({
   }, [doCalc, isOpen])
 
   useEffect(() => {
-    window.addEventListener('resize', doCalc)
+    addEventListener('resize', doCalc)
 
     return () => {
-      window.removeEventListener('resize', doCalc)
+      removeEventListener('resize', doCalc)
     }
   }, [doCalc])
 

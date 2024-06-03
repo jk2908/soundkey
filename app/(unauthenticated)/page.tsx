@@ -8,7 +8,7 @@ export default async function Page() {
     <KeylineBox>
       <Tabs.Root initialValue="signup" loop>
         <div className="space-y-8">
-          <Tabs.List className="rounded-tab-group mx-auto max-w-72">
+          <Tabs.List className="rounded-tab-group max-w-prose mx-auto">
             <Tabs.Button value="signup">
               Signup
             </Tabs.Button>
@@ -17,11 +17,11 @@ export default async function Page() {
             </Tabs.Button>
           </Tabs.List>
 
-          <Tabs.Panel value="signup" className="sk-focus">
+          <Tabs.Panel value="signup" className="sk-focus rounded-xl">
             <SignupForm />
           </Tabs.Panel>
 
-          <Tabs.Panel value="login" className="sk-focus">
+          <Tabs.Panel value="login" className="sk-focus rounded-xl">
             <LoginForm />
           </Tabs.Panel>
         </div>

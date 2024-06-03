@@ -1,14 +1,9 @@
-import { forwardRef } from 'react'
-
 import type { IntentVariant, StateVariant } from '#/lib/types'
 import { cn } from '#/utils/cn'
 
-const DEFAULT_ELEMENT = 'button'
-
-// TODO: This isn't finished, Button is typed as any rn
-// Maybe just wait for React 19 to be released to get rid of forwardRef
-// See for reference:
 // https://www.benmvp.com/blog/forwarding-refs-polymorphic-react-component-typescript/
+
+const DEFAULT_ELEMENT = 'button'
 
 export type PropsOf<C extends keyof JSX.IntrinsicElements | React.JSXElementConstructor<any>> =
   JSX.LibraryManagedAttributes<C, React.ComponentPropsWithoutRef<C>>
@@ -39,44 +34,49 @@ export type PolymorphicComponentPropsWithRef<
 export type Props = {
   children: React.ReactNode
   variant?: IntentVariant | StateVariant
+  size?: 'sm' | 'md' | 'lg'
   className?: string
   iconOnly?: boolean
 }
 
 export type ButtonProps<C extends React.ElementType> = PolymorphicComponentPropsWithRef<C, Props>
 
-export const Button = forwardRef(
-  <C extends React.ElementType = typeof DEFAULT_ELEMENT>(
-    { children, variant = 'primary', className, iconOnly, as, ...rest }: ButtonProps<C>,
-    ref?: PolymorphicRef<C>
-  ) => {
-    const Cmp = as ?? DEFAULT_ELEMENT
+export function Button<C extends React.ElementType = typeof DEFAULT_ELEMENT>({
+  children,
+  ref,
+  variant = 'primary',
+  size = 'md',
+  className,
+  iconOnly,
+  as,
+  ...rest
+}: ButtonProps<C> & { ref?: PolymorphicRef<C> }) {
+  const Cmp = as ?? DEFAULT_ELEMENT
 
-    const styleMap: Record<StateVariant | IntentVariant, string> = {
-      primary: 'bg-app-bg-inverted hover:bg-app-bg-inverted/75 text-app-fg-inverted',
-      secondary: 'bg-keyline hover:bg-keyline/75 text-app-fg',
-      tertiary: 'bg-transparent hover:bg-keyline/25 text-app-fg',
-      danger: 'bg-danger hover:bg-danger-dark text-white',
-      success: 'bg-success hover:bg-success-dark text-white',
-      warning: 'bg-warning hover:bg-warning-dark text-white',
-      info: 'bg-info hover:bg-info-dark text-white',
-      error: 'bg-error hover:bg-error-dark text-white',
-    }
-
-    return (
-      <Cmp
-        ref={ref}
-        className={cn(
-          'flex items-center gap-3 rounded-full px-8 py-2',
-          styleMap[variant],
-          iconOnly && 'p-2',
-          className
-        )}
-        {...rest}>
-        {children}
-      </Cmp>
-    )
+  const styleMap: Record<StateVariant | IntentVariant, string> = {
+    primary: 'bg-app-bg-inverted hover:bg-app-bg-inverted/75 text-app-fg-inverted',
+    secondary: 'bg-keyline hover:bg-keyline/75 text-app-fg',
+    tertiary: 'bg-transparent hover:bg-keyline/25 text-app-fg',
+    danger: 'bg-danger hover:bg-danger-dark text-white',
+    success: 'bg-success hover:bg-success-dark text-white',
+    warning: 'bg-warning hover:bg-warning-dark text-white',
+    info: 'bg-info hover:bg-info-dark text-white',
+    error: 'bg-error hover:bg-error-dark text-white',
   }
-)
 
-Button.displayName = 'Button'
+  return (
+    <Cmp
+      ref={ref}
+      className={cn(
+        'flex items-center gap-3 rounded-full px-8 py-2',
+        styleMap[variant],
+        size === 'sm' && 'gap-2 px-6 text-sm',
+        size === 'lg' && 'gap-4 px-10 text-lg',
+        iconOnly && 'p-2',
+        className
+      )}
+      {...rest}>
+      {children}
+    </Cmp>
+  )
+}

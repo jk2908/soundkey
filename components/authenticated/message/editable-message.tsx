@@ -3,7 +3,6 @@
 import { createContext, use, useActionState, useCallback, useEffect, useRef, useState } from 'react'
 import { update } from '#/api/message/actions'
 
-import type { ServerResponse } from '#/lib/types'
 import { useToast } from '#/hooks/use-toast'
 import { cn } from '#/utils/cn'
 
@@ -27,18 +26,12 @@ export const EditableMessageContext = createContext<EditableProvider>({
   cancel: () => {},
 })
 
-const initialState: ServerResponse = {
-  type: undefined,
-  message: null,
-  status: undefined,
-}
-
 export function Root({ messageId, children }: { messageId: string; children: React.ReactNode }) {
   const ref = useRef<HTMLDivElement>(null)
   const [isEditing, setEditing] = useState(false)
   const [edit, setEdit] = useState('')
   const [originalStr, setOriginalStr] = useState('')
-  const [state, dispatch] = useActionState(update.bind(null, messageId, edit), initialState)
+  const [res, dispatch] = useActionState(update.bind(null, messageId, edit), null)
 
   const { toast } = useToast()
 
@@ -50,11 +43,18 @@ export function Root({ messageId, children }: { messageId: string; children: Rea
   }, [ref])
 
   useEffect(() => {
-    if (!state.type) return
+    if (!res) return
+    
+    const { ok, message = '', status } = res
 
-    toast({ ...state })
+    if (!ok) {
+      toast.error({ message, status })
+      return
+    }
+    
+    toast.success({ message, status })    
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state])
+  }, [res])
 
   const save = useCallback(async () => {
     if (originalStr === edit) {

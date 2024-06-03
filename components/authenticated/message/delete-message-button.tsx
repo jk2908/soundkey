@@ -1,20 +1,13 @@
 'use client'
 
-import { useEffect, useRef, useState, useActionState } from 'react'
+import { useActionState, useEffect, useRef, useState } from 'react'
 import { destroy } from '#/api/message/actions'
 import { flushSync } from 'react-dom'
 
-import { ServerResponse } from '#/lib/types'
 import { useToast } from '#/hooks/use-toast'
 
 import { Button, type ButtonProps } from '#/components/global/button'
 import * as Modal from '#/components/global/modal'
-
-const initialState: ServerResponse = {
-  type: undefined,
-  message: null,
-  status: undefined,
-}
 
 export function DeleteMessageButton({
   children,
@@ -27,18 +20,25 @@ export function DeleteMessageButton({
   onModalOpen?: () => void
 } & Omit<ButtonProps<'button'>, 'as'>) {
   const [isConfirmOpen, setConfirmOpen] = useState(false)
-  const [state, dispatch] = useActionState(destroy.bind(null, messageId), initialState)
+  const [res, dispatch] = useActionState(destroy.bind(null, messageId), null)
   const { toast } = useToast()
 
   const openRef = useRef<HTMLButtonElement>(null)
   const confirmRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
-    if (!state.type) return
+    if (!res) return
 
-    toast({ ...state })
+    const { ok, message = '', status } = res
+
+    if (!ok) {
+      toast.error({ message, status })
+      return
+    }
+
+    toast.success({ message, status })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state])
+  }, [res])
 
   return (
     <>
