@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 
 type ClickOutsideProps = {
   when?: boolean
+  dblClick?: boolean
 }
 
 export function useClickOutside(
@@ -9,7 +10,8 @@ export function useClickOutside(
   onClick: () => void,
   config?: ClickOutsideProps
 ) {
-  const { when } = config || {}
+  const { when, dblClick } = config || {}
+  const eType = dblClick ? 'dblclick' : 'click'
 
   useEffect(() => {
     if (when === false) return
@@ -23,10 +25,10 @@ export function useClickOutside(
       }
     }
 
-    document.addEventListener('click', handler)
+    document.addEventListener(eType, handler)
 
     return () => {
-      document.removeEventListener('click', handler)
+      document.removeEventListener(eType, handler)
     }
-  }, [ref, onClick, when])
+  }, [ref, onClick, when, eType])
 }
