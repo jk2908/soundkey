@@ -71,7 +71,7 @@ export function SendMessageForm({
     toast.success({ message, status })
 
     if (payload && !threadId) {
-      push(`/threads/${payload}`)
+      replace(`/threads/${payload}`)
     }
 
     if (bodyRef.current) {

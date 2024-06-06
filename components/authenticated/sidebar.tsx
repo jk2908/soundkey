@@ -39,7 +39,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
     setOpen(mq ? true : false)
   }, [mq])
 
-  useClickOutside([sidebarRef, toggleRef], () => !mq && setOpen(false))
+  useClickOutside([sidebarRef, toggleRef], () => setOpen(false), { when: isOpen && !mq })
   useFocusScope(sidebarRef, { when: isOpen && !mq })
 
   useKey(

@@ -62,13 +62,15 @@ export function Button<C extends React.ElementType = typeof DEFAULT_ELEMENT>({
     warning: 'bg-warning hover:bg-warning-dark text-white',
     info: 'bg-info hover:bg-info-dark text-white',
     error: 'bg-error hover:bg-error-dark text-white',
+    highlight:
+      'bg-highlight/10 border-highlight/30 text-highlight hover:bg-highlight hover:text-y3llow-0/85 hover:border-highlight',
   }
 
   return (
     <Cmp
       ref={ref}
       className={cn(
-        'flex items-center gap-3 rounded-full px-8 py-2',
+        'flex items-center gap-3 rounded-full border border-transparent px-8 py-2',
         styleMap[variant],
         size === 'sm' && 'gap-2 px-6 text-sm',
         size === 'lg' && 'gap-4 px-10 text-lg',

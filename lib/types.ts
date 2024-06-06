@@ -28,7 +28,7 @@ export interface DatabaseUserAttributes {
 
 export type StateVariant = 'success' | 'error' | 'danger' | 'warning' | 'info'
 
-export type IntentVariant = 'primary' | 'secondary' | 'tertiary'
+export type IntentVariant = 'primary' | 'secondary' | 'tertiary' | 'highlight'
 
 export type Toast = {
   id: number

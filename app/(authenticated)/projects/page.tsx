@@ -18,7 +18,7 @@ export default async function Page() {
   if (!user) throw redirect('/login')
 
   const projects = await getOwnedProjects(user.id)
-  const [lastOwned, ...restOwned] = projects
+  const [lastOwned] = projects
 
   return (
     <>
@@ -37,15 +37,16 @@ export default async function Page() {
                 <>
                   {lastOwned && (
                     <ProjectInFocus
+                      title="Recently updated"
                       project={{
                         ...lastOwned,
                         createdAt: toLocaleFromTimestamp(lastOwned.createdAt),
                         updatedAt: toLocaleFromTimestamp(lastOwned.updatedAt),
                       }}
-                      className="max-w-prose"
+                      className="max-w-prose mb-10"
                     />
                   )}
-                  {restOwned.length ? (
+                  {projects.length ? (
                     <ErrorBoundary
                       fallback={<div>Something went wrong loading your owned projects</div>}>
                       <div className="sk-scrollbar flex overflow-x-auto">
@@ -64,8 +65,9 @@ export default async function Page() {
                               </th>
                             </tr>
                           </thead>
+
                           <tbody>
-                            {restOwned.map(p => (
+                            {projects.map(p => (
                               <ProjectPreview
                                 key={p.projectId}
                                 project={{

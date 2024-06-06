@@ -25,6 +25,8 @@ export type Icon =
   | 'chevron-right'
   | 'chevron-left'
   | 'calendar-plus'
+  | 'disc'
+  | 'music'
 
 export type Props = {
   name: Icon

@@ -30,7 +30,7 @@ export async function SpeechBubble({ children, avatar, placement = 'right', clas
         <div className="relative grow">
           <div
             className={cn(
-              'peer bg-app-bg-inverted rounded-lg p-6 text-app-fg-inverted has-[div[contenteditable=true]]:bg-white has-[div[contenteditable=true]]:text-gr33n-100',
+              'peer rounded-lg bg-app-bg-inverted p-6 text-app-fg-inverted has-[div[contenteditable=true]]:border has-[div[contenteditable=true]]:border-highlight/30 has-[div[contenteditable=true]]:bg-highlight/10 has-[div[contenteditable=true]]:text-gr33n-100 dark:has-[div[contenteditable=true]]:text-y3llow-0',
               className
             )}>
             {children}
@@ -39,17 +39,16 @@ export async function SpeechBubble({ children, avatar, placement = 'right', clas
           {avatar && (
             <Tip
               className={cn(
-                'peer-has-[div[contenteditable=true]]:bg-white absolute top-[calc(100%_-_1px)] -translate-y-1/2 rotate-[135deg] @xs:left-[calc(100%_-_1px)] @xs:right-auto @xs:top-2 @xs:translate-y-0',
+                'absolute top-[calc(100%_-_1px)] -translate-y-1/2 rotate-[135deg] peer-has-[div[contenteditable=true]]:bg-highlight/10 peer-has-[div[contenteditable=true]]:border-highlight/30 peer-has-[div[contenteditable=true]]:border @xs:left-[calc(100%_-_1px)] @xs:right-auto @xs:top-2 @xs:translate-y-0',
                 placement === 'left'
                   ? 'left-6 @xs:left-auto @xs:right-[calc(100%_-_1px)] @xs:translate-x-1/2 @xs:rotate-[225deg]'
                   : 'right-6 @xs:left-[calc(100%_-_1px)] @xs:right-auto @xs:-translate-x-1/2 @xs:rotate-45 @xs:scale-100',
-                bg,
-                
+                bg
               )}
             />
           )}
         </div>
-          
+
         {avatar && (
           <div
             className={cn(

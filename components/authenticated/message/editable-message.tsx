@@ -3,6 +3,7 @@
 import { createContext, use, useActionState, useCallback, useEffect, useRef, useState } from 'react'
 import { update } from '#/api/message/actions'
 
+import { useClickOutside } from '#/hooks/use-click-outside'
 import { useToast } from '#/hooks/use-toast'
 import { cn } from '#/utils/cn'
 
@@ -44,15 +45,15 @@ export function Root({ messageId, children }: { messageId: string; children: Rea
 
   useEffect(() => {
     if (!res) return
-    
+
     const { ok, message = '', status } = res
 
     if (!ok) {
       toast.error({ message, status })
       return
     }
-    
-    toast.success({ message, status })    
+
+    toast.success({ message, status })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [res])
 
@@ -100,7 +101,7 @@ export function Text({
   className?: string
   style?: React.CSSProperties
 } & React.HTMLAttributes<HTMLDivElement>) {
-  const { ref, isEditing, setEdit } = use(EditableMessageContext)
+  const { ref, isEditing, setEdit, save } = use(EditableMessageContext)
 
   useEffect(() => {
     if (!ref.current || isEditing) return
@@ -113,6 +114,8 @@ export function Text({
     s?.removeAllRanges()
     s?.addRange(r)
   }, [isEditing, ref])
+
+  useClickOutside(ref, save, { when: isEditing, dblClick: true })
 
   return (
     <div
