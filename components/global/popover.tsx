@@ -75,12 +75,13 @@ export function Root({ children, onBeforeOpen, onAfterClose, duration }: Props) 
   const contentRef = useRef<HTMLDivElement>(null)
 
   useClickOutside(contentRef, onClickOutsideOrEsc)
+  useKey('Escape', onClickOutsideOrEscWithFocus)
+
   useFocusScope(contentRef, {
     when: isOpen,
     roving: true,
     onTabFocusOut: onClickOutsideOrEscWithFocus,
   })
-  useKey('Escape', onClickOutsideOrEscWithFocus)
 
   return (
     <PopoverContext.Provider value={{ id, isOpen, toggle, toggleRef, contentRef }}>

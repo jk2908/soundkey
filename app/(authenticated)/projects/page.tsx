@@ -9,6 +9,8 @@ import { toLocaleFromTimestamp } from '#/utils/to-locale-from-timestamp'
 
 import { ProjectInFocus } from '#/components/authenticated/project/project-in-focus'
 import { ProjectPreview } from '#/components/authenticated/project/project-preview'
+import { BodyHeading } from '#/components/global/body-heading'
+import { FocusedText } from '#/components/global/focused-text'
 import { Spinner } from '#/components/global/spinner'
 import * as Tabs from '#/components/global/tabs'
 
@@ -22,8 +24,11 @@ export default async function Page() {
 
   return (
     <>
-      <p className="text-sm">Ongoing projects: {projects.length}</p>
+      <BodyHeading level={1} className="sr-only">
+        All projects
+      </BodyHeading>
 
+      <FocusedText as="p">Ongoing projects: {projects.length}</FocusedText>
       <Tabs.Root initialValue="owner" loop>
         <div className="space-y-8">
           <Tabs.List className="rounded-tab-group max-w-prose">
@@ -37,13 +42,12 @@ export default async function Page() {
                 <>
                   {lastOwned && (
                     <ProjectInFocus
-                      title="Recently updated"
                       project={{
                         ...lastOwned,
                         createdAt: toLocaleFromTimestamp(lastOwned.createdAt),
                         updatedAt: toLocaleFromTimestamp(lastOwned.updatedAt),
                       }}
-                      className="max-w-prose mb-10"
+                      className="mb-10 max-w-prose"
                     />
                   )}
                   {projects.length ? (

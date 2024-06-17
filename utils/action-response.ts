@@ -15,11 +15,11 @@ export const success = (
 
 export const error = (
   status?: number,
-  message?: string,
+  err?: string | Error | unknown,
   config?: { key?: string; payload?: unknown }
 ): ActionResponse => ({
   ok: false,
-  message: message ? capitalise(message) : 'An unknown error occurred',
+  message: err instanceof Error ? err.message : err?.toString() || 'An unknown error occurred',
   status: status || 500,
   key: config?.key,
   payload: config?.payload,

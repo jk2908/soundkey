@@ -3,18 +3,20 @@ import focusableSelectors from 'focusable-selectors'
 
 import { isVisible } from '#/utils/is-visible'
 
-type FocusScopeConfig = {
+interface FocusScopeConfig {
   when?: boolean
   roving?: boolean
+  toExcludeFromTabIndex?: HTMLElement[] | React.RefObject<HTMLElement>[]
   orientation?: 'horizontal' | 'vertical'
   loop?: boolean
-  onTabFocusOut?: () => void
+  onTabFocusOut?: (e: KeyboardEvent) => void
 }
 
 export function useFocusScope(ref: React.RefObject<HTMLElement>, config?: FocusScopeConfig) {
   const {
     when,
     roving = false,
+    toExcludeFromTabIndex,
     orientation = 'vertical',
     loop = true,
     onTabFocusOut,
@@ -35,8 +37,11 @@ export function useFocusScope(ref: React.RefObject<HTMLElement>, config?: FocusS
     if (!els.length) els = getNodes()
 
     const reset = (exclude?: HTMLElement) => {
+      const i = toExcludeFromTabIndex?.map(e => (e instanceof HTMLElement ? e : e.current))
+      const x = [exclude, ...(i ?? [])].filter(Boolean)
+
       els.forEach(el => {
-        if (el !== exclude) {
+        if (!x.some(e => e === el)) {
           el.setAttribute('tabindex', '-1')
         }
       })
@@ -78,28 +83,34 @@ export function useFocusScope(ref: React.RefObject<HTMLElement>, config?: FocusS
       switch (true) {
         case orientation === 'vertical' && roving:
           if (e.key === 'ArrowUp') {
+            e.preventDefault()
             prev?.setAttribute('tabindex', '0')
             prev?.focus()
             reset(prev)
           } else if (e.key === 'ArrowDown') {
+            e.preventDefault()
             next?.setAttribute('tabindex', '0')
             next?.focus()
             reset(next)
           } else if (e.key === 'Tab') {
-            onTabFocusOut?.()
+            onTabFocusOut?.(e)
+            reset()
           }
           break
         case orientation === 'horizontal' && roving:
           if (e.key === 'ArrowLeft') {
+            e.preventDefault()
             prev?.setAttribute('tabindex', '0')
             prev?.focus()
             reset(prev)
           } else if (e.key === 'ArrowRight') {
+            e.preventDefault()
             next?.setAttribute('tabindex', '0')
             next?.focus()
             reset(next)
           } else if (e.key === 'Tab') {
-            onTabFocusOut?.()
+            onTabFocusOut?.(e)
+            reset()
           }
           break
         case e.key === 'Tab' && roving !== true:

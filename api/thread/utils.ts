@@ -122,7 +122,7 @@ export const getThread = cache(async (threadId: string) => {
 
     if (!thread) return null
 
-    return thread
+    return { ...thread, threadId: thread.id }
   } catch (err) {
     console.error(err)
     return null

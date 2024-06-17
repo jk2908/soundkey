@@ -25,7 +25,7 @@ export function ThreadPreview({ userId, thread, onDelete, className }: Props) {
   const users = use<SafeUser[]>(usersPromise)
   const { push } = useRouter()
 
-  const open = () => push(`/threads/${thread.threadId}`)
+  const open = () => push(`/threads/t/${thread.threadId}`)
 
   const usersDisplay = users.filter(u => {
     if (users.length === 1 && u.userId === userId) {

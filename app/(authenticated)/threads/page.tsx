@@ -8,6 +8,7 @@ import { auth } from '#/lib/auth'
 import { toLocaleFromTimestamp } from '#/utils/to-locale-from-timestamp'
 
 import { ThreadPreview } from '#/components/authenticated/thread/thread-preview'
+import { BodyHeading } from '#/components/global/body-heading'
 import { Icon } from '#/components/global/icon'
 import { SKTableRowLoader } from '#/components/global/sk-table-row-loader'
 
@@ -20,6 +21,10 @@ export default async function Page() {
 
   return (
     <>
+      <BodyHeading level={1} className="sr-only">
+        All threads
+      </BodyHeading>
+
       {threads.length ? (
         <ErrorBoundary fallback={<div>Something went wrong loading your threads</div>}>
           <div className="sk-scrollbar flex overflow-x-auto">

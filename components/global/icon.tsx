@@ -24,6 +24,8 @@ export type Icon =
   | 'info'
   | 'chevron-right'
   | 'chevron-left'
+  | 'chevron-down'
+  | 'chevron-up'
   | 'calendar-plus'
   | 'disc'
   | 'music'

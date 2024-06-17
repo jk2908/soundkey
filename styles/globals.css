@@ -69,14 +69,23 @@
   }
 
   @layer components {
+    .focused-text {
+      font-family: theme('fontFamily.sans');
+      font-size: theme('fontSize.xs');
+      font-style: normal;
+      letter-spacing: theme('letterSpacing.widest');
+      line-height: theme('lineHeight.tight');
+      text-transform: uppercase;
+    }
+
     .rounded-tab-group {
       border: 1px solid rgb(var(--keyline) / 100%);
       border-radius: 9999px;
       display: flex;
       flex-shrink: 0;
       gap: 1px;
-      min-width: max-content;
-      width: 100%;
+      inline-size: 100%;
+      min-inline-size: max-content;
 
       > :is(button, a) {
         border: 1px solid rgb(var(--keyline));
@@ -88,8 +97,9 @@
         font-weight: 500;
         letter-spacing: theme('letterSpacing.wider');
         margin: -1px;
-        padding: theme(spacing.2) theme(spacing.6);
-        min-width: theme(space.48);
+        padding-block: theme(padding.2);
+        padding-inline: theme(padding.4);
+        min-inline-size: theme(space.48);
 
         &:hover {
           background-color: rgb(var(--keyline) / 40%);
@@ -111,14 +121,14 @@
     }
 
     .sk-table {
-      width: 100%;
+      inline-size: 100%;
 
       th {
-        font-family: theme('fontFamily.sans');
-        font-size: theme('fontSize.sm');
-        font-weight: 500;
-        letter-spacing: theme('letterSpacing.wider');
-        padding: theme('spacing.2') theme('spacing.6');
+        @apply focused-text;
+
+        font-weight: 600;
+        padding-block: theme(padding.2);
+        padding-inline: theme(padding.4);
         text-align: start;
       }
 
@@ -127,7 +137,7 @@
       }
 
       tbody > tr {
-        border-top: 1px dashed rgb(var(--keyline) / 100%);
+        border-block-start: 1px dashed rgb(var(--keyline) / 100%);
 
         &:hover {
           background-color: rgb(var(--keyline) / 25%);
@@ -135,7 +145,8 @@
       }
 
       td {
-        padding: theme('spacing.2') theme('spacing.6');
+        padding-block: theme('spacing.2');
+        padding-inline: theme('spacing.6');
       }
     }
 
@@ -145,6 +156,56 @@
 
       [data-theme=dark] &, &[data-theme=dark] {
         scrollbar-color: rgb(var(--y3llow-0) / 50%) rgb(var(--keyline) / 100%);
+      }
+    }
+
+    .sk-select {
+      --px: theme(padding.4);
+      --py: theme(padding.2);
+
+      :is([role=button], [role=option]) {
+        @apply sk-focus;
+      }
+
+      [aria-expanded] {
+        border: 1px solid rgb(var(--keyline) / 100%);
+        border-radius: 9999px;
+        inline-size: 100%;
+        padding-block: var(--py);
+        padding-inline: var(--px);
+      }
+
+      [aria-expanded=true] {
+        background-color: rgb(var(--keyline) / 40%);
+      }
+
+      [role=listbox] {
+        border-end-start-radius: theme('borderRadius.2xl');
+        border-end-end-radius: theme('borderRadius.2xl');
+        border-block-end: 1px solid rgb(var(--keyline) / 100%);
+        border-inline: 1px solid rgb(var(--keyline) / 100%);
+        display: flex;
+        flex-direction: column;
+        gap: theme(spacing.1);
+        margin-block-start: calc(-1 * (var(--py) * 2.5));
+        padding-block: calc(var(--py) * 2.5) var(--py);
+        pointer-events: none;
+      }
+
+      [role=option] {
+        padding-block: var(--py); 
+        padding-inline: var(--px);
+        pointer-events: auto;
+
+        @media (hover: hover) and (pointer: fine) {
+          &:hover {
+            background-color: rgb(var(--keyline) / 25%);
+          }
+        }
+
+        &:focus-visible {
+          border-radius: 9999px;
+        }
       }
     }
   }

@@ -1,6 +1,6 @@
 'use client'
 
-import { forwardRef, useEffect, useRef, useTransition } from 'react'
+import { useEffect, useRef, useTransition } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 import { Chip } from '#/components/global/chip'

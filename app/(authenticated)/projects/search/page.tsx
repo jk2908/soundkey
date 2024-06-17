@@ -1,3 +1,9 @@
+import { BodyHeading } from '#/components/global/body-heading'
+
 export default function Page() {
-  return <>Search</>
+  return (
+    <BodyHeading level={1} className="sr-only">
+      Search for projects
+    </BodyHeading>
+  )
 }

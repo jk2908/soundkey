@@ -38,24 +38,26 @@ export function SendMessageForm({
   className?: string
 } & React.HTMLAttributes<HTMLFormElement>) {
   const ref = useRef<HTMLFormElement>(null)
-  const recipientId = useId()
-  const bodyId = useId()
+  const searchRef = useRef<HTMLInputElement>(null)
   const bodyRef = useRef<HTMLTextAreaElement>(null)
+
   const [recipients, setRecipients] = useState<ResolvedRecipient[] | []>(resolvedRecipients)
+
+  const recipientsId = useId()
+  const bodyId = useId()
 
   const [res, dispatch] = useActionState(
     send.bind(
       null,
       senderId,
       threadId,
-      recipients.map(r => r.userId)
+      recipients.map(u => u.userId)
     ),
     null
   )
 
   const { replace, push } = useRouter()
   const { toast } = useToast()
-  const searchRef = useRef<HTMLInputElement>(null)
   const pathname = usePathname()
 
   useEffect(() => {
@@ -103,7 +105,7 @@ export function SendMessageForm({
       {...rest}>
       {!threadId && (
         <FormGroup>
-          <Label htmlFor={recipientId} className="sr-only">
+          <Label htmlFor={recipientsId} className="sr-only">
             To
           </Label>
 
@@ -114,12 +116,10 @@ export function SendMessageForm({
                   ref={searchRef}
                   placeholder="To"
                   name="to"
-                  id={recipientId}
-                  results={
-                    resolvedRecipients?.length ? resolvedRecipients.map(r => r.label) : undefined
-                  }
+                  id={recipientsId}
+                  results={resolvedRecipients?.map(r => r.label)}
                   onConfirm={() => {
-                    if (!resolvedRecipients || !resolvedRecipients.length) return
+                    if (!resolvedRecipients?.length) return
 
                     flushSync(() => {
                       setRecipients(prev => [...new Set([...prev, ...resolvedRecipients])])
@@ -146,8 +146,8 @@ export function SendMessageForm({
 
                       searchRef.current?.focus()
                     }}
-                    persist>
-                    <Listbox.Options className="flex items-center gap-2">
+                    shouldPersist>
+                    <Listbox.Options className="flex-row items-center gap-2">
                       {recipients.map(u => (
                         <Listbox.Option
                           key={generateId()}

@@ -1,6 +1,6 @@
 import { cache } from 'react'
 import { revalidateTag } from 'next/cache'
-import { asc, desc, eq } from 'drizzle-orm'
+import { desc, eq } from 'drizzle-orm'
 
 import { db } from '#/lib/db'
 import { projectTable, type NewProject } from '#/lib/schema'
@@ -55,7 +55,7 @@ export const getProject = cache(async (projectId: string) => {
 
     if (!project) return null
 
-    return project
+    return { ...project, projectId: project.id }
   } catch (err) {
     console.error(err)
     return null

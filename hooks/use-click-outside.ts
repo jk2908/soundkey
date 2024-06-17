@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 
 type ClickOutsideProps = {
   when?: boolean
@@ -7,7 +7,7 @@ type ClickOutsideProps = {
 
 export function useClickOutside(
   ref: React.RefObject<HTMLElement> | React.RefObject<HTMLElement>[],
-  onClick: () => void,
+  onClick: (e: MouseEvent) => void,
   config?: ClickOutsideProps
 ) {
   const { when, dblClick } = config || {}
@@ -16,12 +16,12 @@ export function useClickOutside(
   useEffect(() => {
     if (when === false) return
 
-    function handler(e: Event) {
+    function handler(e: MouseEvent) {
       const target = e.target as HTMLElement
       const refs = Array.isArray(ref) ? ref : [ref]
 
       if (!refs.some(r => r.current?.contains(target) || target === r.current)) {
-        onClick?.()
+        onClick?.(e)
       }
     }
 

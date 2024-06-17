@@ -48,7 +48,7 @@ export function CreateProjectForm({
     toast.success({ message, status })
 
     if (payload) {
-      push(`/projects/${payload}`)
+      push(`/projects/p/${payload}`)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [res])
@@ -56,7 +56,7 @@ export function CreateProjectForm({
   return (
     <form ref={ref} action={dispatch} className={cn('flex flex-col', className)} {...rest}>
       <FormGroup withNestedChildren>
-        <BodyHeading level={2} styleAsLevel={4}>
+        <BodyHeading level={2} styleAsLevel={5}>
           Project details
         </BodyHeading>
 
@@ -74,7 +74,7 @@ export function CreateProjectForm({
       <FormGroup withNestedChildren>
         <HorizontalRule className="border-dashed pb-4" />
 
-        <BodyHeading level={2} styleAsLevel={4}>
+        <BodyHeading level={2} styleAsLevel={5}>
           Project coordinator
         </BodyHeading>
 
@@ -101,7 +101,7 @@ export function CreateProjectForm({
       <FormGroup withNestedChildren>
         <HorizontalRule className="border-dashed pb-4" />
 
-        <BodyHeading level={2} styleAsLevel={4}>
+        <BodyHeading level={2} styleAsLevel={5}>
           Artist details
         </BodyHeading>
 
@@ -124,7 +124,7 @@ export function CreateProjectForm({
       <FormGroup withNestedChildren>
         <HorizontalRule className="border-dashed pb-4" />
 
-        <BodyHeading level={2} styleAsLevel={4}>
+        <BodyHeading level={2} styleAsLevel={5}>
           Project plan
         </BodyHeading>
 

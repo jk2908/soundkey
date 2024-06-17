@@ -55,8 +55,9 @@ CREATE TABLE `project_task` (
 	`assignee_ids` text NOT NULL,
 	`title` text NOT NULL,
 	`description` text,
+	`task_priority` text NOT NULL,
+	`task_status` text NOT NULL,
 	`due` integer,
-	`is_completed` integer DEFAULT false NOT NULL,
 	`created_at` integer DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	`updated_at` integer,
 	FOREIGN KEY (`project_id`) REFERENCES `project`(`id`) ON UPDATE cascade ON DELETE cascade

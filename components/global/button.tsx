@@ -63,7 +63,7 @@ export function Button<C extends React.ElementType = typeof DEFAULT_ELEMENT>({
     info: 'bg-info hover:bg-info-dark text-white',
     error: 'bg-error hover:bg-error-dark text-white',
     highlight:
-      'bg-highlight/10 border-highlight/30 text-highlight hover:bg-highlight hover:text-y3llow-0/85 hover:border-highlight',
+      'hover:bg-highlight/10 hover:border-highlight/30 hover:text-highlight bg-highlight text-y3llow-0/95 border-highlight',
   }
 
   return (

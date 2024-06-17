@@ -107,7 +107,7 @@ export async function getMessage(messageId: string) {
 
     if (!message) return null
 
-    return message
+    return { ...message, messageId: message.id }
   } catch (err) {
     return null
   }

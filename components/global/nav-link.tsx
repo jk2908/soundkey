@@ -11,21 +11,23 @@ export type Props = {
   className?: string
   exact?: boolean
   visualOnly?: boolean
+  match?: string[]
 } & React.ComponentProps<typeof Link>
 
-export function NavLink({ children, href, className, exact, visualOnly, ...rest }: Props) {
+export function NavLink({ children, href, className, exact, visualOnly, match, ...rest }: Props) {
   const pathname = usePathname()
-  const isMatching = pathname === href || (!exact && pathname.startsWith(href) && href !== '/')
+  const isMatching =
+    pathname === href ||
+    (!exact && pathname.startsWith(href) && href !== '/') ||
+    match?.some(m =>
+      m.includes('*') ? pathname.startsWith(m.slice(0, m.indexOf('*'))) : m === pathname
+    )
 
   return (
     <Link
       href={href}
       aria-current={!visualOnly ? (isMatching ? 'page' : false) : undefined}
-      className={cn(
-        'relative',
-        visualOnly ? (isMatching ? 'active' : 'inactive') : undefined,
-        className
-      )}
+      className={cn('relative', isMatching ? 'active' : 'inactive', className)}
       {...rest}>
       {children}
     </Link>

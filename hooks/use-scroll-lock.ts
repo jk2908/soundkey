@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 
 export function useScrollLock(
-  state: boolean,
+  when: boolean,
   el?: string | React.RefObject<HTMLElement> | HTMLElement
 ) {
   useEffect(() => {
@@ -15,12 +15,12 @@ export function useScrollLock(
       document.body
     const originalStyle = getComputedStyle(target).overflow
 
-    if (state) {
+    if (when) {
       target.style.overflow = 'hidden'
     }
 
     return () => {
       target.style.overflow = originalStyle
     }
-  }, [state, el])
+  }, [when, el])
 }

@@ -1,71 +1,38 @@
 'use client'
 
-import { createContext, use, useId, useMemo, useState } from 'react'
+import React, { createContext, use, useMemo } from 'react'
 
+import { useSelectContext } from '#/hooks/use-select-context'
 import { cn } from '#/utils/cn'
 
 export const ListBoxContext = createContext<{
   selected: string[]
-  isOpen: boolean
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>
-  onSelect?: (value: string) => void
-  persist?: boolean
-}>({ selected: [], isOpen: false, setOpen: () => {} })
+  onSelect?: (value: string, close: () => void, e: React.SyntheticEvent) => void
+}>({
+  selected: [],
+})
 
 export function Root({
   children,
   selected,
   onSelect,
-  persist = false,
   className,
 }: {
   children: React.ReactNode
   selected: string[]
-  onSelect?: (value: string) => void
-  persist?: boolean
+  onSelect?: (value: string, close: () => void, e: React.SyntheticEvent) => void
   className?: string
 }) {
-  const [isOpen, setOpen] = useState(persist)
-  const id = useId()
+  const ctx = useSelectContext({ isUnsafe: true })
+
+  if (ctx?.isOpen === false) return null
 
   return (
-    <ListBoxContext.Provider value={{ selected, isOpen, setOpen, onSelect, persist }}>
-      <div id={id} role="listbox" className={cn(className)}>
+    <ListBoxContext.Provider value={{ selected, onSelect }}>
+      <div role="listbox" className={cn('flex flex-col', className)}>
         {children}
       </div>
     </ListBoxContext.Provider>
-  )
-}
-
-export function Toggle({ children, className }: { children: React.ReactNode; className?: string }) {
-  const { isOpen, setOpen, persist } = use(ListBoxContext)
-
-  if (persist) return null
-
-  return (
-    <div
-      role="button"
-      aria-expanded={isOpen}
-      onClick={() => setOpen(prev => !prev)}
-      className={cn(className)}>
-      {children}
-    </div>
-  )
-}
-
-export function Options({
-  children,
-  className,
-}: {
-  children: React.ReactNode
-  className?: string
-}) {
-  const { isOpen } = use(ListBoxContext)
-
-  return (
-    <div role="listbox" className={cn(className)} hidden={!isOpen}>
-      {children}
-    </div>
   )
 }
 
@@ -77,20 +44,29 @@ export function Option({
 }: {
   value: string
   children: React.ReactNode
-  ref?: React.Ref<HTMLButtonElement>
+  ref?: React.Ref<HTMLDivElement>
   className?: string
 }) {
+  const { close } = useSelectContext({ isUnsafe: true })
   const { selected, onSelect } = use(ListBoxContext)
   const isSelected = useMemo(() => selected.some(o => o === value), [selected, value])
 
   return (
-    <button
+    <div
       ref={ref}
       role="option"
       aria-selected={isSelected}
-      onClick={() => onSelect?.(value)}
-      className={cn(className)}>
+      tabIndex={0}
+      onKeyDown={e => {
+        if (['Enter', ' '].includes(e.key)) {
+          onSelect?.(value, () => close(e), e)
+        }
+      }}
+      onClick={e => {
+        onSelect?.(value, () => close(e), e)
+      }}
+      className={cn('sk-focus cursor-pointer', className)}>
       {children}
-    </button>
+    </div>
   )
 }

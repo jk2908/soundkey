@@ -1,5 +1,6 @@
 import { InferInsertModel, InferSelectModel, relations, sql } from 'drizzle-orm'
 import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core'
+import { createInsertSchema, createSelectSchema } from 'drizzle-valibot'
 
 import { generateId } from '#/utils/generate-id'
 
@@ -8,6 +9,12 @@ export const userRole = text('user_role', { enum: userRoles })
 
 export const messageTypes = ['message', 'system_message'] as const
 export const messageType = text('message_type', { enum: messageTypes })
+
+export const taskStatuses = ['open', 'in_progress', 'completed'] as const 
+export const taskStatus = text('task_status', { enum: taskStatuses })
+
+export const taskPriorities = ['low', 'medium', 'high'] as const
+export const taskPriority = text('task_priority', { enum: taskPriorities })
 
 export const userTable = sqliteTable('user', {
   id: text('id')
@@ -133,7 +140,7 @@ export const projectTable = sqliteTable('project', {
   updatedAt: integer('updated_at'),
 })
 
-export const projectTaskTable = sqliteTable('project_task', {
+export const taskTable = sqliteTable('task', {
   id: text('id')
     .primaryKey()
     .notNull()
@@ -144,11 +151,12 @@ export const projectTaskTable = sqliteTable('project_task', {
       onUpdate: 'cascade',
       onDelete: 'cascade',
     }),
-  assigneeIds: text('assignee_ids').notNull(),
   title: text('title').notNull(),
   description: text('description'),
+  assigneeIds: text('assignee_ids').notNull(),
+  priority: taskPriority.notNull(),
+  status: taskStatus.notNull(),
   due: integer('due'),
-  isCompleted: integer('is_completed', { mode: 'boolean' }).default(false).notNull(),
   createdAt: integer('created_at')
     .notNull()
     .default(sql`CURRENT_TIMESTAMP`),
@@ -226,12 +234,12 @@ export const projectRelations = relations(projectTable, ({ one, many }) => ({
     fields: [projectTable.userId],
     references: [userTable.id],
   }),
-  task: many(projectTaskTable),
+  task: many(taskTable),
 }))
 
-export const projectTaskRelations = relations(projectTaskTable, ({ one }) => ({
+export const taskRelations = relations(taskTable, ({ one }) => ({
   project: one(projectTable, {
-    fields: [projectTaskTable.projectId],
+    fields: [taskTable.projectId],
     references: [projectTable.id],
   }),
 }))
@@ -266,5 +274,10 @@ export type UserRole = (typeof userRoles)[number]
 export type Project =  Omit<InferSelectModel<typeof projectTable>, 'id'> & { projectId: string }
 export type NewProject = InferInsertModel<typeof projectTable>
 
-export type ProjectTask = InferSelectModel<typeof projectTaskTable>
-export type NewProjectTask = InferInsertModel<typeof projectTaskTable>
+export type Task = InferSelectModel<typeof taskTable>
+export type NewTask = InferInsertModel<typeof taskTable>
+export type TaskPriority = (typeof taskPriorities)[number]
+export type TaskStatus = (typeof taskStatuses)[number]
+
+export const TaskSchema = createSelectSchema(taskTable)
+export const NewTaskSchema = createInsertSchema(taskTable)

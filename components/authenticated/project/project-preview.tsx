@@ -19,7 +19,7 @@ export function ProjectPreview({
   const { projectId, name, artist, createdAt, updatedAt } = project
   const { push } = useRouter()
 
-  const open = () => push(`/projects/${projectId}`)
+  const open = () => push(`/projects/p/${projectId}`)
 
   const actions = [
     {

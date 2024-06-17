@@ -40,6 +40,7 @@ export function Toast({ toast, className, ...rest }: { toast: Toast; className?:
       animate={{ y: 0, opacity: 1 }}
       exit={{ x: -300, opacity: 0 }}
       transition={{ duration: 0.5, type: 'spring' }}
+      layout
       aria-live="polite"
       role="alert"
       className={cn(

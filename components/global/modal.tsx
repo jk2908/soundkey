@@ -60,6 +60,7 @@ export const Root = ({
   }, [onBeforeClose, onAfterClose, setOpen])
 
   useScrollLock(isOpen)
+  
   useKey(
     'Escape',
     (e: KeyboardEvent) => {
@@ -122,27 +123,35 @@ export function Content({ children, ref, size = 'md', className, ...rest }: Cont
 
 export function Heading({
   children,
+  ref,
   level = 2,
   ...rest
 }: {
   children: React.ReactNode
+  ref?: React.Ref<HTMLHeadingElement>
   level?: 1 | 2 | 3 | 4 | 5 | 6
 } & React.HTMLAttributes<HTMLHeadingElement>) {
   const Cmp = `h${level}` as const
 
   return (
-    <Cmp className="font-medium tracking-wide" {...rest}>
+    <Cmp ref={ref} className="font-medium tracking-wide" {...rest}>
       {children}
     </Cmp>
   )
 }
 
-export function Close({ variant = 'tertiary', className, ...rest }: Omit<ButtonProps, 'children'>) {
+export function Close({
+  ref,
+  variant = 'tertiary',
+  className,
+  ...rest
+}: Omit<ButtonProps, 'children' | 'as'> & { ref?: React.Ref<HTMLButtonElement> }) {
   const { close } = use(ModalContext)
 
   return (
     <>
       <Button
+        ref={ref}
         onClick={close}
         variant={variant}
         className={cn('absolute right-1 top-1 text-app-fg-inverted', className)}
@@ -156,11 +165,16 @@ export function Close({ variant = 'tertiary', className, ...rest }: Omit<ButtonP
   )
 }
 
-export function Actions({ children, className, ...rest }: React.HTMLAttributes<HTMLUListElement>) {
+export function Actions({
+  children,
+  ref,
+  className,
+  ...rest
+}: React.HTMLAttributes<HTMLUListElement> & { ref?: React.Ref<HTMLUListElement> }) {
   const wrapped = Children.map(children, (child, idx) => <li key={idx}>{child}</li>)
 
   return (
-    <ul className={cn('mt-5 flex justify-center gap-2', className)} {...rest}>
+    <ul ref={ref} className={cn('mt-5 flex justify-center gap-2', className)} {...rest}>
       {wrapped}
     </ul>
   )
