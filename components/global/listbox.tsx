@@ -47,7 +47,7 @@ export function Option({
   ref?: React.Ref<HTMLDivElement>
   className?: string
 }) {
-  const { close } = useSelectContext({ isUnsafe: true })
+  const ctx = useSelectContext({ isUnsafe: true })
   const { selected, onSelect } = use(ListBoxContext)
   const isSelected = useMemo(() => selected.some(o => o === value), [selected, value])
 
@@ -59,11 +59,11 @@ export function Option({
       tabIndex={0}
       onKeyDown={e => {
         if (['Enter', ' '].includes(e.key)) {
-          onSelect?.(value, () => close(e), e)
+          onSelect?.(value, () => ctx?.close(e), e)
         }
       }}
       onClick={e => {
-        onSelect?.(value, () => close(e), e)
+        onSelect?.(value, () => ctx?.close(e), e)
       }}
       className={cn('sk-focus cursor-pointer', className)}>
       {children}

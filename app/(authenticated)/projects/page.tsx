@@ -5,12 +5,12 @@ import { getOwnedProjects } from '#/api/project/utils'
 import { ErrorBoundary } from 'react-error-boundary'
 
 import { auth } from '#/lib/auth'
+import { pluralise } from '#/utils/pluralise'
 import { toLocaleFromTimestamp } from '#/utils/to-locale-from-timestamp'
 
 import { ProjectInFocus } from '#/components/authenticated/project/project-in-focus'
-import { ProjectPreview } from '#/components/authenticated/project/project-preview'
+import { ProjectsList } from '#/components/authenticated/project/projects-list'
 import { BodyHeading } from '#/components/global/body-heading'
-import { FocusedText } from '#/components/global/focused-text'
 import { Spinner } from '#/components/global/spinner'
 import * as Tabs from '#/components/global/tabs'
 
@@ -28,7 +28,11 @@ export default async function Page() {
         All projects
       </BodyHeading>
 
-      <FocusedText as="p">Ongoing projects: {projects.length}</FocusedText>
+      <p>
+        You currently have {projects.length} ongoing{' '}
+        {pluralise(projects.length, 'project', 'projects')}.
+      </p>
+
       <Tabs.Root initialValue="owner" loop>
         <div className="space-y-8">
           <Tabs.List className="rounded-tab-group max-w-prose">
@@ -37,10 +41,10 @@ export default async function Page() {
           </Tabs.List>
 
           <Tabs.Panel value="owner" className="sk-focus space-y-6 rounded-xl">
-            <Suspense fallback={<Spinner />}>
-              {projects.length ? (
-                <>
-                  {lastOwned && (
+            {projects.length ? (
+              <>
+                {lastOwned && (
+                  <Suspense fallback={<Spinner />}>
                     <ProjectInFocus
                       project={{
                         ...lastOwned,
@@ -49,53 +53,22 @@ export default async function Page() {
                       }}
                       className="mb-10 max-w-prose"
                     />
-                  )}
-                  {projects.length ? (
-                    <ErrorBoundary
-                      fallback={<div>Something went wrong loading your owned projects</div>}>
-                      <div className="sk-scrollbar flex overflow-x-auto">
-                        <table
-                          className="sk-table"
-                          role="treegrid"
-                          aria-label="List of owned projects">
-                          <thead>
-                            <tr>
-                              <th>Name</th>
-                              <th className="w-44">Artist</th>
-                              <th className="w-56">Created</th>
-                              <th className="w-56">Updated</th>
-                              <th className="w-32">
-                                <span className="sr-only">Actions</span>
-                              </th>
-                            </tr>
-                          </thead>
+                  </Suspense>
+                )}
 
-                          <tbody>
-                            {projects.map(p => (
-                              <ProjectPreview
-                                key={p.projectId}
-                                project={{
-                                  ...p,
-                                  createdAt: toLocaleFromTimestamp(p.createdAt),
-                                  updatedAt: toLocaleFromTimestamp(p.updatedAt),
-                                }}
-                              />
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </ErrorBoundary>
-                  ) : null}
-                </>
-              ) : (
-                <p>
-                  You don&apos;t own any projects yet.{' '}
-                  <Link href="/projects/create" className="body-link">
-                    Start a new one?
-                  </Link>
-                </p>
-              )}
-            </Suspense>
+                <ErrorBoundary
+                  fallback={<div>Something went wrong loading your owned projects</div>}>
+                  <ProjectsList projects={projects} />
+                </ErrorBoundary>
+              </>
+            ) : (
+              <p>
+                You don&apos;t own any projects yet.{' '}
+                <Link href="/projects/create" className="body-link">
+                  Start a new one?
+                </Link>
+              </p>
+            )}
           </Tabs.Panel>
 
           <Tabs.Panel value="member" className="sk-focus rounded-xl">

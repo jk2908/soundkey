@@ -36,7 +36,7 @@ export function AnimateHeight({
 
   return (
     <motion.div
-      className={cn('', className)}
+      className={cn(className)}
       style={{ height }}
       animate={{ height }}
       transition={{ duration }}

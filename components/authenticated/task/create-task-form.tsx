@@ -96,11 +96,15 @@ export function CreateTaskForm({ projectId, resolvedAssignees, className, ...res
                 name="to"
                 id={assigneesId}
                 results={resolvedAssignees?.map(a => a.label)}
-                onConfirm={() => {
+                onConfirm={value => {
                   if (!resolvedAssignees?.length) return
 
                   flushSync(() => {
-                    setAssignees(prev => [...new Set([...prev, ...resolvedAssignees])])
+                    setAssignees(prev => [
+                      ...prev,
+                      ...resolvedAssignees.filter(u => u.label === value),
+                    ])
+
                     replace(pathname)
                     setValue('')
                   })
@@ -152,7 +156,7 @@ export function CreateTaskForm({ projectId, resolvedAssignees, className, ...res
           <Select.Toggle className="flex items-center justify-between gap-2">
             {({ isOpen }) => (
               <>
-                Selected: {capitalise(priority)}
+                {capitalise(priority)}
                 <Icon
                   name="chevron-down"
                   size={16}

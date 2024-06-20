@@ -6,7 +6,7 @@ import { isVisible } from '#/utils/is-visible'
 interface FocusScopeConfig {
   when?: boolean
   roving?: boolean
-  toExcludeFromTabIndex?: HTMLElement[] | React.RefObject<HTMLElement>[]
+  toExcludeFromTabIndex?: (HTMLElement | React.RefObject<HTMLElement>)[]
   orientation?: 'horizontal' | 'vertical'
   loop?: boolean
   onTabFocusOut?: (e: KeyboardEvent) => void
@@ -67,6 +67,9 @@ export function useFocusScope(ref: React.RefObject<HTMLElement>, config?: FocusS
       e.stopPropagation()
 
       const active = document.activeElement as HTMLElement
+
+      if (els.indexOf(active) === -1) return
+
       const prev =
         els.indexOf(active) - 1 >= 0
           ? els[els.indexOf(active as HTMLElement) - 1]
@@ -94,7 +97,7 @@ export function useFocusScope(ref: React.RefObject<HTMLElement>, config?: FocusS
             reset(next)
           } else if (e.key === 'Tab') {
             onTabFocusOut?.(e)
-            reset()
+            reset(els[els.findIndex(e => e === active)])
           }
           break
         case orientation === 'horizontal' && roving:
@@ -110,7 +113,7 @@ export function useFocusScope(ref: React.RefObject<HTMLElement>, config?: FocusS
             reset(next)
           } else if (e.key === 'Tab') {
             onTabFocusOut?.(e)
-            reset()
+            reset(els[els.findIndex(e => e === active)])
           }
           break
         case e.key === 'Tab' && roving !== true:

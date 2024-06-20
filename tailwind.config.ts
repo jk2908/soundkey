@@ -37,6 +37,41 @@ const config: Config = {
         'gr33n-100': 'rgb(var(--gr33n-100) / <alpha-value>)',
         'y3llow-50': 'rgb(var(--y3llow-50) / <alpha-value>)',
         'y3llow-0': 'rgb(var(--y3llow-0) / <alpha-value>)',
+        gr33n: {
+          500: 'rgb(var(--gr33n-500) / <alpha-value>)',
+          700: 'rgb(var(--gr33n-700) / <alpha-value>)',
+          900: 'rgb(var(--gr33n-900) / <alpha-value>)',
+        },
+        r3d: {
+          500: 'rgb(var(--r3d-500) / <alpha-value>)',
+          700: 'rgb(var(--r3d-700) / <alpha-value>)',
+        },
+        blu3: {
+          100: 'rgb(var(--blu3-100) / <alpha-value>)',
+          200: 'rgb(var(--blu3-200) / <alpha-value>)',
+          300: 'rgb(var(--blu3-300) / <alpha-value>)',
+          400: 'rgb(var(--blu3-400) / <alpha-value>)',
+          500: 'rgb(var(--blu3-500) / <alpha-value>)',
+          600: 'rgb(var(--blu3-600) / <alpha-value>)',
+          700: 'rgb(var(--blu3-700) / <alpha-value>)',
+          800: 'rgb(var(--blu3-800) / <alpha-value>)',
+          900: 'rgb(var(--blu3-900) / <alpha-value>)',
+        },
+        p1nk: {
+          100: 'rgb(var(--p1nk-100) / <alpha-value>)',
+          500: 'rgb(var(--p1nk-500) / <alpha-value>)',
+          700: 'rgb(var(--p1nk-700) / <alpha-value>)',
+        },
+        y311ow: {
+          100: 'rgb(var(--y311ow-100) / <alpha-value>)',
+          500: 'rgb(var(--y311ow-500) / <alpha-value>)',
+        },
+        'lumin0us-yellow': {
+          500: 'rgb(var(--lumin0us-yellow-500) / <alpha-value>)'
+        },
+        purpl3: {
+          500: 'rgb(var(--purpl3-500) / <alpha-value>)'
+        }
       },
       fontFamily: {
         sans: ['var(--font-sans)', ...fontFamily.sans],

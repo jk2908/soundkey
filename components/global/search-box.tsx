@@ -60,10 +60,10 @@ export function SearchBox({
   }, [results])
 
   return (
-    <div className="group relative">
-      <div className="flex w-full items-center gap-1 overflow-x-auto rounded-full border border-keyline has-[input:focus]:outline-1 has-[input:focus]:outline-highlight">
+    <div className="sk-search-box group">
+      <div className="sk-search-box__results">
         {results?.map(r => (
-          <Chip key={r} ref={chipRef} onClick={onConfirm} className="ml-1">
+          <Chip key={r} ref={chipRef} onClick={onConfirm} className="sk-search-box__chip">
             {r}?
           </Chip>
         ))}
@@ -73,12 +73,12 @@ export function SearchBox({
           type="search"
           onChange={onChange}
           value={value}
-          className="grow border-none pr-8 focus-visible:outline-none [&::-webkit-search-cancel-button]:hidden"
+          className="sk-search-box__input"
           {...rest}
         />
       </div>
 
-      <span className="absolute right-4 top-1/2 flex -translate-y-1/2 transform gap-4">
+      <span className="sk-search-box__icon">
         {isPending ? (
           <Spinner size={16} />
         ) : (

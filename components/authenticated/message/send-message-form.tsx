@@ -73,7 +73,7 @@ export function SendMessageForm({
     toast.success({ message, status })
 
     if (payload && !threadId) {
-      replace(`/threads/${payload}`)
+      replace(`/threads/t/${payload}`)
     }
 
     if (bodyRef.current) {
@@ -118,11 +118,15 @@ export function SendMessageForm({
                   name="to"
                   id={recipientsId}
                   results={resolvedRecipients?.map(r => r.label)}
-                  onConfirm={() => {
+                  onConfirm={value => {
                     if (!resolvedRecipients?.length) return
 
                     flushSync(() => {
-                      setRecipients(prev => [...new Set([...prev, ...resolvedRecipients])])
+                      setRecipients(prev => [
+                        ...prev,
+                        ...resolvedRecipients.filter(u => u.label === value),
+                      ])
+
                       replace(pathname)
                       setValue('')
                     })
@@ -146,18 +150,16 @@ export function SendMessageForm({
 
                       searchRef.current?.focus()
                     }}
-                    shouldPersist>
-                    <Listbox.Options className="flex-row items-center gap-2">
-                      {recipients.map(u => (
-                        <Listbox.Option
-                          key={generateId()}
-                          value={u.label}
-                          className="flex gap-1 rounded-full bg-keyline/80 px-2.5 py-1.5 text-sm">
-                          {u.label}
-                          <Icon name="x" size={10} />
-                        </Listbox.Option>
-                      ))}
-                    </Listbox.Options>
+                    className="flex-row items-center gap-2">
+                    {recipients.map(u => (
+                      <Listbox.Option
+                        key={generateId()}
+                        value={u.label}
+                        className="flex gap-1 rounded-full bg-keyline/80 px-2.5 py-1.5 text-sm">
+                        {u.label}
+                        <Icon name="x" size={10} />
+                      </Listbox.Option>
+                    ))}
                   </Listbox.Root>
                 </Search.Results>
               </>

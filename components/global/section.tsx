@@ -1,16 +1,18 @@
-import { forwardRef } from 'react'
 import { cn } from '#/utils/cn'
 
 type Size = '3xs' | '2xs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl'
 
-export const Section = forwardRef<
-  HTMLDivElement,
-  {
-    children: React.ReactNode
-    className?: string
-    size?: Size
-  }
->(({ children, className, size = 'md' }, ref) => {
+export function Section({
+  children,
+  ref,
+  className,
+  size = 'md',
+}: {
+  children: React.ReactNode
+  ref: React.Ref<HTMLDivElement>
+  className?: string
+  size?: Size
+}) {
   const styleMap: Record<Size, string> = {
     '3xs': 'py-0.5',
     '2xs': 'py-1',
@@ -28,6 +30,4 @@ export const Section = forwardRef<
       {children}
     </section>
   )
-})
-
-Section.displayName = 'Section'
+}
