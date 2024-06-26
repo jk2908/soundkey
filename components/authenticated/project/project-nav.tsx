@@ -1,3 +1,4 @@
+import { Collapsible } from '#/components/global/collapsible'
 import type { Icon as IconType } from '#/components/global/icon'
 import { Icon } from '#/components/global/icon'
 import { NavLink } from '#/components/global/nav-link'
@@ -18,7 +19,7 @@ export function ProjectNav() {
   ]
 
   return (
-    <div role="menubar" className="rounded-tab-group">
+    <Collapsible role="menubar" className="sk-collapsible-rounded-tab-group">
       {items.map(({ href, label, icon, match }) => (
         <NavLink
           key={href}
@@ -32,6 +33,6 @@ export function ProjectNav() {
           {label}
         </NavLink>
       ))}
-    </div>
+    </Collapsible>
   )
 }

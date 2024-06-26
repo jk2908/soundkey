@@ -1,10 +1,10 @@
-import { forwardRef } from 'react'
+import React, { forwardRef } from 'react'
 
 import { cn } from '#/utils/cn'
 
 type Props = {
   children: React.ReactNode
-  onClick?: (value: string) => void
+  onClick?: (e: React.MouseEvent) => void
   className?: string
   as?: React.ElementType
 }

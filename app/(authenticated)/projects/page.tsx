@@ -35,7 +35,7 @@ export default async function Page() {
 
       <Tabs.Root initialValue="owner" loop>
         <div className="space-y-8">
-          <Tabs.List className="rounded-tab-group max-w-prose">
+          <Tabs.List className="sk-rounded-tab-group max-w-prose">
             <Tabs.Button value="owner">Owner</Tabs.Button>
             <Tabs.Button value="member">Member</Tabs.Button>
           </Tabs.List>

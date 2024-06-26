@@ -35,6 +35,11 @@ const UncutSans = localFont({
   variable: '--font-sans',
 })
 
+const Kihim = localFont({
+  src: '../public/assets/Kihim-Regular.woff2',
+  variable: '--sk-typeface',
+})
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
@@ -43,7 +48,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={cn(
         'sk-scrollbar h-full overflow-x-hidden font-sans',
         UncutSans.variable,
-        MartianMono.variable
+        MartianMono.variable,
+        Kihim.variable
       )}
       suppressHydrationWarning>
       <body className="sk-scrollbar flex min-h-full flex-col bg-app-bg tracking-wide text-app-fg selection:bg-highlight selection:text-white">

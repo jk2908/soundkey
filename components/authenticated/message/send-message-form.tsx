@@ -118,13 +118,15 @@ export function SendMessageForm({
                   name="to"
                   id={recipientsId}
                   results={resolvedRecipients?.map(r => r.label)}
-                  onConfirm={value => {
+                  onConfirm={(value, e) => {
+                    e.stopPropagation()
+
                     if (!resolvedRecipients?.length) return
 
                     flushSync(() => {
                       setRecipients(prev => [
-                        ...prev,
-                        ...resolvedRecipients.filter(u => u.label === value),
+                        ...prev.filter(u => u.label !== value),
+                        ...resolvedRecipients,
                       ])
 
                       replace(pathname)
@@ -143,7 +145,9 @@ export function SendMessageForm({
                 <Search.Results>
                   <Listbox.Root
                     selected={recipients.map(r => r.label)}
-                    onSelect={value => {
+                    onSelect={(value, _, e) => {
+                      e.preventDefault()
+
                       flushSync(() => {
                         setRecipients(prev => prev.filter(u => u.label !== value))
                       })
@@ -153,7 +157,7 @@ export function SendMessageForm({
                     className="flex-row items-center gap-2">
                     {recipients.map(u => (
                       <Listbox.Option
-                        key={generateId()}
+                        key={u.label}
                         value={u.label}
                         className="flex gap-1 rounded-full bg-keyline/80 px-2.5 py-1.5 text-sm">
                         {u.label}

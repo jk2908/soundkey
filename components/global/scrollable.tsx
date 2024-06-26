@@ -11,12 +11,14 @@ export function Scrollable({
   auto,
   speed = 1500 / 60,
   wait,
+  scrollClassName,
   className,
 }: {
   children: React.ReactNode
   auto?: boolean
   speed?: number
   wait?: number
+  scrollClassName?: string
   className?: string
 }) {
   const wrapperRef = useRef<HTMLDivElement>(null)
@@ -52,6 +54,7 @@ export function Scrollable({
 
     return () => {
       resizeRef.current?.unobserve(el)
+      resizeRef.current?.disconnect()
       resizeRef.current = null
     }
   }, [onScroll])
@@ -99,14 +102,14 @@ export function Scrollable({
   const pause = () => setPaused(true)
 
   return (
-    <div ref={wrapperRef} className={cn('hide-scrollbar relative overflow-x-auto', className)}>
+    <div ref={wrapperRef} className={cn('hide-scrollbar relative whitespace-nowrap overflow-x-auto', className)}>
       <GradientMask isVisible={isLeftEdgeVisible} />
       <div
         ref={scrollRef}
         onScroll={onScroll}
         onMouseEnter={pause}
         onMouseLeave={play}
-        className="hide-scrollbar flex overflow-x-auto whitespace-nowrap">
+        className={cn('hide-scrollbar flex overflow-x-auto whitespace-nowrap', scrollClassName)}>
         {children}
       </div>
       <GradientMask isVisible={isRightEdgeVisible} mirror />

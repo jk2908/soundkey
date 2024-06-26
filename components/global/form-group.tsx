@@ -17,7 +17,7 @@ export function FormGroup({
   return (
     <div
       className={cn(
-        '[&>:is(h2,h3,h4,h5,h6)]:mb-4',
+        '[&>:is(h2,h3,h4,h5,h6)]:mb-5',
         !withNestedChildren ? 'space-y-2 [&_+_&]:mt-4' : '[&_+_&]:mt-6',
         followsNestedChildren && 'mt-6',
         className

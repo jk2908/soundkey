@@ -11,6 +11,7 @@ import { ThreadPreview } from '#/components/authenticated/thread/thread-preview'
 import { BodyHeading } from '#/components/global/body-heading'
 import { Icon } from '#/components/global/icon'
 import { SKTableRowLoader } from '#/components/global/sk-table-row-loader'
+import { resolveThreadUsers } from '#/api/thread/handlers'
 
 export default async function Page() {
   const user = await auth()
@@ -50,6 +51,7 @@ export default async function Page() {
                         createdAt: toLocaleFromTimestamp(t.createdAt),
                         updatedAt: toLocaleFromTimestamp(t.updatedAt),
                       }}
+                      usersPromise={resolveThreadUsers(t.threadId)}
                       onDelete={async () => {
                         'use server'
                         await deleteThread(t.threadId)

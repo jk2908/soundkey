@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, Suspense, useEffect, useRef, useState } from 'react'
+import React, { createContext, Suspense, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { flushSync } from 'react-dom'
 
@@ -39,29 +39,35 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
     setOpen(mq ? true : false)
   }, [mq])
 
-  useClickOutside([sidebarRef, toggleRef], () => setOpen(false), { when: isOpen && !mq })
-  useFocusScope(sidebarRef, { when: isOpen && !mq })
+  const close = (e: React.MouseEvent | KeyboardEvent) => {
+    e.stopPropagation()
+    e.preventDefault()
 
-  useKey(
-    'Escape',
-    () => {
+    if (e instanceof KeyboardEvent || e.type === 'keydown') {
       flushSync(() => {
         setOpen(false)
       })
 
       toggleRef.current?.focus()
-    },
-    {
-      when: isOpen && !mq,
+      return
     }
-  )
+
+    setOpen(false)
+  }
+
+  useClickOutside([sidebarRef, toggleRef], () => setOpen(false), { when: isOpen && !mq })
+  useFocusScope(sidebarRef, { when: isOpen && !mq })
+
+  useKey('Escape', e => close(e), {
+    when: isOpen && !mq,
+  })
 
   return (
     <>
       {!mq && (
         <Button
           ref={toggleRef}
-          onClick={(e: React.MouseEvent) => {
+          onClick={(e: React.SyntheticEvent) => {
             e.stopPropagation()
             setOpen(prev => !prev)
           }}
@@ -82,7 +88,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
           ref={sidebarRef}
           size="lg"
           className={cn(
-            'h-screen w-[min(320px,_100vw)] shrink-0 rounded-e-3xl border border-keyline bg-app-bg aria-current:bg-app-bg-inverted',
+            'h-screen w-[min(280px,_100vw)] shrink-0 rounded-e-3xl border border-keyline bg-app-bg aria-current:bg-app-bg-inverted',
             'fixed inset-0 z-40 transition-transform',
             !isOpen && '-translate-x-full',
             'lg:sticky lg:top-0 lg:translate-x-0'
@@ -95,7 +101,7 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
 
               {!mq && (
                 <button
-                  onClick={() => setOpen(false)}
+                  onClick={close}
                   style={{
                     width: '32px',
                     height: '32px',

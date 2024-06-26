@@ -96,13 +96,15 @@ export function CreateTaskForm({ projectId, resolvedAssignees, className, ...res
                 name="to"
                 id={assigneesId}
                 results={resolvedAssignees?.map(a => a.label)}
-                onConfirm={value => {
+                onConfirm={(value, e) => {
+                  e.stopPropagation()
+
                   if (!resolvedAssignees?.length) return
 
                   flushSync(() => {
                     setAssignees(prev => [
-                      ...prev,
-                      ...resolvedAssignees.filter(u => u.label === value),
+                      ...prev.filter(u => u.label !== value),
+                      ...resolvedAssignees,
                     ])
 
                     replace(pathname)

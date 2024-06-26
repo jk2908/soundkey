@@ -17,7 +17,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
 
   return (
     <Suspense fallback={<FullscreenSpinner />}>
-      <Wrapper size="xxl" className="ml-0 flex grow bg-app-bg md:px-0">
+      <Wrapper size="xxl" className="overflow-x-hidden ml-0 flex grow bg-app-bg md:px-0">
         <Sidebar>
           <Suspense fallback={<NavSkeletonLoader />}>
             <Nav />

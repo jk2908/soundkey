@@ -109,7 +109,7 @@ export function Content({ children, ref, size = 'md', className, ...rest }: Cont
     <div
       ref={localRef}
       className={cn(
-        'fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-app-bg-inverted px-6 py-10 text-app-fg-inverted shadow-lg',
+        'fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-app-bg-inverted px-6 py-10 text-app-fg-inverted shadow-lg shadow-app-bg-inverted/25',
         className
       )}
       style={{

@@ -9,7 +9,7 @@ export function Section({
   size = 'md',
 }: {
   children: React.ReactNode
-  ref: React.Ref<HTMLDivElement>
+  ref?: React.Ref<HTMLDivElement>
   className?: string
   size?: Size
 }) {

@@ -13,11 +13,11 @@ export function Root({ children, ...rest }: Props) {
   return <Popover.Root {...rest}>{children}</Popover.Root>
 }
 
-export function Toggle({ children, ...rest }: {} & ToggleProps) {
+export function Toggle({ children, className, ...rest }: {} & ToggleProps) {
   const { isOpen } = use(PopoverContext)
 
   return (
-    <Popover.Toggle {...rest}>
+    <Popover.Toggle className={cn('items-center', className)} {...rest}>
       {typeof children === 'function' ? children({ isOpen }) : children}
     </Popover.Toggle>
   )
@@ -32,7 +32,7 @@ export function Content({
   return (
     <Popover.Content
       className={cn(
-        'overflow-hidden bg-app-bg-inverted p-0',
+        'overflow-hidden bg-app-bg-inverted shadow-md shadow-app-bg-inverted/25 p-0',
         orientation === 'vertical' ? 'rounded-lg' : 'rounded-full',
         className
       )}

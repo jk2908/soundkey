@@ -1,7 +1,8 @@
 'use client'
 
-import { createContext, use, useCallback, useEffect, useId, useRef, useState } from 'react'
+import React, { createContext, use, useCallback, useEffect, useId, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
+import { mergeRefs } from 'react-merge-refs'
 
 import { useClickOutside } from '#/hooks/use-click-outside'
 import { useFocusScope } from '#/hooks/use-focus-scope'
@@ -80,7 +81,10 @@ export function Root({ children, onBeforeOpen, onAfterClose, duration }: Props) 
   useFocusScope(contentRef, {
     when: isOpen,
     roving: true,
-    onTabFocusOut: onClickOutsideOrEscWithFocus,
+    onTabPress: e => {
+      e.preventDefault()
+      onClickOutsideOrEscWithFocus()
+    },
   })
 
   return (
@@ -92,15 +96,16 @@ export function Root({ children, onBeforeOpen, onAfterClose, duration }: Props) 
 
 export type ToggleProps = {
   children: React.ReactNode | (({ isOpen }: { isOpen: boolean }) => React.ReactNode)
+  ref?: React.Ref<HTMLButtonElement>
 } & Omit<React.HTMLAttributes<HTMLButtonElement>, 'children'>
 
-export function Toggle({ children, ...rest }: ToggleProps) {
+export function Toggle({ children, ref, ...rest }: ToggleProps) {
   const { id, isOpen, toggle, toggleRef } = use(PopoverContext)
 
   return (
     <button
       id={`${id}-t`}
-      ref={toggleRef}
+      ref={mergeRefs([toggleRef, ref])}
       aria-haspopup="true"
       aria-expanded={isOpen}
       aria-controls={`${id}-c`}

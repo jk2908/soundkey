@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 
 import type { SafeUser, Thread } from '#/lib/schema'
 import { type WithFormattedTimestamps } from '#/lib/types'
-import { useResolvedThreadUsers } from '#/hooks/use-resolved-thread-users'
 import { cn } from '#/utils/cn'
 
 import * as ContextMenu from '#/components/global/context-menu'
@@ -14,20 +13,20 @@ import { Icon } from '#/components/global/icon'
 type Props = {
   userId: string
   thread: WithFormattedTimestamps<Thread, 'createdAt' | 'updatedAt'>
+  usersPromise: Promise<SafeUser[]>
   onDelete: () => void
   onArchive?: () => void
   className?: string
 }
 
-export function ThreadPreview({ userId, thread, onDelete, className }: Props) {
+export function ThreadPreview({ userId, thread, usersPromise, onDelete, className }: Props) {
   const { threadId, ownerId, createdAt, updatedAt } = thread
-  const usersPromise = useResolvedThreadUsers(threadId)
-  const users = use<SafeUser[]>(usersPromise)
+  const users = use(usersPromise)
   const { push } = useRouter()
 
   const open = () => push(`/threads/t/${thread.threadId}`)
 
-  const usersDisplay = users.filter(u => {
+  const usersDisplay = users?.filter(u => {
     if (users.length === 1 && u.userId === userId) {
       return u
     }
@@ -50,7 +49,7 @@ export function ThreadPreview({ userId, thread, onDelete, className }: Props) {
   return (
     <tr key={threadId} onClick={open} role="row" className={cn('cursor-pointer', className)}>
       <td>
-        {usersDisplay.map((u, idx) => (
+        {usersDisplay?.map((u, idx) => (
           <span
             key={u.userId}
             className={cn(

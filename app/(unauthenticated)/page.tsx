@@ -8,7 +8,7 @@ export default async function Page() {
     <KeylineBox>
       <Tabs.Root initialValue="signup" loop>
         <div className="space-y-8">
-          <Tabs.List className="rounded-tab-group max-w-prose mx-auto">
+          <Tabs.List className="sk-rounded-tab-group max-w-prose mx-auto">
             <Tabs.Button value="signup">
               Signup
             </Tabs.Button>

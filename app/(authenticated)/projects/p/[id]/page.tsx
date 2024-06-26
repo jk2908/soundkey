@@ -76,7 +76,7 @@ export default async function Page({
 
         <Tabs.Root initialValue="add" loop>
           <div className="space-y-8">
-            <Tabs.List className="rounded-tab-group">
+            <Tabs.List className="sk-rounded-tab-group">
               <Tabs.Button value="add">Add</Tabs.Button>
               <Tabs.Button value="update">Update</Tabs.Button>
             </Tabs.List>

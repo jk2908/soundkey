@@ -9,7 +9,7 @@ interface FocusScopeConfig {
   toExcludeFromTabIndex?: (HTMLElement | React.RefObject<HTMLElement>)[]
   orientation?: 'horizontal' | 'vertical'
   loop?: boolean
-  onTabFocusOut?: (e: KeyboardEvent) => void
+  onTabPress?: (e: KeyboardEvent) => void
 }
 
 export function useFocusScope(ref: React.RefObject<HTMLElement>, config?: FocusScopeConfig) {
@@ -19,7 +19,7 @@ export function useFocusScope(ref: React.RefObject<HTMLElement>, config?: FocusS
     toExcludeFromTabIndex,
     orientation = 'vertical',
     loop = true,
-    onTabFocusOut,
+    onTabPress,
   } = config || {}
   let els: HTMLElement[] = []
 
@@ -96,7 +96,7 @@ export function useFocusScope(ref: React.RefObject<HTMLElement>, config?: FocusS
             next?.focus()
             reset(next)
           } else if (e.key === 'Tab') {
-            onTabFocusOut?.(e)
+            onTabPress?.(e)
             reset(els[els.findIndex(e => e === active)])
           }
           break
@@ -112,7 +112,7 @@ export function useFocusScope(ref: React.RefObject<HTMLElement>, config?: FocusS
             next?.focus()
             reset(next)
           } else if (e.key === 'Tab') {
-            onTabFocusOut?.(e)
+            onTabPress?.(e)
             reset(els[els.findIndex(e => e === active)])
           }
           break

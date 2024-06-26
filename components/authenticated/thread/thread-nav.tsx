@@ -16,7 +16,7 @@ export function ThreadNav() {
   ]
 
   return (
-    <div role="menubar" className="rounded-tab-group">
+    <div role="menubar" className="sk-rounded-tab-group">
       {items.map(({ href, label, icon, match }) => (
         <NavLink
           key={href}

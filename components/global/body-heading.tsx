@@ -23,7 +23,11 @@ export function BodyHeading({ children, level = 2, styleAsLevel, className, ...r
 
   return (
     <Cmp
-      className={cn('font-medium tracking-wide font-mono italic', className, styleMap[styleAsLevel ?? level])}
+      className={cn(
+        'font-mono font-medium italic tracking-wide',
+        className,
+        styleMap[styleAsLevel ?? level]
+      )}
       {...rest}>
       {children}
     </Cmp>

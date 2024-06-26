@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useTransition } from 'react'
+import React, { useEffect, useRef, useTransition } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 import { Chip } from '#/components/global/chip'
@@ -14,7 +14,7 @@ export type Props = {
   setValue?: React.Dispatch<React.SetStateAction<string>>
   param?: string
   results?: string[]
-  onConfirm?: (value: string) => void
+  onConfirm?: (value: string, e: React.MouseEvent) => void
   onClear?: () => void
 } & Omit<InputProps, 'results'>
 
@@ -63,7 +63,11 @@ export function SearchBox({
     <div className="sk-search-box group">
       <div className="sk-search-box__results">
         {results?.map(r => (
-          <Chip key={r} ref={chipRef} onClick={onConfirm} className="sk-search-box__chip">
+          <Chip
+            key={r}
+            ref={chipRef}
+            onClick={e => onConfirm?.(value = '', e)}
+            className="sk-search-box__chip">
             {r}?
           </Chip>
         ))}
