@@ -11,7 +11,7 @@ import { useSelectContext } from '#/hooks/use-select-context'
 import { cn } from '#/utils/cn'
 import { toSmartEscape } from '#/utils/to-smart-escape'
 
-import { AnimateHeight } from './animate-height'
+import { AnimateHeight, type Props as AnimateHeightProps } from '#/components/global/animate-height'
 
 export type SelectProvider = {
   isOpen: boolean
@@ -27,7 +27,6 @@ export function Root({
   children,
   isDefaultOpen = false,
   shouldPersist,
-  shouldAnimate = true,
   ref,
   className,
   ...rest
@@ -35,7 +34,6 @@ export function Root({
   children: React.ReactNode
   isDefaultOpen?: boolean
   shouldPersist?: boolean
-  shouldAnimate?: boolean
   ref?: React.Ref<HTMLDivElement>
   className?: string
 } & React.HTMLAttributes<HTMLDivElement>) {
@@ -76,7 +74,7 @@ export function Root({
     when: isOpen,
     roving: true,
     toExcludeFromTabIndex: [toggleRef],
-    onTabFocusOut: close,
+    onTabPress: close,
     loop: false,
   })
 
@@ -94,9 +92,27 @@ export function Root({
         aria-haspopup="listbox"
         className={cn(className)}
         {...rest}>
-        <AnimateHeight className="w-full" isDisabled={!shouldAnimate}>{children}</AnimateHeight>
+        {children}
       </div>
     </SelectContext.Provider>
+  )
+}
+
+export function Options({
+  children,
+  shouldAnimate = true,
+  className,
+  ...rest
+}: {
+  children: React.ReactNode
+  shouldAnimate?: boolean
+} & Omit<AnimateHeightProps, 'isDisabled'>) {
+  const { isOpen } = useSelectContext()
+
+  return (
+    <AnimateHeight className={cn('w-full', className)} isDisabled={!shouldAnimate} {...rest}>
+      {isOpen ? children : null}
+    </AnimateHeight>
   )
 }
 
@@ -120,7 +136,7 @@ export function Toggle({
       aria-expanded={isOpen}
       tabIndex={0}
       onClick={() => setOpen(prev => !prev)}
-      className={cn('select-none w-full', className)}>
+      className={cn('w-full select-none', className)}>
       {typeof children === 'function' ? children({ isOpen }) : children}
     </button>
   )

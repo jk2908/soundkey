@@ -44,8 +44,14 @@
 
     --wrapper-px: theme(padding.4);
 
-    @media (width: theme('screens.sm')) {
+    @media (width >= theme('screens.sm')) {
       --wrapper-px: theme(padding.8);
+    }
+
+    --app-cols: 1;
+
+    @media (width >= theme('screens.lg')) {
+      --app-cols: 240px minmax(auto, 1fr);
     }
 
     --app-bg: var(--blu3-200);
@@ -147,10 +153,13 @@
 
   .sk-collapsible-rounded-tab-group {
     @apply sk-rounded-tab-group;
-    
-    :is(button, a) {
-      flex-grow: 0;
-    }
+
+    min-inline-size: unset;
+  }
+
+  .sk-collapsible {
+    max-inline-size: 100%;
+    overflow: hidden;
   }
 
   .body-link {

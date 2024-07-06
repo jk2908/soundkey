@@ -1,4 +1,5 @@
 import { lucia } from '#/lib/auth'
+import { type Icon } from '#/components/global/icon'
 
 declare module 'react' {
   interface CSSProperties {
@@ -52,6 +53,9 @@ export type Route = {
   label: string
   href: string
   isProtected?: boolean
+  icon?: Icon
+  match?: string[]
+  subRoutes?: Route[]
 }
 
 export type ThreadAction = {

@@ -16,9 +16,7 @@ import { Button } from '#/components/global/button'
 import { HorizontalRule } from '#/components/global/horizontal-rule'
 import { Icon } from '#/components/global/icon'
 import { Logo } from '#/components/global/logo'
-import { Overlay } from '#/components/global/overlay'
 import { Section } from '#/components/global/section'
-import { Spinner } from '#/components/global/spinner'
 import { YSpace } from '#/components/global/y-space'
 
 export const SidebarContext = createContext<{
@@ -29,9 +27,15 @@ export const SidebarContext = createContext<{
   setOpen: () => {},
 })
 
-export function Sidebar({ children }: { children: React.ReactNode }) {
+export function Sidebar({
+  children,
+  className,
+  ...rest
+}: { children: React.ReactNode } & React.HTMLAttributes<HTMLDivElement>) {
   const [isOpen, setOpen] = useState(false)
+
   const mq = useMediaQuery(`(min-width: ${breakpoints.lg})`)
+
   const toggleRef = useRef<HTMLButtonElement>(null)
   const sidebarRef = useRef<HTMLDivElement>(null)
 
@@ -71,7 +75,8 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
             e.stopPropagation()
             setOpen(prev => !prev)
           }}
-          className="fixed bottom-8 right-8 z-50 px-6 lg:hidden">
+          size="xs"
+          className="fixed bottom-8 right-8 z-50 px-6 text-sm lg:hidden">
           Menu
           <Icon
             name="chevron-right"
@@ -88,11 +93,12 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
           ref={sidebarRef}
           size="lg"
           className={cn(
-            'h-screen w-[min(280px,_100vw)] shrink-0 rounded-e-3xl border border-keyline bg-app-bg aria-current:bg-app-bg-inverted',
-            'fixed inset-0 z-40 transition-transform',
+            'fixed inset-0 z-40 h-screen shrink-0 rounded-e-3xl border border-keyline bg-app-bg transition-transform aria-current:bg-app-bg-inverted',
             !isOpen && '-translate-x-full',
-            'lg:sticky lg:top-0 lg:translate-x-0'
-          )}>
+            'lg:sticky lg:top-0 lg:translate-x-0',
+            className
+          )}
+          {...rest}>
           <YSpace className="flex h-full flex-col">
             <div className="flex items-center justify-between">
               <span className="pl-4">
@@ -118,22 +124,19 @@ export function Sidebar({ children }: { children: React.ReactNode }) {
             <div className="flex grow flex-col">
               {children}
 
-              <div className="mt-auto flex flex-col gap-6 px-4">
-                <HorizontalRule />
+              <HorizontalRule />
+              <div className="mt-auto flex flex-col py-6 px-4">
+                <div className="flex gap-4">
+                  <LogoutButton iconOnly>
+                    <Icon name="logout" size={18} title="Logout" />
+                    <span className="sr-only">Log out</span>
+                  </LogoutButton>
 
-                <Suspense fallback={<Spinner />}>
-                  <div className="flex gap-4">
-                    <LogoutButton iconOnly>
-                      <Icon name="logout" size={18} title="Logout" />
-                      <span className="sr-only">Log out</span>
-                    </LogoutButton>
-
-                    <Button as={Link} href="/profile" iconOnly>
-                      <Icon name="user" size={18} title="Profile" />
-                      <span className="sr-only">Profile</span>
-                    </Button>
-                  </div>
-                </Suspense>
+                  <Button as={Link} href="/profile" iconOnly>
+                    <Icon name="user" size={18} title="Profile" />
+                    <span className="sr-only">Profile</span>
+                  </Button>
+                </div>
               </div>
             </div>
           </YSpace>

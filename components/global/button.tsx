@@ -34,7 +34,7 @@ export type PolymorphicComponentPropsWithRef<
 export type Props = {
   children: React.ReactNode
   variant?: IntentVariant | StateVariant
-  size?: 'sm' | 'md' | 'lg'
+  size?: 'xs' | 'sm' | 'md' | 'lg'
   className?: string
   iconOnly?: boolean
 }
@@ -72,6 +72,7 @@ export function Button<C extends React.ElementType = typeof DEFAULT_ELEMENT>({
       className={cn(
         'flex items-center gap-3 rounded-full border border-transparent px-8 py-2',
         styleMap[variant],
+        size === 'xs' && 'gap-1 px-4 text-xs',
         size === 'sm' && 'gap-2 px-6 text-sm',
         size === 'lg' && 'gap-4 px-10 text-lg',
         iconOnly && 'p-2',

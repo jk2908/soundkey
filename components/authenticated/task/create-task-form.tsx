@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState, useEffect, useId, useRef, useState } from 'react'
+import { startTransition, useActionState, useEffect, useId, useRef, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { create } from '#/api/task/actions'
 import { flushSync } from 'react-dom'
@@ -101,22 +101,22 @@ export function CreateTaskForm({ projectId, resolvedAssignees, className, ...res
 
                   if (!resolvedAssignees?.length) return
 
+                  startTransition(() => {
+                    setValue('')
+                    replace(pathname)
+                  })
+
                   flushSync(() => {
                     setAssignees(prev => [
                       ...prev.filter(u => u.label !== value),
                       ...resolvedAssignees,
                     ])
-
-                    replace(pathname)
-                    setValue('')
                   })
 
                   searchRef.current?.focus()
                 }}
                 onClear={() => {
-                  queueMicrotask(() => {
-                    searchRef.current?.focus()
-                  })
+                  searchRef.current?.focus()
                 }}
               />
 
@@ -169,18 +169,20 @@ export function CreateTaskForm({ projectId, resolvedAssignees, className, ...res
             )}
           </Select.Toggle>
 
-          <Listbox.Root
-            selected={[priority]}
-            onSelect={(value, close) => {
-              setPriority(value as TaskPriority)
-              close()
-            }}>
-            {taskPriorities.map(p => (
-              <Listbox.Option key={p} value={p}>
-                {capitalise(p)}
-              </Listbox.Option>
-            ))}
-          </Listbox.Root>
+          <Select.Options>
+            <Listbox.Root
+              selected={[priority]}
+              onSelect={(value, close) => {
+                setPriority(value as TaskPriority)
+                close()
+              }}>
+              {taskPriorities.map(p => (
+                <Listbox.Option key={p} value={p}>
+                  {capitalise(p)}
+                </Listbox.Option>
+              ))}
+            </Listbox.Root>
+          </Select.Options>
         </Select.Root>
 
         <input type="hidden" id={priorityId} name="priority" value={priority} />

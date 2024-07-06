@@ -29,6 +29,8 @@ export type Icon =
   | 'calendar-plus'
   | 'disc'
   | 'music'
+  | 'plus'
+  | 'minus'
 
 export type Props = {
   name: Icon

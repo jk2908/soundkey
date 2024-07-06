@@ -23,10 +23,6 @@ export function Root({
   onSelect?: (value: string, close: () => void, e: React.SyntheticEvent) => void
   className?: string
 }) {
-  const ctx = useSelectContext({ isUnsafe: true })
-
-  if (ctx?.isOpen === false) return null
-
   return (
     <ListBoxContext.Provider value={{ selected, onSelect }}>
       <div role="listbox" className={cn('flex flex-col', className)}>

@@ -17,14 +17,14 @@ export default async function Layout({ children }: { children: React.ReactNode }
 
   return (
     <Suspense fallback={<FullscreenSpinner />}>
-      <Wrapper size="xxl" className="overflow-x-hidden ml-0 flex grow bg-app-bg md:px-0">
-        <Sidebar>
+      <Wrapper size="xxl" className="ml-0 grid grid-cols-[--app-cols] grow bg-app-bg md:px-0">
+        <Sidebar className="overflow-y-auto sk-scrollbar">
           <Suspense fallback={<NavSkeletonLoader />}>
             <Nav />
           </Suspense>
         </Sidebar>
 
-        <Wrapper size={0} className="flex grow flex-col px-0 md:px-[--wrapper-px]">
+        <Wrapper size={0} className="flex grow flex-col px-0 md:px-[--wrapper-px] overflow-x-hidden">
           <Section size="lg" className="flex grow flex-col">
             {children}
           </Section>

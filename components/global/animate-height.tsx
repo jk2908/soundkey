@@ -5,17 +5,19 @@ import { motion, type HTMLMotionProps } from 'framer-motion'
 
 import { cn } from '#/utils/cn'
 
+export type Props = {
+  children: React.ReactNode
+  duration?: number
+  isDisabled?: boolean
+} & HTMLMotionProps<'div'>
+
 export function AnimateHeight({
   children,
   duration = 0.1,
   isDisabled,
   className,
   ...rest
-}: {
-  children: React.ReactNode
-  duration?: number
-  isDisabled?: boolean
-} & HTMLMotionProps<'div'>) {
+}: Props) {
   const ref = useRef<HTMLDivElement>(null)
   const [height, setHeight] = useState<number | 'auto'>('auto')
 
@@ -36,7 +38,7 @@ export function AnimateHeight({
 
   return (
     <motion.div
-      className={cn(className)}
+      className={cn('pointer-events-none &*:pointer-events-auto', className)}
       style={{ height }}
       animate={{ height }}
       transition={{ duration }}

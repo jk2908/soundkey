@@ -1,13 +1,12 @@
 'use client'
 
-import { useActionState, useEffect, useId, useRef, useState } from 'react'
+import { useActionState, useEffect, useId, useRef, useState, startTransition } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { send } from '#/api/message/actions'
 import { flushSync } from 'react-dom'
 
 import { useToast } from '#/hooks/use-toast'
 import { cn } from '#/utils/cn'
-import { generateId } from '#/utils/generate-id'
 
 import { FormGroup } from '#/components/global/form-group'
 import { Icon } from '#/components/global/icon'
@@ -123,14 +122,16 @@ export function SendMessageForm({
 
                     if (!resolvedRecipients?.length) return
 
+                    startTransition(() => {
+                      setValue('')
+                      replace(pathname)
+                    })
+
                     flushSync(() => {
                       setRecipients(prev => [
                         ...prev.filter(u => u.label !== value),
                         ...resolvedRecipients,
                       ])
-
-                      replace(pathname)
-                      setValue('')
                     })
 
                     searchRef.current?.focus()

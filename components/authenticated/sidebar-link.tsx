@@ -1,16 +1,16 @@
 'use client'
 
-import { startTransition, use, useCallback } from 'react'
+import { startTransition, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 
-import { SidebarContext } from '#/components/authenticated/sidebar'
 import { NavLink, type Props as NavLinkProps } from '#/components/global/nav-link'
+import { useSidebarContext } from '#/hooks/use-sidebar-context'
 
 // https://github.com/shuding/next-view-transitions/blob/main/src/link.tsx
 
 export function SidebarLink(props: NavLinkProps) {
   const { children, onClick: prevOnClick, ...rest } = props
-  const { isOpen, setOpen } = use(SidebarContext)
+  const { isOpen, setOpen } = useSidebarContext()
   const router = useRouter()
 
   const onClick = useCallback(

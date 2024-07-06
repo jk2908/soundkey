@@ -46,13 +46,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="en"
       dir="ltr"
       className={cn(
-        'sk-scrollbar h-full overflow-x-hidden font-sans',
+        'sk-scrollbar h-full font-sans',
         UncutSans.variable,
         MartianMono.variable,
         Kihim.variable
       )}
       suppressHydrationWarning>
-      <body className="sk-scrollbar flex min-h-full flex-col bg-app-bg tracking-wide text-app-fg selection:bg-highlight selection:text-white">
+      <body className="sk-scrollbar overflow-x-hidden flex min-h-full flex-col bg-app-bg tracking-wide text-app-fg selection:bg-highlight selection:text-white">
         <Providers>
           <Suspense fallback={<FullscreenSpinner />}>
             {children}
