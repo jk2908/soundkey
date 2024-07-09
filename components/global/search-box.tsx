@@ -66,7 +66,9 @@ export function SearchBox({
           <Chip
             key={r}
             ref={chipRef}
-            onClick={e => onConfirm?.(value = '', e)}
+            onClick={e => {
+              onConfirm?.(value ? value : '', e)
+            }}
             className="sk-search-box__chip">
             {r}?
           </Chip>

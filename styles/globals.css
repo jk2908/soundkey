@@ -61,7 +61,7 @@
 
     --keyline: var(--blu3-400);
 
-    &[data-theme=og] {
+    &[data-theme='og'] {
       --app-bg: var(--y3llow-100);
       --app-bg-inverted: var(--gr33n-900);
       --app-fg: var(--gr33n-900);
@@ -172,15 +172,27 @@
   }
 
   .sk-table {
+    --rad: theme('borderRadius.2xl');
+
     inline-size: 100%;
 
     th {
       @apply focused-text;
 
+      background-color: rgb(var(--app-bg-inverted) / 100%);
+      color: rgb(var(--app-fg-inverted) / 100%);
       font-weight: 600;
       padding-block: theme(padding.2);
       padding-inline: theme(padding.4);
       text-align: start;
+
+      &:first-of-type {
+        border-start-start-radius: var(--rad);
+      }
+
+      &:last-of-type {
+        border-start-end-radius: var(--rad);
+      }
     }
 
     th,
@@ -192,13 +204,33 @@
       border-block-start: 1px dashed rgb(var(--keyline) / 100%);
 
       &:hover {
-        background-color: rgb(var(--keyline) / 25%);
+        background-color: rgb(var(--keyline) / 40%);
+      }
+
+      > td {
+        &:last-of-type {
+          border-inline-end: none;
+        }
+      }
+
+      &:last-of-type {
+        > td {
+          &:first-of-type {
+            border-end-start-radius: var(--rad);
+          }
+
+          &:last-of-type {
+            border-end-end-radius: var(--rad);
+          }
+        }
       }
     }
 
     td {
-      padding-block: theme('spacing.2');
-      padding-inline: theme('spacing.6');
+      background-color: rgb(var(--keyline) / 30%);
+      border-inline-end: 1px solid rgb(var(--keyline) / 100%);
+      padding-block: theme(padding.2);
+      padding-inline: theme(padding.4);
     }
   }
 
@@ -323,7 +355,10 @@
       );
     background-clip: padding-box, border-box;
     border: 3px solid transparent;
-    transition: --sk-highlight-box-gradient-c1 0.5s, --sk-highlight-box-gradient-c2 0.5s, --sk-highlight-box-gradient-c3 0.5s;
+    transition:
+      --sk-highlight-box-gradient-c1 0.5s,
+      --sk-highlight-box-gradient-c2 0.5s,
+      --sk-highlight-box-gradient-c3 0.5s;
   }
 
   @keyframes sk-highlight-box-gradient {
@@ -355,13 +390,12 @@
 
     @media (hover: hover) and (pointer: fine) {
       &:hover {
-        
         > * {
           animation-play-state: paused;
         }
       }
     }
-    
+
     > * {
       animation: sk-marquee 10s linear infinite;
       flex-shrink: 0;

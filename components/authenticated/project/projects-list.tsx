@@ -1,18 +1,16 @@
-import { Suspense } from 'react'
-
 import { type Project } from '#/lib/schema'
 import { toLocaleFromTimestamp } from '#/utils/to-locale-from-timestamp'
 
 import { ProjectPreview } from '#/components/authenticated/project/project-preview'
-import { SKTableRowLoader } from '#/components/global/sk-table-row-loader'
+import { Scrollable } from '#/components/global/scrollable'
 
 export function ProjectsList({ projects }: { projects: Project[] }) {
   return (
-    <div className="sk-scrollbar flex overflow-x-auto">
+    <Scrollable scrollbars>
       <table className="sk-table" role="treegrid" aria-label="List of owned projects">
         <thead>
           <tr>
-            <th>Name</th>
+            <th className="min-w-[30ch]">Name</th>
             <th className="w-44">Artist</th>
             <th className="w-56">Created</th>
             <th className="w-56">Updated</th>
@@ -35,6 +33,6 @@ export function ProjectsList({ projects }: { projects: Project[] }) {
           ))}
         </tbody>
       </table>
-    </div>
+    </Scrollable>
   )
 }

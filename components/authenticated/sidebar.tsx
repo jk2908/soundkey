@@ -18,6 +18,7 @@ import { Icon } from '#/components/global/icon'
 import { Logo } from '#/components/global/logo'
 import { Section } from '#/components/global/section'
 import { YSpace } from '#/components/global/y-space'
+import { usePathname } from 'next/navigation'
 
 export const SidebarContext = createContext<{
   isOpen: boolean
@@ -35,6 +36,7 @@ export function Sidebar({
   const [isOpen, setOpen] = useState(false)
 
   const mq = useMediaQuery(`(min-width: ${breakpoints.lg})`)
+  const pathname = usePathname()
 
   const toggleRef = useRef<HTMLButtonElement>(null)
   const sidebarRef = useRef<HTMLDivElement>(null)
@@ -91,6 +93,7 @@ export function Sidebar({
       <SidebarContext.Provider value={{ isOpen, setOpen }}>
         <Section
           ref={sidebarRef}
+          key={pathname}
           size="lg"
           className={cn(
             'fixed inset-0 z-40 h-screen shrink-0 rounded-e-3xl border border-keyline bg-app-bg transition-transform aria-current:bg-app-bg-inverted',
@@ -101,9 +104,9 @@ export function Sidebar({
           {...rest}>
           <YSpace className="flex h-full flex-col">
             <div className="flex items-center justify-between">
-              <span className="pl-4">
+              <Link href="/dashboard" className="pl-4">
                 <Logo />
-              </span>
+              </Link>
 
               {!mq && (
                 <button
@@ -124,9 +127,10 @@ export function Sidebar({
             <div className="flex grow flex-col">
               {children}
 
-              <HorizontalRule />
-              <div className="mt-auto flex flex-col py-6 px-4">
-                <div className="flex gap-4">
+              <div className="mt-auto flex flex-col px-4">
+                <HorizontalRule />
+
+                <div className="flex gap-4 pt-6">
                   <LogoutButton iconOnly>
                     <Icon name="logout" size={18} title="Logout" />
                     <span className="sr-only">Log out</span>

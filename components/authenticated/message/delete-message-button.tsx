@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState, useEffect, useRef, useState } from 'react'
+import { startTransition, useActionState, useEffect, useRef, useState } from 'react'
 import { destroy } from '#/api/message/actions'
 import { flushSync } from 'react-dom'
 
@@ -77,7 +77,10 @@ export function DeleteMessageButton({
                   ref={confirmRef}
                   onClick={() => {
                     close()
-                    dispatch()
+
+                    startTransition(() => {
+                      dispatch()
+                    })
                   }}
                   variant="danger"
                   className="mr-2">

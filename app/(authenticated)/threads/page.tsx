@@ -12,6 +12,7 @@ import { BodyHeading } from '#/components/global/body-heading'
 import { Icon } from '#/components/global/icon'
 import { SKTableRowLoader } from '#/components/global/sk-table-row-loader'
 import { resolveThreadUsers } from '#/api/thread/handlers'
+import { Scrollable } from '#/components/global/scrollable'
 
 export default async function Page() {
   const user = await auth()
@@ -28,11 +29,11 @@ export default async function Page() {
 
       {threads.length ? (
         <ErrorBoundary fallback={<div>Something went wrong loading your threads</div>}>
-          <div className="sk-scrollbar flex overflow-x-auto">
+          <Scrollable scrollbars>
             <table className="sk-table" role="treegrid" aria-label="List of threads">
               <thead>
                 <tr>
-                  <th>With</th>
+                  <th className="min-w-[30ch]">With</th>
                   <th className="w-56">Created</th>
                   <th className="w-56">Updated</th>
                   <th className="w-32">
@@ -61,7 +62,7 @@ export default async function Page() {
                 ))}
               </tbody>
             </table>
-          </div>
+          </Scrollable>
         </ErrorBoundary>
       ) : (
         <div className="flex items-center gap-4">

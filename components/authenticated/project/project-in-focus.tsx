@@ -40,12 +40,12 @@ export function ProjectInFocus({
     <div
       ref={ref}
       className={cn(
-        'flex flex-col gap-4 rounded-2xl bg-app-bg-inverted py-6 text-app-fg-inverted md:gap-6 md:py-8',
+        'flex flex-col gap-4 rounded-2xl bg-app-bg-inverted text-app-fg-inverted py-4',
         className
       )}>
       <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="flex flex-col gap-6">
-          <FocusedText as="h2" className="px-6 text-end md:px-8">
+        <div className="flex flex-col gap-4">
+          <FocusedText as="h2" className="text-end px-4">
             In focus
           </FocusedText>
 
@@ -57,7 +57,7 @@ export function ProjectInFocus({
               <div className="flex items-center gap-3">
                 <Icon name="disc" size={20} />
 
-                <BodyHeading level={3} styleAsLevel={2}>
+                <BodyHeading level={3} className="font-normal">
                   {name} <span className="font-sans text-sm not-italic">by</span> {artist}
                 </BodyHeading>
 
@@ -70,7 +70,7 @@ export function ProjectInFocus({
 
           <HorizontalRule className="border-keyline/25" />
 
-          <div className="px-6 md:px-8">
+          <div className="px-4">
             {withOpenButton && (
               <Button
                 as={Link}

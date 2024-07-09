@@ -138,7 +138,7 @@ export function CreateTaskForm({ projectId, resolvedAssignees, className, ...res
                       <Listbox.Option
                         key={u.label}
                         value={u.label}
-                        className="flex gap-1 rounded-full bg-keyline/80 px-2.5 py-1.5 text-sm">
+                        className="flex gap-1 rounded-full bg-app-bg-inverted text-app-fg-inverted px-2.5 py-1.5 text-sm">
                         {u.label}
                         <Icon name="x" size={10} />
                       </Listbox.Option>
@@ -169,7 +169,7 @@ export function CreateTaskForm({ projectId, resolvedAssignees, className, ...res
             )}
           </Select.Toggle>
 
-          <Select.Options>
+          <Select.Options duration={0.2}>
             <Listbox.Root
               selected={[priority]}
               onSelect={(value, close) => {
